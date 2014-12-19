@@ -1,9 +1,14 @@
 package twitter;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import lucene.TokenikeStopStem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +36,7 @@ public class Test {
 	private static final Logger log = LogManager.getLogger(Test.class);
 	
 	public static ArrayList<Status>getConcertTweets(Event event, int radius, JDBC db) throws InterruptedException, SQLException{
-		log.debug("Entering getTweetByLocation");
+//		log.debug("Entering getTweetByLocation");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		DateTime start = new DateTime();
 		QueryResult results = null;		
@@ -45,7 +50,7 @@ public class Test {
 		long lastID = 0;
 		
 		do {
-			log.debug("Entering getTweetByLocation");
+//			log.debug("Entering getTweetByLocation");
 			query.setCount(100);
 			try {
 				if(DateTime.now().isAfter(event.getDatetime().minusHours(2))){
@@ -68,7 +73,7 @@ public class Test {
 			}
 			if(tweetsArrayList.size() > 0)
 				db.testInsert(tweetsArrayList);
-			log.debug("retrieved: " + tweetsArrayList.size());
+//			log.debug("retrieved: " + tweetsArrayList.size());
 			tweetsArrayList.clear();
 //			query.setMaxId(lastID-1);
 			query.setSinceId(lastID);
@@ -110,7 +115,7 @@ public class Test {
 				distance = LatLngTool.distance(center, other, LengthUnit.KILOMETER);
 				if(distance <= radius)
 					filtered.add(rs.getString("text"));
-				log.debug(distance);
+//				log.debug(distance);
 			}
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -119,27 +124,8 @@ public class Test {
 		return filtered;
 	}
 	
-	public static void countWords(ArrayList<String> list){
-		String[] words = null;
-		HashMap<String, Integer> counts = new HashMap<String, Integer>();
-		String[] toIgnore = {",", ".", ":", ";", "-", "and", "to", "be", "have", 
-				"or", "has", "is", "am", "can", "the", "i", "you", "he", "she", "it", "we", "they", "as", "while"};
-		
-		for(String text: list){
-			for(int i = 0; i < toIgnore.length; i++){
-//				text = text.replaceAll(toIgnore[i], " ");
-			}
-			
-			words = text.split(" ");
-			for(String word : words){
-				log.debug(word);
-			}
-		}
-		
-		
-	}
-	
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
+		Map<String, Integer> countWords = new HashMap<String, Integer>();
 		Bandsintown bandsintown = new Bandsintown();
 		JDBC s = null;
 		ArrayList<String> filtered = null;
@@ -147,11 +133,11 @@ public class Test {
 		ArrayList<Status> tweets = new ArrayList<Status>();
 		
 		ArrayList<Event> events = bandsintown.getEvents.setArtist("smashing pumpkins").setDate("2014-12-11").search();
-		log.debug(events.get(0));
+//		log.debug(events.get(0));
 		
 		try {
 			s = new JDBC("sqlite");
-			filtered = filterTweets(events.get(0), s, 1);
+			filtered = filterTweets(events.get(0), s, 0.5);
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -159,8 +145,16 @@ public class Test {
 			s.closeConnection();
 		}
 		
-		log.debug(filtered.size());
-		countWords(filtered);
+//		log.debug(filtered.size());
+		
+		countWords = new TokenikeStopStem().tokenize(filtered);
+//		log.debug(countWords.get("smashing"));
+		Map<String, Integer> a = new LinkedHashMap<String, Integer>();
+		for (Map.Entry<String, Integer> entry : countWords.entrySet()) {
+			if(entry.getValue() > 3)
+				log.info(entry.getKey() + "," + entry.getValue());
+		}
+		
 		
 		
 	}

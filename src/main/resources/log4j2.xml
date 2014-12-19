@@ -8,15 +8,19 @@
 		<File name="File" fileName="test.log">
 			<PatternLayout pattern="[%d{ISO8601} %-5level] %logger{36} - %msg%n"/>
 		</File>
+		<File name="Csv" fileName="test.csv">
+			<PatternLayout pattern="%msg%n"/>
+		</File>
 	</Appenders>
 	<Loggers>
-	   	<Logger name="package.className" level="trace" additivity="false">
-	 		<AppenderRef ref="Console"/>
+	   	<Logger name="twitter.Test" level="info" additivity="false">
+	 		<AppenderRef ref="Csv"/>
 	 	</Logger>
 	 	
 	   <Root level="trace">
 	     <AppenderRef ref="Console"/>
 	     <AppenderRef ref="File" level="trace" />
+	     <AppenderRef ref="Csv" level="info" />
 	   </Root>\
 	</Loggers>
 </Configuration>
