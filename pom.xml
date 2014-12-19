@@ -47,6 +47,12 @@
 <!-- 		<artifactId>twitter4j-stream</artifactId> -->
 <!-- 		<version>4.0.2</version> -->
 <!-- 	</dependency> -->
+
+		<dependency>
+			<groupId>com.javadocmd</groupId>
+			<artifactId>simplelatlng</artifactId>
+			<version>RELEASE</version>
+		</dependency>
 		
 	</dependencies>
 	
