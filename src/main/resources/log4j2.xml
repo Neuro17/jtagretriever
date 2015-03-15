@@ -14,13 +14,13 @@
 	</Appenders>
 	<Loggers>
 	   	<Logger name="twitter.Test" level="info" additivity="false">
-	 		<AppenderRef ref="Csv"/>
+	 		<AppenderRef ref="Console"/>
 	 	</Logger>
 	 	
 	   <Root level="trace">
 	     <AppenderRef ref="Console"/>
 	     <AppenderRef ref="File" level="trace" />
 	     <AppenderRef ref="Csv" level="info" />
-	   </Root>\
+	   </Root>
 	</Loggers>
 </Configuration>
