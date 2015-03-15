@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import lucene.TokenikeStopStem;
 
@@ -130,7 +131,7 @@ public class Test {
 		JDBC s = null;
 		ArrayList<String> filtered = null;
 		
-		ArrayList<Status> tweets = new ArrayList<Status>();
+//		ArrayList<Status> tweets = new ArrayList<Status>();
 		
 		ArrayList<Event> events = bandsintown.getEvents.setArtist("smashing pumpkins").setDate("2014-12-11").search();
 //		log.debug(events.get(0));
@@ -138,7 +139,10 @@ public class Test {
 		try {
 			s = new JDBC("sqlite");
 			filtered = filterTweets(events.get(0), s, 0.5);
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException  e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -150,7 +154,7 @@ public class Test {
 		countWords = new TokenikeStopStem().tokenize(filtered);
 //		log.debug(countWords.get("smashing"));
 		Map<String, Integer> a = new LinkedHashMap<String, Integer>();
-		for (Map.Entry<String, Integer> entry : countWords.entrySet()) {
+		for (Entry<String, Integer> entry : countWords.entrySet()) {
 			if(entry.getValue() > 3)
 				log.info(entry.getKey() + "," + entry.getValue());
 		}

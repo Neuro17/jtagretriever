@@ -23,7 +23,7 @@ public class TokenikeStopStem {
 		
 		String line = "";
 		
-		InputStream inputStream =  this.getClass().getResourceAsStream("stop_words.txt");
+		InputStream inputStream =  this.getClass().getResourceAsStream("../resource/stop_words.txt");
 		
         BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
         
@@ -66,10 +66,12 @@ public class TokenikeStopStem {
 	
 	
 	public static void main(String[] args) throws IOException{
-//		Map<String, Integer> countWords = new TokenikeStopStem().tokenize("I am Biagio");
-//		for (Map.Entry<String, Integer> entry : countWords.entrySet()) {
-//		    log.debug(entry.getKey() + " : " + entry.getValue());
-//		}
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("I am Biagio");
+		Map<String, Integer> countWords = new TokenikeStopStem().tokenize(list);
+		for (Map.Entry<String, Integer> entry : countWords.entrySet()) {
+		    log.debug(entry.getKey() + " : " + entry.getValue());
+		}
 	}
 	
 }
