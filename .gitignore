@@ -3,6 +3,8 @@
 .settings
 .metadata
 target/
+src/test/
+sample.db
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -10,3 +12,4 @@ pom.xml.next
 release.properties
 *.log
 *.csv
+*.~
