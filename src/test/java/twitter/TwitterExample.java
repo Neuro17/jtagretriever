@@ -4,11 +4,13 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
-import search.Bandsintown;
 import twitter4j.GeoLocation;
 import twitter4j.Query;
+import twitter4j.Query.Unit;
 import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -19,12 +21,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import entity.Event;
+import entity.Venue;
 
 public class TwitterExample {
 	
-	public static ArrayList<Status> getTweetBylocation(double lat, double lng, int tweetSize) throws InterruptedException{
-		System.out.println("Entering getTweetByLocation");
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	private static final Logger log = LogManager.getLogger(TwitterExample.class);
+	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	
+//	Test class
+	public static ArrayList<Status> getTweetBylocation(double lat, double lng, 
+			int tweetSize) throws InterruptedException{
+		
+		log.trace("Entering getTweetByLocation");
 		
 		QueryResult results = null;
 		
@@ -46,17 +54,17 @@ public class TwitterExample {
 			count = tweetSize;
 		}
 		do {
-			System.out.println("Entering getTweetByLocation");
+			log.trace("Entering getTweetByLocation");
 			query.setCount(count);
 			try {
 				results = twitter.search(query);
 				
 			} catch (TwitterException e) {
-				System.out.println(e.getErrorMessage());
-				System.out.println(e.getRateLimitStatus().getSecondsUntilReset());
-				System.out.println(e.getRetryAfter());
+				log.error(e.getErrorMessage());
+				log.error(e.getRateLimitStatus().getSecondsUntilReset());
+				log.error(e.getRetryAfter());
 				e.printStackTrace();
-				System.out.println("tweets retrieved: " + tweetsArrayList.size());
+				log.error("tweets retrieved: " + tweetsArrayList.size());
 //				return tweetsArrayList;
 //				Thread.sleep(e.getRateLimitStatus().getSecondsUntilReset() * 1000);
 			}
@@ -74,22 +82,28 @@ public class TwitterExample {
 		return tweetsArrayList;
 	}
 	
-	public static ArrayList<Status>getConcertTweets(Event event, int radius, JDBC db) throws InterruptedException, SQLException{
-		System.out.println("Entering getTweetByLocation");
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	public static ArrayList<Status>getConcertTweets(Event event, int radius,
+			JDBC db) throws InterruptedException, SQLException{
+		
+		log.trace("Entering getTweetByLocation");
 		DateTime start = new DateTime();
 		QueryResult results = null;		
 		
 		Twitter twitter = TwitterFactory.getSingleton();
 		
-		Query query = new Query().geoCode(new GeoLocation(event.getVenue().getLatitude(), event.getVenue().getLongitude()), radius, "km");
+		Query query = new Query().geoCode(new GeoLocation(event.getVenue().
+				getLatitude(), event.getVenue().getLongitude()), radius,
+				Unit.km.toString());
+		
+//		Query query = new Query().geoCode(new GeoLocation(event.getVenue().
+//				getLatitude(), event.getVenue().getLongitude()), radius, Unit.km.toString());		
 		
 		ArrayList<Status> tweetsArrayList= new ArrayList<Status>();
 		
 		long lastID = 0;
 		
 		do {
-			System.out.println("Entering getTweetByLocation");
+			log.trace("Entering getTweetByLocation");
 			query.setCount(100);
 			try {
 				if(DateTime.now().isAfter(event.getDatetime().minusHours(2))){
@@ -112,8 +126,11 @@ public class TwitterExample {
 		        if(tweet.getId() > lastID) 
 		        	lastID = tweet.getId();
 			}
+			
 			if(tweetsArrayList.size() > 0)
-				db.testInsert(tweetsArrayList);
+//				Here the connection with db
+//				db.testInsert(tweetsArrayList);
+			
 			System.out.println("retrieved: " + tweetsArrayList.size());
 			tweetsArrayList.clear();
 //			query.setMaxId(lastID-1);
@@ -126,56 +143,78 @@ public class TwitterExample {
 
 	}
 	
-	public static void main(String[] args) throws InterruptedException, URISyntaxException {
+	public static ArrayList<Status>getTweetByLocation(double lat, double lng,
+			int radius)	throws InterruptedException, SQLException{
+		
+		Event tmpEvent = new Event();
+		
+		return null;
+		
+	}
+	
+	public static void main(String[] args) throws InterruptedException, URISyntaxException, SQLException {
 //		  
-//		double lat = 40.7143; 
-//		double lng = -74.006;
+		double lat = 40.7143; 
+		double lng = -74.006;
+		
+//		double lat = 40.7833; 
+//		double lng = 73.9667;
+		DateTime start = DateTime.now();
+		
+		Event event = new Event();
+		event.setDatetime(start);
+		event.setVenue(new Venue(lat, lng));
+		
+		ArrayList<Status> tweets = getConcertTweets(event, 2, null);
 		
 		
-		Bandsintown bandsintown = new Bandsintown();
-		JDBC s = null;
-		ArrayList<Status> tweets = new ArrayList<Status>();
-		
-		ArrayList<Event> events = bandsintown.getEvents.setArtist("smashing pumpkins").setDate("2014-12-11").search();
-		System.out.println(events.get(0));
-//		DateTime now = new DateTime();
-		
-		System.out.println("Starting tweets retrieving: " + DateTime.now());
-		System.out.println("Concert starts at: " + events.get(0).getDatetime());
-		System.out.println("Concerts finished at: " + new DateTime("2014-12-12T05:00:00.000"));
-		
-		events.get(0).setDatetime(new DateTime("2014-12-12T05:00:00.000"));
-		System.out.println(events.get(0).getDatetime());
-		System.out.println(events.get(0).getDatetime().minusHours(2));
-		System.out.println(events.get(0).getDatetime().plusHours(4));
-		
-		try{
-			s = new JDBC("sqlite");
-			tweets = getConcertTweets(events.get(0), 2, s);
-		} catch(SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			if (s != null) s.closeConnection();
-		}
-		
-		
-		
-		for(Status t : tweets){
-			System.out.println(t.getCreatedAt() + " " + t.getGeoLocation());
-		}
+//		Bandsintown bandsintown = new Bandsintown();
+//		JDBC s = null;
+//		ArrayList<Status> tweets = new ArrayList<Status>();
+//		
+//		ArrayList<Event> events = bandsintown.getEvents.setArtist("smashing pumpkins")
+//				.setDate("2014-12-11").search();
+//		
+//		System.out.println(events.get(0));
+////		DateTime now = new DateTime();
+//		
+//		System.out.println("Starting tweets retrieving: " + DateTime.now());
+//		System.out.println("Concert starts at: " + events.get(0).getDatetime());
+//		System.out.println("Concerts finished at: " + 
+//				new DateTime("2015-12-12T05:00:00.000"));
+//		
+//		events.get(0).setDatetime(new DateTime("2014-12-12T05:00:00.000"));
+//		System.out.println(events.get(0).getDatetime());
+//		System.out.println(events.get(0).getDatetime().minusHours(2));
+//		System.out.println(events.get(0).getDatetime().plusHours(4));
+//		
+//		try{
+//			s = new JDBC("sqlite");
+//			tweets = getConcertTweets(events.get(0), 2, s);
+//		} catch(SQLException e) {
+//			e.printStackTrace();
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		} finally {
+//			if (s != null) s.closeConnection();
+//		}
+//		
+//		
+//		
+//		for(Status t : tweets){
+//			System.out.println(t.getCreatedAt() + " " + t.getGeoLocation());
+//		}
 		
 		
 		
 //		ArrayList<Status> tweets = getTweetBylocation(lat, lng, 50);
-//		
-//		for(Status tweet : tweets){		
-//			System.out.println(tweet.getText());
-//			System.out.println(tweet.getLang());
-//			System.out.println(tweet.getCreatedAt());
-//			System.out.println("---------------------------------------------");
-//		}
+		
+		for(Status tweet : tweets){		
+			System.out.println(tweet.getText());
+			System.out.println(tweet.getLang());
+			System.out.println(tweet.getCreatedAt());
+			System.out.println("---------------------------------------------");
+		}
 //		
 //		System.out.println("tweets received: " + tweets.size());
 //		

@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "controllers")
+@ComponentScan(basePackages = {"app.controllers", "app.dao", "app.repository"})
 @EnableAutoConfiguration
 public class SpringBootApp {
 

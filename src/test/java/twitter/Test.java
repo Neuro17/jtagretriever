@@ -9,13 +9,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import lucene.TokenikeStopStem;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import search.Bandsintown;
+import server.tag.extractor.Tokenizer;
 import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -44,8 +43,9 @@ public class Test {
 		
 		Twitter twitter = TwitterFactory.getSingleton();
 		
-		Query query = new Query().geoCode(new GeoLocation(event.getVenue().getLatitude(), event.getVenue().getLongitude()), radius, "km");
-		
+		Query query = new Query().geoCode(new GeoLocation(event.getVenue()
+				.getLatitude(), event.getVenue().getLongitude()), radius, "km");
+
 		ArrayList<Status> tweetsArrayList= new ArrayList<Status>();
 		
 		long lastID = 0;
@@ -139,6 +139,7 @@ public class Test {
 		try {
 			s = new JDBC("sqlite");
 			filtered = filterTweets(events.get(0), s, 0.5);
+			log.debug("reading from DB - done");
 		} catch (ClassNotFoundException  e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -151,10 +152,13 @@ public class Test {
 		
 //		log.debug(filtered.size());
 		
-		countWords = new TokenikeStopStem().tokenize(filtered);
-//		log.debug(countWords.get("smashing"));
-		Map<String, Integer> a = new LinkedHashMap<String, Integer>();
+		countWords = new Tokenizer().tokenize(filtered);
+		log.debug(countWords.get("smashing"));
+//		Map<String, Integer> a = new LinkedHashMap<String, Integer>();
 		for (Entry<String, Integer> entry : countWords.entrySet()) {
+			
+//			log.info(entry.getKey() + "," + entry.getValue());
+			
 			if(entry.getValue() > 3)
 				log.info(entry.getKey() + "," + entry.getValue());
 		}

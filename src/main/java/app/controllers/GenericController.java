@@ -1,4 +1,4 @@
-package controllers;
+package app.controllers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
