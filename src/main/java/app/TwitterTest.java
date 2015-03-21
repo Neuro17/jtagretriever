@@ -51,6 +51,7 @@ public class TwitterTest implements CommandLineRunner {
 		
 		Event event = new Event();
 		event.setDatetime(start);
+
 		event.setVenue(new Venue(lat, lng));
 		
 		twc.StreamConcert(event, 2);

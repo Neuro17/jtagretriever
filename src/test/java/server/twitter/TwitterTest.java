@@ -37,7 +37,7 @@ public class TwitterTest {
 		Event event = new Event();
 		event.setDatetime(start);
 		event.setVenue(new Venue(lat, lng));
-		
+
 		twc.StreamConcert(event, 2);
 		
 //		for(Status tweet : twc.StreamConcert(event, 2)){

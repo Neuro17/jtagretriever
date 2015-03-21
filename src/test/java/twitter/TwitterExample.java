@@ -163,8 +163,10 @@ public class TwitterExample {
 		
 		Event event = new Event();
 		event.setDatetime(start);
-		event.setVenue(new Venue(lat, lng));
+		Venue v = new Venue();
 		
+		event.setVenue(new Venue(lat,lng));
+				
 		ArrayList<Status> tweets = getConcertTweets(event, 2, null);
 		
 		
