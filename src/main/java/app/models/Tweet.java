@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.transaction.Transactional;
 
 @Entity
-@Table(name = "tweet")
+@Table(name = "tweet_test")
 //@Transactional
 public class Tweet implements Serializable { 
 	

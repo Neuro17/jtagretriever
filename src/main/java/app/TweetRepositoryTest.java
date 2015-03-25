@@ -88,6 +88,7 @@ public class TweetRepositoryTest implements CommandLineRunner {
         System.out.println();
         
         tweet.toString();
+    
     }
 
 }

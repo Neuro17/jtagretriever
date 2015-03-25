@@ -1,5 +1,7 @@
 package app;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -11,20 +13,24 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 
-import server.twitter.TwitterConnector;
 import twitter4j.Status;
-import app.repository.TweetRepository;
+import app.twitter.TwitterConnector;
+import app.twitter.TwitterTagExtractor;
+import app.twitter.impl.TwitterConnectorImpl;
 import entity.Event;
 import entity.Venue;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"app.repository", "server.twitter"})
+@ComponentScan(basePackages = {"app.repository",  "app.twitter", "app.tools"})
 @EntityScan(basePackages = "app.models")
 @EnableAutoConfiguration
 public class TwitterTest implements CommandLineRunner {
 
 	@Autowired 
 	TwitterConnector twitter;
+	
+	@Autowired 
+	TwitterTagExtractor twTag;
 	
 	private static final Logger log = LogManager.getLogger(TwitterTest.class);
 	
@@ -44,17 +50,16 @@ public class TwitterTest implements CommandLineRunner {
 	}
 	
 	public void StreamConcertTest() throws InterruptedException{
-		TwitterConnector twc = new TwitterConnector();
-		double lat = 40.7833; 
-		double lng = 73.9667;
+		double lat = 40.7143; 
+		double lng = -74.006;
 		DateTime start = DateTime.now();
 		
 		Event event = new Event();
 		event.setDatetime(start);
-
 		event.setVenue(new Venue(lat, lng));
+		event.setTitle("test event 2");
 		
-		twc.StreamConcert(event, 2);
+		twitter.StreamConcert(event, 2);
 		
 //		for(Status tweet : twc.StreamConcert(event, 2)){
 //			log.info(tweet.getText());
@@ -65,6 +70,21 @@ public class TwitterTest implements CommandLineRunner {
 //		}
 		
 		
+	}
+	
+	public void TagExtractorTest() {
+		double lat = 40.7143; 
+		double lng = -74.006;
+		DateTime start = DateTime.now();
+		
+		Event event = new Event();
+		event.setDatetime(start);
+		event.setVenue(new Venue(lat, lng));
+		event.setTitle("test event");
+
+		for (Map.Entry<String, Integer> entry : twTag.extracxtTag(event, 2).entrySet()) {
+		    log.debug(entry.getKey() + " : " + entry.getValue());
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -83,9 +103,10 @@ public class TwitterTest implements CommandLineRunner {
 //		log.debug(tweet);
 		log.debug(twitter);
 		
-		TweetsStreamTest(100);
+//		TweetsStreamTest(100);
 		
-//		twc.TweetsStreamTest(50);
+//		StreamConcertTest();
+		
+		TagExtractorTest();
 	}
-
 }

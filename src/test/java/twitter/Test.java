@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import search.Bandsintown;
-import server.tag.extractor.Tokenizer;
 import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -22,6 +21,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import app.tools.Tokenizer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

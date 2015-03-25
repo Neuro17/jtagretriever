@@ -7,10 +7,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"app.controllers", "app.dao", "app.repository"})
+@ComponentScan(basePackages = {"app.controllers", "app.dao", "app.repository", "app.scheduler"})
 @EnableAutoConfiguration
+@EnableScheduling
 public class SpringBootApp {
 
     public static void main(String[] args) {

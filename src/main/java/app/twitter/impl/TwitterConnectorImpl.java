@@ -1,4 +1,4 @@
-package app;
+package app.twitter.impl;
 
 import java.util.ArrayList;
 
@@ -6,12 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
-
 import org.springframework.stereotype.Component;
-
-import org.springframework.stereotype.Controller;
 
 //import scala.annotation.meta.getter;
 import twitter4j.GeoLocation;
@@ -25,6 +20,7 @@ import twitter4j.TwitterFactory;
 import app.models.Tweet;
 import app.models.TweetKey;
 import app.repository.TweetRepository;
+import app.twitter.TwitterConnector;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,8 +28,7 @@ import com.google.gson.GsonBuilder;
 import entity.Event;
 
 @Component
-@Controller
-public class TwitterConnector {
+public class TwitterConnectorImpl implements TwitterConnector{
 
 	private static final Logger log = LogManager.getLogger(Twitter.class);
 	private static final int DEFAULT_COUNT = 100;
@@ -46,12 +41,12 @@ public class TwitterConnector {
 	@Autowired
 	TweetRepository twitterRepo;
 	
-	public TwitterConnector(int queryCount) {
-		this.queryCount = queryCount;
-		this.twitter = TwitterFactory.getSingleton();
-	}
+//	public TwitterConnectorImpl(int queryCount) {
+//		this.queryCount = queryCount;
+//		this.twitter = TwitterFactory.getSingleton();
+//	}
 	
-	public TwitterConnector() {
+	public TwitterConnectorImpl() {
 		this.queryCount = DEFAULT_COUNT;
 		this.twitter = TwitterFactory.getSingleton();
 	}
@@ -104,7 +99,6 @@ public class TwitterConnector {
 		return lastID;
 	}
 	
-
 	public ArrayList<Status> TweetsStream(double lat, double lng, int tweetsize,
 			int radius){
 	
@@ -124,7 +118,6 @@ public class TwitterConnector {
 		ArrayList<Status> tmpTweets= new ArrayList<Status>();
 		
 		do {
-			
 			tmpTweets = getTweet();
 			tweetsArrayList.addAll(tmpTweets);
 			
@@ -155,9 +148,7 @@ public class TwitterConnector {
 	
 	public ArrayList<Status> StreamConcert(Event event, int radius) 
 			throws InterruptedException {
-		
-//		TODO - buggata
-		
+				
 		log.trace("Entering StreamConcert");
 		
 		ArrayList<Status> tweetsArrayList= new ArrayList<Status>();
@@ -168,6 +159,7 @@ public class TwitterConnector {
 		DateTime startDate = event.getDatetime().minusHours(2);
 		DateTime endDate = event.getDatetime().plusHours(4);
 		
+		log.debug(getQueryCount());
 		
 		query = new Query().geoCode(new GeoLocation(lat, lng), radius, "km");
 		
@@ -186,23 +178,19 @@ public class TwitterConnector {
 				tweetsArrayList.addAll(tmpTweets);
 			}
 			
-			lastID = sinceNow(tmpTweets, lastID);
-			
-			if(!tmpTweets.isEmpty()) {
-				log.info(tmpTweets.get(0).getText());
-				log.info(tmpTweets.get(0).getLang());
-				log.info(tmpTweets.get(0).getCreatedAt());
-				log.info(tmpTweets.get(0).getGeoLocation().getLatitude());
-				log.info("---------------------------------------------");
+			for (Status tweet: tmpTweets) {
+				TweetKey pk = new TweetKey();
+//				log.debug("Ho trovato dei tweet, ora dovrei salvarli!!!!");
+	        	pk.setEventName(event.getTitle());
+	        	pk.setId(tweet.getId());
+//	        	
+//	        	log.debug(twitterRepo);
+//	        	TODO - ricordarsi di inserire tutti i campi necessari per la tabella
+ 	        	twitterRepo.save( new Tweet(pk, tweet.getGeoLocation().getLatitude(),
+	        			tweet.getGeoLocation().getLongitude()));
+		        if(tweet.getId() > lastID) 
+		        	lastID = tweet.getId();
 			}
-			
-//			for(Status tweet: tmpTweets){
-//				log.info(tweet.getText());
-//				log.info(tweet.getLang());
-//				log.info(tweet.getCreatedAt());
-//				log.info(tweet.getGeoLocation().getLatitude());
-//				log.info("---------------------------------------------");
-//			}
 			
 			tmpTweets.clear();
 //			log.debug(lastID);
