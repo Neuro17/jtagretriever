@@ -16,9 +16,8 @@ import app.models.Tweet;
 @Transactional
 public interface TweetRepository extends CrudRepository<Tweet, Long> {
 	
-	@Query("SELECT p FROM Tweet p WHERE p.myKey.eventName = :eventName")
+	@Query("SELECT t FROM Tweet t WHERE t.myKey.eventName = :eventName")
     List<Tweet> findByEventName(@Param("eventName") String eventName);
 	
-//	@Query("SELECT p FROM Tweet p where p.lat = :lat")
 	List<Tweet> findByLat(double lat);
 }

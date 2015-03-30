@@ -7,6 +7,8 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import app.tools.Tokenizer;
+
 
 public class TagFilterTest {
 	
@@ -14,11 +16,12 @@ public class TagFilterTest {
 	
 	public static void main(String[] args) throws IOException{
 		ArrayList<String> list = new ArrayList<String>();
+		
 		for(int i = 0; i < 100; i++){
-			list.add("I am Biagio");
+			list.add("I am Biagio at home");
 		}
 			
-		Map<String, Integer> countWords = new Tokenizer().tokenize(list);
+		Map<String, Integer> countWords = Tokenizer.tokenize(list);
 		for (Map.Entry<String, Integer> entry : countWords.entrySet()) {
 		    log.debug(entry.getKey() + " : " + entry.getValue());
 		}

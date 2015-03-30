@@ -59,7 +59,16 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		this.queryCount = queryCount;
 	}
 	
-	public ArrayList<Status> getTweet(){
+	public Query getQuery() {
+		return query;
+	}
+
+	public void setQuery(Query query) {
+		this.query = query;
+
+	}
+	
+	private ArrayList<Status> getTweet(){
 		QueryResult results = null;
 		ArrayList<Status> tweetsArrayList= new ArrayList<Status>();
 		
@@ -202,5 +211,7 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		return tweetsArrayList;
 		
 	}
+	
+	
 	
 }

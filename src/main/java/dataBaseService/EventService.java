@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import entity.Artist;
 import entity.Event;
@@ -24,7 +25,7 @@ public class EventService {
   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
   static final String DB_URL = "jdbc:mysql://localhost/concerts_db";
   static final String USER = "root";
-  static final String PASS = "mysql";
+  static final String PASS = "mysqldata";
   
   public void configure() throws ClassNotFoundException, SQLException{
 	  Class.forName(getJdbcDriver());
@@ -99,6 +100,9 @@ public class EventService {
 
   public void persist(Event entity) throws Exception{
 	  VenueService vService = new VenueService();
+	  ArtistService aservice = new ArtistService();
+	  
+	  vService.persist(entity.getVenue());
 	  
 	  if(!this.exists(entity.getId()) && vService.exists(entity.getVenue().getId())){
 	    try {
@@ -122,21 +126,27 @@ public class EventService {
 	    }
 	  
 	    ArrayList<Artist> eArtist = entity.getArtist();
-	    for(Artist a : eArtist)
-	    	try {
-		    	this.configure();
-		        
-		        preparedStatement = connection.prepareStatement("INSERT INTO " +
-		        		"partecipations(`event_id`, `artist_name`) VALUES(?,?)");
-			    preparedStatement.setInt(1, entity.getId());
-			    preparedStatement.setString(2, a.getName());
-			    preparedStatement .executeUpdate();
-		      
-		    } catch (Exception e) {
-		      throw e;
-		    } finally {
-		      close();
-		    }
+	    
+	    for(Artist a : eArtist) {
+	    	aservice.persist(a);
+	    	if (!aservice.existsPartecipations(a.getName(), entity.getId())) {
+		    	try {
+			    	this.configure();
+			        
+			        preparedStatement = connection.prepareStatement("INSERT INTO " +
+			        		"partecipations(`event_id`, `artist_name`) VALUES(?,?)");
+				    preparedStatement.setInt(1, entity.getId());
+				    preparedStatement.setString(2, a.getName());
+				    System.out.println(preparedStatement);
+				    preparedStatement .executeUpdate();
+				    
+			    } catch (Exception e) {
+			      throw e;
+			    } finally {
+			      close();
+			    }
+	    	}
+	    }
 	  }
 	  
   }
@@ -325,5 +335,29 @@ public class EventService {
   public static String getPass() {
 	return PASS;
   }
+
+  //TODO
+//	public void getTodaysEvents(LocalDate today) {
+//		try {
+//			  this.configure();
+//		      
+//		      preparedStatement = connection.prepareStatement("select * from events_table as e, venues as v where e.venue_id = v.venue_id and date(e.`datetime`) = ?");   
+//		      Date d = new Date()
+//		      preparedStatement.setDate(1,(Date) today);
+//		      preparedStatement.setInt(2,event_id);
+//		      System.out.println(preparedStatement);
+//	        resultSet = preparedStatement.executeQuery();   
+//	        System.out.println(resultSet);
+//	        if(!resultSet.next())
+//	      	  return false;
+//	        else return true;
+//	        
+//		    } catch (Exception e) {
+//		      throw e;
+//		    } finally {
+//		      close();
+//		    }	  
+//		
+//	}
 
 } 

@@ -8,18 +8,29 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+
+import app.models.interfaces.ArtistDAOInterface;
 import entity.Artist;
 
-public class ArtistService {
+@PropertySource("classpath:config.properties")
+public class ArtistService implements ArtistDAOInterface {
   private Connection connect = null;
   private Statement statement = null;
   private PreparedStatement preparedStatement = null;
   private ResultSet resultSet = null;
 
-  private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-  private static final String DB_URL = "jdbc:mysql://localhost/concerts_db";
-  private static final String USER = "root";
-  private static final String PASS = "mysql";
+	  private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+	  private static final String DB_URL = "jdbc:mysql://localhost/concerts_db";
+	  private static final String USER = "root";
+	  private static final String PASS = "mysqldata";
+  
+//  @Value("${spring.datasource.driverClassName}")
+//  private String JDBC_DRIVER;
+//  
+//  @Value("${spring.datasource.url}")
+//  private static final String DB_URL;
   
   private void configure() throws ClassNotFoundException, SQLException{
 	  Class.forName(getJdbcDriver());
@@ -45,22 +56,43 @@ public class ArtistService {
 	    }	  
   }
   
+  public boolean existsPartecipations(String id, int event_id) throws Exception{
+	  try {
+		  this.configure();
+	      
+	      preparedStatement = connect.prepareStatement("select * from partecipations where artist_name = ? and event_id = ?");   
+	      preparedStatement.setString(1,id);
+	      preparedStatement.setInt(2,event_id);
+	      System.out.println(preparedStatement);
+          resultSet = preparedStatement.executeQuery();   
+          System.out.println(resultSet);
+          if(!resultSet.next())
+        	  return false;
+          else return true;
+          
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }	  
+  }
+  
   public Artist findById(String id) throws Exception{
 	  Artist aTmp = null;
 	  try {
 			  this.configure();
 		      
 		      preparedStatement = connect.prepareStatement("select * from artists where artist_name = ?");   
-		      preparedStatement.setString(1,id);
-	          resultSet = preparedStatement.executeQuery();   
-	          
-	          if(resultSet.last()){
-		          String nameTmp = resultSet.getString("artist_name");
-		          String idTmp = resultSet.getString("artist_id");
-		          aTmp = new Artist(nameTmp,idTmp);
-	          }
-	          else 
-	        	  System.out.println("Artist with Name : " + id + " not found");
+      preparedStatement.setString(1,id);
+      resultSet = preparedStatement.executeQuery();   
+      
+      if(resultSet.last()){
+          String nameTmp = resultSet.getString("artist_name");
+          String idTmp = resultSet.getString("artist_id");
+          aTmp = new Artist(nameTmp,idTmp);
+      }
+      else 
+    	  System.out.println("Artist with Name : " + id + " not found");
 	    } catch (Exception e) {
 	      throw e;
 	    } finally {
@@ -143,11 +175,11 @@ public class ArtistService {
   	return entities;
   }
 
-public void deleteAll() throws Exception {
-	ArrayList<Artist> entities = this.findAll();
-	for(Artist entity : entities)
-		this.delete(entity.getName());
-}
+	public void deleteAll() throws Exception {
+		ArrayList<Artist> entities = this.findAll();
+		for(Artist entity : entities)
+			this.delete(entity.getName());
+	}
   
 	public ArrayList<Artist> getEventArtist(int eventId) throws Exception{
 		ArrayList<Artist> eventArtist = null;

@@ -1,5 +1,4 @@
 ### Lista di artisti per sincronizzare il DB
-ac dc
 alt j
 Stereophonics
 pearl jam

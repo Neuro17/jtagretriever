@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+
 
 //import scala.annotation.meta.getter;
 import twitter4j.GeoLocation;
@@ -30,6 +32,8 @@ import com.google.gson.GsonBuilder;
 import entity.Event;
 
 @Component
+@Controller
+@Deprecated
 public class TwitterConnector {
 
 	private static final Logger log = LogManager.getLogger(Twitter.class);
@@ -135,6 +139,7 @@ public class TwitterConnector {
 	        	
 	        	twitterRepo.save( new Tweet(pk, tweet.getGeoLocation().getLatitude(),
 	        			tweet.getGeoLocation().getLongitude()));
+				
 		        if(tweet.getId() < lastID) 
 		        	lastID = tweet.getId();
 			}
@@ -182,15 +187,29 @@ public class TwitterConnector {
 				tweetsArrayList.addAll(tmpTweets);
 			}
 			
-			lastID = sinceNow(tmpTweets, lastID);
-			
-			if(!tmpTweets.isEmpty()) {
-				log.info(tmpTweets.get(0).getText());
-				log.info(tmpTweets.get(0).getLang());
-				log.info(tmpTweets.get(0).getCreatedAt());
-				log.info(tmpTweets.get(0).getGeoLocation().getLatitude());
-				log.info("---------------------------------------------");
+			for (Status tweet: tmpTweets) {
+				
+				log.debug("Ho trovato dei tweet, ora dovrei salvarli!!!!");
+//	        	pk.setEventName("test event");
+//	        	pk.setId(tweet.getId());
+//	        	
+//	        	log.debug(twitterRepo);
+//	        	
+//	        	twitterRepo.save( new Tweet(pk, tweet.getGeoLocation().getLatitude(),
+//	        			tweet.getGeoLocation().getLongitude()));
+		        if(tweet.getId() > lastID) 
+		        	lastID = tweet.getId();
 			}
+			
+//			lastID = sinceNow(tmpTweets, lastID);
+			
+//			if(!tmpTweets.isEmpty()) {
+//				log.info(tmpTweets.get(0).getText());
+//				log.info(tmpTweets.get(0).getLang());
+//				log.info(tmpTweets.get(0).getCreatedAt());
+//				log.info(tmpTweets.get(0).getGeoLocation().getLatitude());
+//				log.info("---------------------------------------------");
+//			}
 			
 //			for(Status tweet: tmpTweets){
 //				log.info(tweet.getText());

@@ -3,8 +3,12 @@ package app.scheduler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import dataBaseService.EventService;
 
 @Component
 public class ScheduledTasks {
@@ -25,8 +29,11 @@ public class ScheduledTasks {
      * Month and weekday names can be given as the first three letters of the 
      * English names.
      */
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 16 0 * * *")
     public void cronExample(){
     	System.out.println("this is a cron scheduled task");
+    	EventService eventServ = new EventService();
+    	LocalDate today = LocalDate.now();
+//    	eventServ.getTodaysEvents(today);
     }
 }

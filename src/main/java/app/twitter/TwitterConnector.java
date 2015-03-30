@@ -2,6 +2,7 @@ package app.twitter;
 
 import java.util.ArrayList;
 
+import twitter4j.Query;
 import twitter4j.Status;
 import entity.Event;
 
@@ -11,8 +12,10 @@ public interface TwitterConnector {
 	
 	public void setQueryCount(int queryCount);
 	
-	public ArrayList<Status> getTweet();
+	public Query getQuery();
 	
+	public void setQuery(Query query);
+		
 	public ArrayList<Status> TweetsStream(double lat, double lng, int tweetsize,
 			int radius);
 	
