@@ -187,6 +187,11 @@ public class TwitterConnectorImpl implements TwitterConnector{
 				tweetsArrayList.addAll(tmpTweets);
 			}
 			
+			else {
+				log.debug("too early");
+				Thread.sleep(1000 * 60);
+			}
+			
 			for (Status tweet: tmpTweets) {
 				TweetKey pk = new TweetKey();
 //				log.debug("Ho trovato dei tweet, ora dovrei salvarli!!!!");

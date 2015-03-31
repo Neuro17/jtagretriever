@@ -6,6 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import search.Bandsintown;
+import app.twitter.TwitterConnector;
+import app.twitter.impl.TwitterConnectorImpl;
 import dataBaseService.ArtistService;
 import dataBaseService.EventService;
 import dataBaseService.VenueService;
@@ -20,6 +22,7 @@ public class Task {
 	private static final EventService eventDAO = new EventService();
 	private static final VenueService venueDAO = new VenueService();
 	private static final Bandsintown bandsintown = new Bandsintown();
+	private static final TwitterConnector twitterExtractor= new TwitterConnectorImpl();
 	
 	public static void initArtistDB(){
 		ArrayList<String> artists = Tools.readFileFromResource(ARTISTS_FILE, "#");
@@ -58,10 +61,23 @@ public class Task {
 		}
 	}
 	
+	public static void startTweetExtraction() {
+		try {
+			log.debug(eventDAO.findById(9069374));
+			Event event = eventDAO.findById(9069374);
+			
+			twitterExtractor.StreamConcert(event, 2);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	public static void main(String[] args) {
-		initArtistDB();
-		initEventDB();
+//		initArtistDB();
+//		initEventDB();
+		startTweetExtraction();
 	}
 
 }

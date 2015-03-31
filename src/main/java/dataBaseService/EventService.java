@@ -1,16 +1,10 @@
 package dataBaseService;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import entity.Artist;
 import entity.Event;
@@ -41,7 +35,7 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 	  Event eTmp = new Event();
 	  ArrayList<Artist> eArtist = null;
 	  
-	try {
+	  try {
 		this.configure();
 	
 		String sql = "select * " +
@@ -70,12 +64,11 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 			Venue v = vService.find(latitude,longitude);
 			eTmp.setVenue(v);
 		}
-
-  } catch (Exception ex) {
-    throw ex;
-  } finally {
-    close();
-  }
+	  } catch (Exception ex) {
+	    throw ex;
+	  } finally {
+	    close();
+	  }
 
 	ArtistService aService = new ArtistService();
 	eArtist = aService.getEventArtist(eTmp.getId());
