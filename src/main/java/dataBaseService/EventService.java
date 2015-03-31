@@ -16,23 +16,9 @@ import entity.Artist;
 import entity.Event;
 import entity.Venue;
 
-public class EventService {
-  private Connection connection = null;
-  private Statement statement = null;
-  private PreparedStatement preparedStatement = null;
-  private ResultSet resultSet = null;
+public class EventService extends DatabaseService implements EventDAOInterface{
 
-  static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-  static final String DB_URL = "jdbc:mysql://localhost/concerts_db";
-  static final String USER = "root";
-  static final String PASS = "mysqldata";
-  
-  public void configure() throws ClassNotFoundException, SQLException{
-	  Class.forName(getJdbcDriver());
-	  connection = DriverManager.getConnection(getDbUrl() + "?user=" + getUser() + "&password=" + getPass());
-  }
-
-  public boolean exists(Integer id) throws Exception{
+	public boolean exists(Integer id) throws Exception{
 	  try {
 		  this.configure();
 	      
@@ -49,7 +35,7 @@ public class EventService {
 	    } finally {
 	      close();
 	    }	  
-  }
+	}
   
   public Event findById(Integer id) throws Exception{
 	  Event eTmp = new Event();
@@ -58,7 +44,7 @@ public class EventService {
 	try {
 		this.configure();
 	
-		String sql = "select `event_id`,`title`,`datetime`,`description`,`venue_id` " +
+		String sql = "select * " +
 		  		"from `concerts_db`.`events_table` where (`event_id` = ?)";
 		
 		preparedStatement = connection.prepareStatement(sql);   
@@ -72,7 +58,8 @@ public class EventService {
 			Timestamp ts = (resultSet.getTimestamp("datetime"));    	
 			DateTime dateTime = new DateTime((long)ts.getTime());
 			String description = resultSet.getString("description");
-			Integer venueId = resultSet.getInt("venue_id");
+			Double latitude = resultSet.getDouble("latitude");
+			Double longitude = resultSet.getDouble("longitude");
 			
 			eTmp.setId(eventId);
 			eTmp.setTitle(title);
@@ -80,7 +67,7 @@ public class EventService {
 			eTmp.setDescription(description);
 
 			VenueService vService = new VenueService();
-			Venue v = vService.findById(venueId);
+			Venue v = vService.find(latitude,longitude);
 			eTmp.setVenue(v);
 		}
 
@@ -100,23 +87,27 @@ public class EventService {
 
   public void persist(Event entity) throws Exception{
 	  VenueService vService = new VenueService();
-	  ArtistService aservice = new ArtistService();
+	  ArtistService aService = new ArtistService();
 	  
 	  vService.persist(entity.getVenue());
 	  
-	  if(!this.exists(entity.getId()) && vService.exists(entity.getVenue().getId())){
+	  if(!this.exists(entity.getId()) && 
+			  vService.exists(entity.getVenue().getLatitude(),entity.getVenue().getLongitude())){
 	    try {
 	    	this.configure();
 	        
 		    preparedStatement = connection
-		    		.prepareStatement("INSERT INTO " +
-		    				"events_table(`event_id`, `title`, `datetime`, `description`, `venue_id`)" +
-		    				" VALUES(?,?,?,?,?)");
+		    		.prepareStatement("INSERT INTO "
+		    				+ "`concerts_db`.`events_table` "
+		    				+ "(`event_id`, `title`, `datetime`, `description`, "
+		    				+ "`latitude`, `longitude`) "
+		    				+ "VALUES (?, ?, ?, ?, ?, ?)");
 		    preparedStatement.setInt(1, entity.getId());
 		    preparedStatement.setString(2, entity.getTitle());
 		    preparedStatement.setTimestamp(3, new Timestamp(entity.getDatetime().getMillis()));
 		    preparedStatement.setString(4, entity.getDescription());
-		    preparedStatement.setInt(5, entity.getVenue().getId());
+		    preparedStatement.setDouble(5, entity.getVenue().getLatitude());
+		    preparedStatement.setDouble(6, entity.getVenue().getLongitude());
 		    preparedStatement.executeUpdate();
 		    	   
 	    } catch (Exception e) {
@@ -128,8 +119,8 @@ public class EventService {
 	    ArrayList<Artist> eArtist = entity.getArtist();
 	    
 	    for(Artist a : eArtist) {
-	    	aservice.persist(a);
-	    	if (!aservice.existsPartecipations(a.getName(), entity.getId())) {
+	    	aService.persist(a);
+	    	if (!aService.existsPartecipations(a.getName(), entity.getId())) {
 		    	try {
 			    	this.configure();
 			        
@@ -153,27 +144,38 @@ public class EventService {
 
   public void update(Event entity) throws Exception{
 	 VenueService vService = new VenueService();
-	 Venue vTmp = vService.findById(entity.getVenue().getId());
-
+	 Venue vTmp = vService.find(entity.getVenue().getLatitude(),entity.getVenue().getLongitude());
+	 	 
 	 if(exists(entity.getId()) && vTmp != null){
-	 try {
-		this.configure();
-		  		  
-      	preparedStatement = connection.prepareStatement("UPDATE `concerts_db`.`events_table` SET `title`=?, `datetime`=?, " +
-      			"`description`=?, `venue_id`=? WHERE `event_id`=?");
-	    preparedStatement.setString(1, entity.getTitle());
-	    preparedStatement.setTimestamp(2, new Timestamp(entity.getDatetime().getMillis()));		
-	    preparedStatement.setString(3, entity.getDescription());
-	    preparedStatement.setInt(4, entity.getVenue().getId());
-	    preparedStatement.setInt(5, entity.getId());
-	    preparedStatement .executeUpdate();
-	    
-    } catch (Exception e) {
-      throw e;
-    } finally {
-      close();
-    }
+		 
+		 System.out.println("updating events table");
+		 try {
+			this.configure();
+			  		  
+	      	preparedStatement = 
+	      			connection.prepareStatement("UPDATE `concerts_db`.`events_table` "
+	      					+ "SET `title`=?, `datetime`=?, `description`=?, "
+	      					+ "`latitude`=?, `longitude`=? WHERE `event_id`=?");
+		    preparedStatement.setString(1, entity.getTitle());
+		    preparedStatement.setTimestamp(2, new Timestamp(entity.getDatetime().getMillis()));		
+		    preparedStatement.setString(3, entity.getDescription());
+		    preparedStatement.setDouble(4, entity.getVenue().getLatitude());
+		    preparedStatement.setDouble(5, entity.getVenue().getLongitude());
+		    preparedStatement.setInt(6, entity.getId());
+		    preparedStatement .executeUpdate();
+		    
+		    System.out.println(preparedStatement);
+		    
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
 
+		 System.out.println("updated events table");
+
+
+		 System.out.println("deleting from partecipations table");
 	 try {
 		this.configure();
 
@@ -181,12 +183,16 @@ public class EventService {
 		preparedStatement.setInt(1,entity.getId());
 		preparedStatement.execute(); 	    
     
+		System.out.println(preparedStatement);
+		
 	} catch (Exception e) {
 	  throw e;
 	} finally {
 	  close();
 	}
+	 System.out.println("deleted from partecipations table");
 	 
+	 System.out.println("adding to partecipations table");
     ArrayList<Artist> eArtist = entity.getArtist();
     for(Artist a : eArtist)
     	try {
@@ -198,11 +204,14 @@ public class EventService {
 	    preparedStatement.setString(2, a.getName());
 	    preparedStatement .executeUpdate();
 	      
+	    System.out.println(preparedStatement);
+	    
     } catch (Exception e) {
       throw e;
     } finally {
       close();
     }
+	 System.out.println("added to partecipations table");
  }
 
 } 
@@ -248,7 +257,8 @@ public class EventService {
     	Timestamp ts = (resultSetTmp.getTimestamp("datetime"));    	
     	DateTime dateTime = new DateTime((long)ts.getTime());
         String description = resultSetTmp.getString("description");
-        Integer venueId = resultSetTmp.getInt("venue_id");
+        Double latitude = resultSetTmp.getDouble("latitude");
+        Double longitude = resultSetTmp.getDouble("longitude");
         Event e = new Event();
         e.setId(id);
         e.setTitle(title);
@@ -256,7 +266,7 @@ public class EventService {
         e.setDescription(description);
 
         VenueService vService = new VenueService();
-        Venue v = vService.findById(venueId);
+        Venue v = vService.find(latitude,longitude);
         e.setVenue(v);
 
         partialEvents.add(e);
@@ -301,40 +311,6 @@ public class EventService {
 		this.delete(entity.getId());	      
 	}
 }
-  
-  private void close() {
-    try {
-      if (resultSet != null) {
-        resultSet.close();
-      }
-
-      if (statement != null) {
-        statement.close();
-      }
-
-      if (connection != null) {
-        connection.close();
-      }
-    } catch (Exception e) {
-
-    }
-  }
-	
-  public static String getJdbcDriver() {
-	return JDBC_DRIVER;
-  }
-	
-  public static String getDbUrl() {
-	return DB_URL;
-  }
-
-  public static String getUser() {
-	return USER;
-  }
-
-  public static String getPass() {
-	return PASS;
-  }
 
   //TODO
 //	public void getTodaysEvents(LocalDate today) {

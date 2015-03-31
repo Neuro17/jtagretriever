@@ -1,6 +1,5 @@
 package dataBaseService;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,49 +9,42 @@ import java.util.ArrayList;
 
 import entity.Venue;
 
-public class VenueService {
-  private Connection connect = null;
-  private Statement statement = null;
-  private PreparedStatement preparedStatement = null;
-  private ResultSet resultSet = null;
+public class VenueService extends DatabaseService implements VenueDAOInterface {
 
-  static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-  static final String DB_URL = "jdbc:mysql://localhost/concerts_db";
-  static final String USER = "root";
-  static final String PASS = "mysqldata";
-  
-  public void configure() throws ClassNotFoundException, SQLException{
-	  Class.forName(getJdbcDriver());
-      connect = DriverManager.getConnection(getDbUrl() + "?user=" + getUser() + "&password=" + getPass());
-  }
-
-  public boolean exists(Integer id) throws Exception{
+	public boolean exists(double lat,double lng) throws Exception{
 	  try {
 		  this.configure();
 	      
-	      preparedStatement = connect.prepareStatement("select * from venues where venue_id = ?");   
-	      preparedStatement.setInt(1,id);
+	      preparedStatement = connection.prepareStatement("select * from venues "
+	      		+ "where latitude = ? and longitude = ?");   
+	      preparedStatement.setDouble(1,lat);
+	      preparedStatement.setDouble(2,lng);
+          System.out.println(preparedStatement);
+
           resultSet = preparedStatement.executeQuery();   
           
-          if(!resultSet.next())
-        	  return false;
-          else return true;
+          if(!resultSet.next()){
+        	  return false;  
+          }
+          else {
+        	  return true;  
+          }
           
 	    } catch (Exception e) {
 	      throw e;
 	    } finally {
 	      close();
 	    }	  
-  }
+	}
 
-
-  public Venue findById(Integer id) throws Exception{
+  public Venue find(double lat, double lng) throws Exception{
 	  Venue venueTmp = null;
 	  try {
 		  this.configure();
 	      
-	      preparedStatement = connect.prepareStatement("select * from venues where venue_id =?");   
-	      preparedStatement.setInt(1,id);
+	      preparedStatement = connection.prepareStatement("select * from venues where latitude = ? and longitude = ?");   
+	      preparedStatement.setDouble(1,lat);
+	      preparedStatement.setDouble(2,lng);
           resultSet = preparedStatement.executeQuery();   
 
           if(resultSet.last()){
@@ -81,11 +73,12 @@ public class VenueService {
 }
 
   public void persist(Venue entity) throws Exception{
-	  if(!exists(entity.getId()))
+	  System.out.println("entering venueService.persist");
+	  if(!exists(entity.getLatitude(),entity.getLongitude())){
 	    try {
 	    	this.configure();
 	        
-		    preparedStatement = connect
+		    preparedStatement = connection
 		    		.prepareStatement("INSERT INTO " +
 		    				"venues(venue_id,latitude,longitude,venue_name,country,city,region)" +
 		    				" VALUES(?,?,?,?,?,?,?)");
@@ -96,30 +89,34 @@ public class VenueService {
 		    preparedStatement.setString(5, entity.getCountry());
 		    preparedStatement.setString(6, entity.getCity());
 		    preparedStatement.setString(7, entity.getRegion());
+			System.out.println(preparedStatement);
 		    preparedStatement .executeUpdate();
-	      
+
 	    } catch (Exception e) {
 	      throw e;
 	    } finally {
 	      close();
 	    }
+	  }
+		System.out.println("exiting venueService.persist");
+
   }
 
   public void update(Venue entity) throws Exception{
-	 if(exists(entity.getId()))
+	 if(exists(entity.getLatitude(),entity.getLongitude()))
 		 try {
 			  this.configure();
-		      String sql = "UPDATE `concerts_db`.`venues` SET `latitude`=?, `longitude`=?, `venue_name`=?," +
-		      		" `country`=?, `city`=?, `region`=? WHERE `venue_id`=?";
-
-		      preparedStatement = connect.prepareStatement(sql);
-		      preparedStatement.setDouble(1, entity.getLatitude());
-		      preparedStatement.setDouble(2, entity.getLongitude());
-		      preparedStatement.setString(3, entity.getName());
-		      preparedStatement.setString(4, entity.getCountry());
-		      preparedStatement.setString(5, entity.getCity());
-		      preparedStatement.setString(6, entity.getRegion());
-		      preparedStatement.setInt(7, entity.getId());
+		      String sql = "UPDATE `concerts_db`.`venues` SET `venue_id`=?, "
+		      		+ "`venue_name`=?, `country`=?, `city`=?, `region`=?"
+		      		+ " WHERE `latitude`=? and`longitude`=?";
+		      preparedStatement = connection.prepareStatement(sql);
+		      preparedStatement.setInt(1, entity.getId());
+		      preparedStatement.setString(2, entity.getName());
+		      preparedStatement.setString(3, entity.getCountry());
+		      preparedStatement.setString(4, entity.getCity());
+		      preparedStatement.setString(5, entity.getRegion());
+		      preparedStatement.setDouble(6, entity.getLatitude());
+		      preparedStatement.setDouble(7, entity.getLongitude());
 		      preparedStatement .executeUpdate();
 		      
 	    } catch (Exception e) {
@@ -129,13 +126,14 @@ public class VenueService {
 	    }
   } 
   
-  public void delete(Integer id) throws Exception {
-	 if(exists(id))
+  public void delete(double lat,double lng) throws Exception {
+	 if(exists(lat,lng))
 	 try {
 		  this.configure();
 	      
-	      preparedStatement = connect.prepareStatement("delete from venues where venue_id = ?");
-	      preparedStatement.setInt(1,id);
+	      preparedStatement = connection.prepareStatement("delete from venues where latitude = ? and longitude = ?");
+	      preparedStatement.setDouble(1,lat);
+	      preparedStatement.setDouble(2,lng);
 	      preparedStatement.execute();
 	      
 	    } catch (Exception e) {
@@ -151,7 +149,7 @@ public class VenueService {
 	try {
 	  this.configure();
 	  
-      statement = connect.createStatement();
+      statement = connection.createStatement();
       resultSet = statement.executeQuery("select * from concerts_db.venues");
 
       while (resultSet.next()) {
@@ -185,41 +183,7 @@ public class VenueService {
   public void deleteAll() throws Exception {
 	ArrayList<Venue> entities = this.findAll();
 	for(Venue entity : entities)
-		this.delete(entity.getId());
+		this.delete(entity.getLatitude(),entity.getLongitude());
   }
   
-	private void close() {
-	    try {
-	      if (resultSet != null) {
-	        resultSet.close();
-	      }
-	
-	      if (statement != null) {
-	    	  statement.close();
-	      }
-	
-	      if (connect != null) {
-	    	  connect.close();
-	      	}
-	    } catch (Exception e) {
-	
-	    }
-	}
-
-	public static String getJdbcDriver() {
-		return JDBC_DRIVER;
-	}
-	
-	public static String getDbUrl() {
-		return DB_URL;
-	}
-	
-	public static String getUser() {
-		return USER;
-	}
-	
-	public static String getPass() {
-		return PASS;
-	}
-
 } 

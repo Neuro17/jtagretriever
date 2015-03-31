@@ -8,22 +8,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public abstract class DatabaseService {
-	  private Connection connect = null;
-	  private Statement statement = null;
-	  private PreparedStatement preparedStatement = null;
-	  private ResultSet resultSet = null;
+	  protected Connection connection = null;
+	  protected Statement statement = null;
+	  protected PreparedStatement preparedStatement = null;
+	  protected ResultSet resultSet = null;
 
 	  private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
 	  private static final String DB_URL = "jdbc:mysql://localhost/concerts_db";
 	  private static final String USER = "root";
-	  private static final String PASS = "mysql";
+	  private static final String PASS = "mysqldata";
 	  
-	  private void configure() throws ClassNotFoundException, SQLException{
+	  protected void configure() throws ClassNotFoundException, SQLException{
 		  Class.forName(getJdbcDriver());
-	      connect = DriverManager.getConnection(getDbUrl() + "?user=" + getUser() + "&password=" + getPass());
+	      connection = DriverManager.getConnection(getDbUrl() + "?user=" + getUser() + "&password=" + getPass());
 	  }
 
-	  private void close() {
+	  protected void close() {
 		  try {
 		      if (resultSet != null) {
 		        resultSet.close();
@@ -33,8 +33,8 @@ public abstract class DatabaseService {
 		        statement.close();
 		      }
 		
-		      if (connect != null) {
-		        connect.close();
+		      if (connection != null) {
+		        connection.close();
 		      }
 		  } catch (Exception e) {
 		}

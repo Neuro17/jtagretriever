@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import search.Bandsintown;
-import app.models.interfaces.ArtistDAOInterface;
 import dataBaseService.ArtistService;
 import dataBaseService.EventService;
 import dataBaseService.VenueService;
