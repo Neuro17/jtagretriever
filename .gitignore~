@@ -14,3 +14,4 @@ release.properties
 *.csv
 *~
 .*~
+*.db

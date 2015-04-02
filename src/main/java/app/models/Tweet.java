@@ -77,6 +77,19 @@ public class Tweet implements Serializable {
 		this.lat = lat;
 		this.lng = lng;
 	}
+	
+	
+
+public Tweet(TweetKey myKey, double lat, double lng, String text,
+			String place, String time) {
+		super();
+		this.myKey = myKey;
+		this.lat = lat;
+		this.lng = lng;
+		this.text = text;
+		this.place = place;
+		this.time = time;
+	}
 
 //	public long getId() {
 //		return id;

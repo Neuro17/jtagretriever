@@ -197,11 +197,16 @@ public class TwitterConnectorImpl implements TwitterConnector{
 //				log.debug("Ho trovato dei tweet, ora dovrei salvarli!!!!");
 	        	pk.setEventName(event.getTitle());
 	        	pk.setId(tweet.getId());
+	        	Tweet tmpTweet = new Tweet(pk, 
+	        			tweet.getGeoLocation().getLatitude(),
+	        			tweet.getGeoLocation().getLongitude(),
+	        			tweet.getText(),
+	        			tweet.getPlace().getName(),
+	        			tweet.getCreatedAt().toString());
 //	        	
 //	        	log.debug(twitterRepo);
 //	        	TODO - ricordarsi di inserire tutti i campi necessari per la tabella
- 	        	twitterRepo.save( new Tweet(pk, tweet.getGeoLocation().getLatitude(),
-	        			tweet.getGeoLocation().getLongitude()));
+ 	        	twitterRepo.save(tmpTweet);
 		        if(tweet.getId() > lastID) 
 		        	lastID = tweet.getId();
 			}

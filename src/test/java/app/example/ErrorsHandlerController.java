@@ -1,4 +1,4 @@
-package app.controllers;
+package app.example;
 
 import java.util.Date;
 import java.util.Map;

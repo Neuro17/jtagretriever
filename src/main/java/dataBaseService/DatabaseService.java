@@ -16,7 +16,7 @@ public abstract class DatabaseService {
 	  private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
 	  private static final String DB_URL = "jdbc:mysql://localhost/concerts_db";
 	  private static final String USER = "root";
-	  private static final String PASS = "mysqldata";
+	  private static final String PASS = "mysql";
 	  
 	  protected void configure() throws ClassNotFoundException, SQLException{
 		  Class.forName(getJdbcDriver());

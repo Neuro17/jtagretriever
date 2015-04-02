@@ -14,6 +14,14 @@ import dataBaseService.VenueService;
 import entity.Artist;
 import entity.Event;
 
+
+
+/**
+ * @author biagio
+ * 
+ * Utility class that performs init actions on databases and other useful actions
+ *
+ */
 public class Task {
 	
 	private static final Logger log = LogManager.getLogger(Task.class);
@@ -75,9 +83,9 @@ public class Task {
 	
 	
 	public static void main(String[] args) {
-//		initArtistDB();
-//		initEventDB();
-		startTweetExtraction();
+		initArtistDB();
+		initEventDB();
+//		startTweetExtraction();
 	}
 
 }

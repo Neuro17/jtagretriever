@@ -17,6 +17,7 @@ public class PhotoRetrieverTest {
 		tagList.add("pappa");
 		tagList.add("cacca");
 		tagList.add("nanna");
+		tagList.add("pearljam");
 
 		PhotoRetriever pr = new PhotoRetriever();
 		
