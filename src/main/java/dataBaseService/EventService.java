@@ -1,10 +1,12 @@
 package dataBaseService;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import entity.Artist;
 import entity.Event;
@@ -244,58 +246,12 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 //      close();
 //    }
 
-	while (resultSetTmp.next()) {
-    	Integer id = resultSetTmp.getInt("event_id");
-        String title = resultSetTmp.getString("title");
-    	Timestamp ts = (resultSetTmp.getTimestamp("datetime"));    	
-    	DateTime dateTime = new DateTime((long)ts.getTime());
-        String description = resultSetTmp.getString("description");
-        Double latitude = resultSetTmp.getDouble("latitude");
-        Double longitude = resultSetTmp.getDouble("longitude");
-        Event e = new Event();
-        e.setId(id);
-        e.setTitle(title);
-        e.setDatetime(dateTime);
-        e.setDescription(description);
-
-        VenueService vService = new VenueService();
-        Venue v = vService.find(latitude,longitude);
-        e.setVenue(v);
-
-        partialEvents.add(e);
-    }
+		partialEvents = extractEvents(resultSetTmp);
 	
-//    try {
-		  this.configure();
+		finalEvents = extractPartecipations(partialEvents);
 
-		  statement = connection.createStatement();
-	      resultSetTmp = statement.executeQuery("select * from concerts_db.partecipations");
-//    } catch (Exception e) {
-//      throw e;
-//    } finally {
-//      close();
-//    }
-	
-    for(int i = 0 ; i < partialEvents.size(); i++){
-		resultSetTmp.absolute(0);
-		ArrayList<Artist> eArtist = new ArrayList<Artist>();
-	  		
-		Event eTmp = partialEvents.get(i);
-		
-		while (resultSetTmp.next()) {
-			Integer eventId = resultSetTmp.getInt("event_id");
-			if(eventId == eTmp.getId()){
-	        	String artistName = resultSetTmp.getString("artist_name");
-	        	ArtistService aService = new ArtistService();
-	        	Artist aTmp = aService.findById(artistName);
-	        	if(aTmp != null)
-	        		eArtist.add(aTmp);
-	        }			
-	    }
-		eTmp.setArtist(eArtist);
-		finalEvents.add(eTmp);
-	}	
     return finalEvents;
+    
   }
 
   public void deleteAll() throws Exception {
@@ -305,28 +261,92 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 	}
 }
 
-  //TODO
-//	public void getTodaysEvents(LocalDate today) {
+  private ArrayList<Event> extractEvents(ResultSet resultSetTmp) throws SQLException, Exception{
+	  ArrayList<Event> partialEvents = new ArrayList<Event>();
+
+	  while (resultSetTmp.next()) {
+	    	Integer id = resultSetTmp.getInt("event_id");
+	        String title = resultSetTmp.getString("title");
+	    	Timestamp ts = (resultSetTmp.getTimestamp("datetime"));    	
+	    	DateTime dateTime = new DateTime((long)ts.getTime());
+	        String description = resultSetTmp.getString("description");
+	        Double latitude = resultSetTmp.getDouble("latitude");
+	        Double longitude = resultSetTmp.getDouble("longitude");
+	        Event e = new Event();
+	        e.setId(id);
+	        e.setTitle(title);
+	        e.setDatetime(dateTime);
+	        e.setDescription(description);
+
+	        VenueService vService = new VenueService();
+	        Venue v = vService.find(latitude,longitude);
+	        e.setVenue(v);
+
+	        partialEvents.add(e);
+	    }
+	return partialEvents;	
+  }
+
+  private ArrayList<Event> extractPartecipations(ArrayList<Event> partialEvents) throws Exception{
+		
+//	    try {
+			  this.configure();
+
+			  statement = connection.createStatement();
+		      resultSet = statement.executeQuery("select * "
+		      		+ "from concerts_db.partecipations");
+//	    } catch (Exception e) {
+//	      throw e;
+//	    } finally {
+//	      close();
+//	    }
+		
+	    ArrayList<Event> finalEvents = new ArrayList<Event>();
+		for(int i = 0 ; i < partialEvents.size(); i++){
+			resultSet.absolute(0);
+			ArrayList<Artist> eArtist = new ArrayList<Artist>();
+		  		
+			Event eTmp = partialEvents.get(i);
+			
+			while (resultSet.next()) {
+				Integer eventId = resultSet.getInt("event_id");
+				if(eventId == eTmp.getId()){
+		        	String artistName = resultSet.getString("artist_name");
+		        	ArtistService aService = new ArtistService();
+		        	Artist aTmp = aService.findById(artistName);
+		        	if(aTmp != null)
+		        		eArtist.add(aTmp);
+		        }			
+		    }
+			eTmp.setArtist(eArtist);
+			finalEvents.add(eTmp);
+		}	
+	    return finalEvents;
+  }
+  
+  public ArrayList<Event> getTodaysEvents(LocalDate today) throws Exception {
+		ResultSet resultSetTmp = null;
 //		try {
-//			  this.configure();
-//		      
-//		      preparedStatement = connection.prepareStatement("select * from events_table as e, venues as v where e.venue_id = v.venue_id and date(e.`datetime`) = ?");   
-//		      Date d = new Date()
-//		      preparedStatement.setDate(1,(Date) today);
-//		      preparedStatement.setInt(2,event_id);
-//		      System.out.println(preparedStatement);
-//	        resultSet = preparedStatement.executeQuery();   
-//	        System.out.println(resultSet);
-//	        if(!resultSet.next())
-//	      	  return false;
-//	        else return true;
-//	        
+			  this.configure();
+		      preparedStatement = 
+		    		  connection.prepareStatement("select * "
+		    		  		+ "from `concerts_db`.`events_table`"
+		    		  		+ "where date(`datetime`) like ?");   
+		      preparedStatement.setString(1, today.toString());		
+
+		      resultSetTmp = preparedStatement.executeQuery();   
+		      
 //		    } catch (Exception e) {
 //		      throw e;
 //		    } finally {
 //		      close();
 //		    }	  
-//		
-//	}
+		      
+		ArrayList<Event> partialEvents = extractEvents(resultSetTmp);
+
+		ArrayList<Event> finalEvents = extractPartecipations(partialEvents);
+	    
+		return finalEvents;
+	}
 
 } 
