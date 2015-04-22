@@ -77,7 +77,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">musiConcerts</a>
+            <a class="navbar-brand" href="home">musiConcerts</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -114,7 +114,7 @@
 
 
 //            List<MediaFeedData> mediaList = mediaFeed.getData();
-        List<MediaFeedData> mediaList = pr.getMediaByTag("likeforlike");
+        List<MediaFeedData> mediaList = pr.getMediaByTag("likeforlike",4);
 
 //           int mediaCount = mediaList.size();
 			int mediaCount = 0;

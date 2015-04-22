@@ -76,7 +76,7 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="gallery">Gallery</a></li>
+                <li><a href="gallery">Gallery</a></li>
                 <li><a href="popular">Popular</a></li>
 <!--  SEARCH BAR -->
 				<li><a href="#">Tag # </a></li>
@@ -101,9 +101,10 @@
     <div class="row">
 
         <div class="col-lg-12">
-            <h1 class="page-header">Gallery (setted to search first 4 medias tagged with #red)</h1>
+            <h1 class="page-header">musiConcerts HomePage</h1>
         </div>
-        <%
+<!--
+         <%
         	PhotoRetriever pr = new PhotoRetriever();
         
             List<MediaFeedData> mediaList = pr.getMediaByTag("red",4);
@@ -129,7 +130,7 @@
             }
         %>
 
-
+-->
     </div>
 
     <hr>

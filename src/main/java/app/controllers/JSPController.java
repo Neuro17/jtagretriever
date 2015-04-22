@@ -50,10 +50,10 @@ public class JSPController extends GenericController{
 	 
 	  }
 
-	  @RequestMapping("/search")
-	    public String searchPage(ModelAndView modelAndView) {
+	  @RequestMapping("/home")
+	    public String homePage(ModelAndView modelAndView) {
 
-		  return "search";
+		  return "home";
 	  }
 	  
 	  @RequestMapping("/gallery")
@@ -66,6 +66,12 @@ public class JSPController extends GenericController{
 	    public String popularPage(ModelAndView modelAndView) {
 
 		  return "popular";
+	  }
+	  
+	  @RequestMapping("/search")
+	    public String searchPage(ModelAndView modelAndView) {
+
+		  return "search";
 	  }
 
 }
