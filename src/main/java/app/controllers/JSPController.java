@@ -55,6 +55,12 @@ public class JSPController extends GenericController{
 
 		  return "home";
 	  }
+
+	  @RequestMapping("/home2")
+	    public String homePage2(ModelAndView modelAndView) {
+
+		  return "home2";
+	  }
 	  
 	  @RequestMapping("/gallery")
 	    public String galleryPage(ModelAndView modelAndView) {
