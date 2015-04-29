@@ -82,7 +82,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">musiConcerts</a>
+            <a class="navbar-brand" href="home">musiConcerts</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -115,7 +115,7 @@
         <div class="col-lg-12">
             <h1 class="page-header">Search</h1>
         </div>
-
+<!-- 
         <p>
 
         <form action="search" method="post">
@@ -125,7 +125,7 @@
 
         </form>
         </p>
-
+ -->
 
         <%
             List<MediaFeedData> mediaList = null;

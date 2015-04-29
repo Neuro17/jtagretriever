@@ -2,10 +2,14 @@ package app.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,7 +33,7 @@ public class JSPController extends GenericController{
 	    	
 	        return "jsp-spring-boot";
 	  }
-	  
+/*	  
 	  @RequestMapping(value = "/photoAlbum", method = RequestMethod.GET)
 		public ModelAndView getdata() throws InstagramException {
 	 
@@ -49,17 +53,12 @@ public class JSPController extends GenericController{
 			return model;
 	 
 	  }
+*/	  
 
 	  @RequestMapping("/home")
 	    public String homePage(ModelAndView modelAndView) {
 
 		  return "home";
-	  }
-
-	  @RequestMapping("/home2")
-	    public String homePage2(ModelAndView modelAndView) {
-
-		  return "home2";
 	  }
 	  
 	  @RequestMapping("/gallery")
@@ -75,9 +74,30 @@ public class JSPController extends GenericController{
 	  }
 	  
 	  @RequestMapping("/search")
-	    public String searchPage(ModelAndView modelAndView) {
+	    public String searchPage(@ModelAttribute("tag") String tag, 
+	    		ArrayList<String> urlList, HttpServletRequest request) throws InstagramException {
+		  
+/*	traduce "Pink Floyd" in "PinkFloyd"	*/		  
+		  tag = tag.replaceAll("\\s", "");
 
-		  return "search";
+		  System.out.println("----------------> Requested search for the tag = " + tag);
+
+//TODO effettuare controllo validità tag 
+		  
+	      /* do some process and send back the data */
+
+		  PhotoRetriever pr = new PhotoRetriever();
+        
+		  List<MediaFeedData> mediaList = pr.getMediaByTag(tag);
+		  
+          for (MediaFeedData mediaFeedData : mediaList) {
+        	  String url = mediaFeedData.getImages().getLowResolution().getImageUrl();
+        	  urlList.add(url);
+          }
+          
+          request.setAttribute("urlList",urlList);
+	        
+		  return "photoAlbum";
 	  }
 
 }
