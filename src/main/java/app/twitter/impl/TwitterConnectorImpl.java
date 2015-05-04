@@ -6,7 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
 import twitter4j.GeoLocation;
 import twitter4j.Query;
@@ -16,7 +17,6 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-
 import app.models.Tweet;
 import app.models.TweetKey;
 import app.repository.TweetRepository;
@@ -31,7 +31,7 @@ import entity.Event;
  * @author neuro
  *
  */
-@Component
+@Service
 public class TwitterConnectorImpl implements TwitterConnector{
 
 	private static final Logger log = LogManager.getLogger(Twitter.class);
@@ -201,10 +201,11 @@ public class TwitterConnectorImpl implements TwitterConnector{
 	/* (non-Javadoc)
 	 * @see app.twitter.TwitterConnector#StreamConcert(entity.Event, int)
 	 */
+	@Async
 	public ArrayList<Status> StreamConcert(Event event, int radius) 
 			throws InterruptedException {
 				
-		log.trace("Entering StreamConcert");
+		log.trace("Entering StreamConcert for events: " + event.getTitle());
 		
 		ArrayList<Status> tweetsArrayList= new ArrayList<Status>();
 		
@@ -240,10 +241,14 @@ public class TwitterConnectorImpl implements TwitterConnector{
 			}
 			
 			for (Status tweet: tmpTweets) {
+				if(tweet.getGeoLocation() == null){
+					continue;
+				}
 				TweetKey pk = new TweetKey();
 				log.debug("Ho trovato dei tweet, ora dovrei salvarli!!!!");
 	        	pk.setEventName(event.getTitle());
 	        	pk.setId(tweet.getId());
+	        	
 	        	Tweet tmpTweet = new Tweet(pk, 
 	        			tweet.getGeoLocation().getLatitude(),
 	        			tweet.getGeoLocation().getLongitude(),
@@ -271,17 +276,4 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		
 	}
 
-	
-//	TODO
-	public void run() {
-		
-		while(running) {
-//			try {
-//				StreamConcert(event, radius);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-		}		
-	}
 }

@@ -1,10 +1,7 @@
 package app;
 
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,11 +11,10 @@ import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 
 import twitter4j.Status;
-import app.twitter.TwitterConnector;
 import app.tools.TagExtractor;
+import app.twitter.TwitterConnector;
 import dataBaseService.EventService;
 import entity.Event;
-import entity.Venue;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"app.repository",  "app.twitter", "app.tools", "app.twitter.impl"})
@@ -76,33 +72,23 @@ public class TwitterTest implements CommandLineRunner {
 //			log.info(tweet.getText());
 //			log.info(tweet.getLang());
 //			log.info(tweet.getCreatedAt());
-//			log.info(tweet.getGeoLocation().getLatitude());
+//			log.info(tweet.getGeoLocation().g	etLatitude());
 //			log.info("---------------------------------------------");
 //		}
 		
 		
 	}
 	
-	public void TagExtractorTest() {
-		double lat = 40.7143; 
-		double lng = -74.006;
-		
-		DateTime start = DateTime.now();
-		
-		Event event = new Event();
-		event.setDatetime(start);
-		event.setVenue(new Venue(lat, lng));
-		event.setTitle("test event");
-
-//		Event event;
-		try {
-//			event = eventDAO.findById(9069374);
-			for (Map.Entry<String, Integer> entry : TagExtractor.extracxtTag(event, 0.5).entrySet()) {
-			    log.debug(entry.getKey() + " : " + entry.getValue());
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void TagExtractorTest() throws Exception {
+		EventService es = new EventService();
+		Event e = es.findById(9069374);
+//		Bandsintown bandsintown = new Bandsintown();
+//		Event event = bandsintown.getEvents.setArtist("foo fighters").setDate("upcoming").search().get(0);
+//		for(String tag : t.extractTagFromBandsintown(event)){
+//			log.debug(tag);
+//		};
+		for (String tag : TagExtractor.extractTag(e, 1)) {
+			log.debug(tag);
 		}
 		
 	}
@@ -117,10 +103,10 @@ public class TwitterTest implements CommandLineRunner {
 //		log.debug(tweet);
 		log.debug(twitter);
 		
-		TweetsStreamTest(100);
+//		TweetsStreamTest(100);
+//		
+////		StreamConcertTest();
 		
-//		StreamConcertTest();
-		
-//		TagExtractorTest();
+		TagExtractorTest();
 	}
 }

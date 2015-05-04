@@ -16,6 +16,20 @@ public interface TagExtractor {
 	 * @return Map<String, Integer> where String represent the tag 
 	 * 			and Integer is its count among tweets
 	 */
-	public Map<String, Integer> extracxtTag(Event e, double radius);
+	public Map<String, Integer> extractTagFromTweets(Event e, double radius);
+	
+	/**
+	 * @param event	bandsintown event
+	 * @return
+	 */
+	public ArrayList<String> extractTagFromBandsintown(Event event);
+	
+	/**
+	 * @param e
+	 * @param radius
+	 * @return
+	 */
+	public ArrayList<String> extractTag(Event e, double radius);
+
 	
 }

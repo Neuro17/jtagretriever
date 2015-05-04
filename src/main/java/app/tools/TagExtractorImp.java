@@ -9,13 +9,17 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import search.Bandsintown;
 import app.models.Tweet;
 import app.repository.TweetRepository;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
+import com.mysql.fabric.xmlrpc.base.Array;
 
+import dataBaseService.EventService;
+import entity.Artist;
 import entity.Event;
 
 @Component
@@ -34,7 +38,8 @@ public class TagExtractorImp implements TagExtractor{
 		double distance;
 		
 		ArrayList<String> filtered = new ArrayList<String>();
-		
+//		log.debug(e);
+//		log.debug(tweetRepo);
 		for (Tweet tweet : (List<Tweet>) tweetRepo.findByEventName(e.getTitle())) {
 			log.debug(tweet);
 			center = new LatLng(e.getVenue().getLatitude(), 
@@ -52,15 +57,61 @@ public class TagExtractorImp implements TagExtractor{
 	}
 	
 	@Override
-	public Map<String, Integer> extracxtTag(Event e, double radius) {
+	public Map<String, Integer> extractTagFromTweets(Event e, double radius) {
 		ArrayList<String> filteredTweets = filterTweets(e, radius);
 		Map<String, Integer> rawTag = Tokenizer.tokenize(filteredTweets);
 		
 //		for (Map.Entry<String, Integer> entry : rawTag.entrySet()) {
 //		    log.debug(entry.getKey() + " : " + entry.getValue());
 //		}
-		
 		return rawTag;
+	}
+
+	@Override
+	public ArrayList<String> extractTagFromBandsintown(Event event) {
+		ArrayList<String> tag = new ArrayList<String>();
+		
+//		log.debug(event);
+		
+		for(Artist artist : event.getArtist()) {
+			tag.add(artist.getName().toLowerCase().replaceAll("\\s",""));
+		}
+		
+		tag.add(event.getVenue().getCity().toLowerCase().replaceAll("\\s",""));
+		tag.add(event.getVenue().getCountry().toLowerCase().replaceAll("\\s",""));
+		tag.add(event.getVenue().getName().toLowerCase().replaceAll("\\s",""));
+		tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s",""));
+		tag.add(event.getTitle().toLowerCase().replaceAll("\\s",""));
+		tag.add(event.getDatetime().toString().toLowerCase().replaceAll("\\s",""));
+		
+		return tag;
+	}
+	
+	public ArrayList<String> extractTag(Event e, double radius) {
+		Map<String, Integer> rawTag = extractTagFromTweets(e, radius);
+		ArrayList<String> tag = new ArrayList<String>();
+		int occurrency = 3;
+		
+		for(Map.Entry<String, Integer> entry : rawTag.entrySet()){
+			if(entry.getValue() >= occurrency) {
+				tag.add(entry.getKey());
+			}
+		}
+		
+		tag.addAll(extractTagFromBandsintown(e));
+		return tag;
+	}
+	
+	public static void main(String[] args) throws Exception{
+		EventService es = new EventService();
+		Event e = es.findById(9069374);
+		Bandsintown bandsintown = new Bandsintown();
+		Event event = bandsintown.getEvents.setArtist("foo fighters").setDate("upcoming").search().get(0);
+		TagExtractorImp t = new TagExtractorImp();
+//		for(String tag : t.extractTagFromBandsintown(event)){
+//			log.debug(tag);
+//		};
+		t.extractTag(e, 1);
 	}
 
 }
