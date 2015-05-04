@@ -13,16 +13,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 
-import dataBaseService.EventService;
 import twitter4j.Status;
 import app.twitter.TwitterConnector;
-import app.twitter.TwitterTagExtractor;
-import app.twitter.impl.TwitterConnectorImpl;
+import app.tools.TagExtractor;
+import dataBaseService.EventService;
 import entity.Event;
 import entity.Venue;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"app.repository",  "app.twitter", "app.tools"})
+@ComponentScan(basePackages = {"app.repository",  "app.twitter", "app.tools", "app.twitter.impl"})
 @EntityScan(basePackages = "app.models")
 @EnableAutoConfiguration
 public class TwitterTest implements CommandLineRunner {
@@ -31,7 +30,7 @@ public class TwitterTest implements CommandLineRunner {
 	TwitterConnector twitter;
 	
 	@Autowired 
-	TwitterTagExtractor twTag;
+	TagExtractor TagExtractor;
 	
 	private static final EventService eventDAO = new EventService();
 	
@@ -45,7 +44,7 @@ public class TwitterTest implements CommandLineRunner {
 			log.info(tweet.getText());
 			log.info(tweet.getLang());
 			log.info(tweet.getCreatedAt());
-			log.info(tweet.getGeoLocation().getLatitude());
+//			log.info(tweet.getGeoLocation().getLatitude());
 			log.info("---------------------------------------------");
 		}
 		
@@ -85,19 +84,20 @@ public class TwitterTest implements CommandLineRunner {
 	}
 	
 	public void TagExtractorTest() {
-//		double lat = 40.7143; 
-//		double lng = -74.006;
-//		DateTime start = DateTime.now();
-//		
-//		Event event = new Event();
-//		event.setDatetime(start);
-//		event.setVenue(new Venue(lat, lng));
-//		event.setTitle("test event");
+		double lat = 40.7143; 
+		double lng = -74.006;
+		
+		DateTime start = DateTime.now();
+		
+		Event event = new Event();
+		event.setDatetime(start);
+		event.setVenue(new Venue(lat, lng));
+		event.setTitle("test event");
 
-		Event event;
+//		Event event;
 		try {
-			event = eventDAO.findById(9069374);
-			for (Map.Entry<String, Integer> entry : twTag.extracxtTag(event, 0.5).entrySet()) {
+//			event = eventDAO.findById(9069374);
+			for (Map.Entry<String, Integer> entry : TagExtractor.extracxtTag(event, 0.5).entrySet()) {
 			    log.debug(entry.getKey() + " : " + entry.getValue());
 			}
 		} catch (Exception e) {
@@ -108,14 +108,8 @@ public class TwitterTest implements CommandLineRunner {
 	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-//		ApplicationContext ctx = 
+		
 		SpringApplication.run(TwitterTest.class, args);
-		
-		
-//		twc.StreamConcertTest();
-		
-
 	}
 	
 	@Override
@@ -123,10 +117,10 @@ public class TwitterTest implements CommandLineRunner {
 //		log.debug(tweet);
 		log.debug(twitter);
 		
-//		TweetsStreamTest(100);
+		TweetsStreamTest(100);
 		
 //		StreamConcertTest();
 		
-		TagExtractorTest();
+//		TagExtractorTest();
 	}
 }

@@ -15,3 +15,4 @@ release.properties
 *~
 .*~
 *.db
+src/main/java/dataBaseService/DatabaseService.java

@@ -1,4 +1,4 @@
-package app.twitter.impl;
+package app.tools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 
 import app.models.Tweet;
 import app.repository.TweetRepository;
-import app.tools.Tokenizer;
-import app.twitter.TwitterTagExtractor;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
@@ -21,14 +19,14 @@ import com.javadocmd.simplelatlng.util.LengthUnit;
 import entity.Event;
 
 @Component
-public class TwitterTagExtractorImp implements TwitterTagExtractor{
+public class TagExtractorImp implements TagExtractor{
 	
-	private static final Logger log = LogManager.getLogger(TwitterTagExtractorImp.class);
+	private static final Logger log = LogManager.getLogger(TagExtractorImp.class);
 	
 	@Autowired
 	TweetRepository tweetRepo;
 	
-	public TwitterTagExtractorImp(){}
+	public TagExtractorImp(){}
 	
 	private ArrayList<String> filterTweets(Event e, double radius){
 		LatLng center;

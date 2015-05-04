@@ -1,11 +1,11 @@
-package app.twitter;
+package app.tools;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import entity.Event;
 
-public interface TwitterTagExtractor {
+public interface TagExtractor {
 	
 	/**
 	 * Given a bandsintown Event and a radius extract all the tags found in the 
