@@ -9,19 +9,8 @@ import entity.Artist;
 
 @PropertySource("classpath:config.properties")
 public class ArtistService extends DatabaseService implements ArtistDAOInterface{
-  
-//  @Value("${spring.datasource.driverClassName}")
-//  private String JDBC_DRIVER;
-//  
-//  @Value("${spring.datasource.url}")
-//  private static final String DB_URL;
-  
-//  private void configure() throws ClassNotFoundException, SQLException{
-//	  Class.forName(getJdbcDriver());
-//      connection = DriverManager.getconnectionion(getDbUrl() + "?user=" + getUser() + "&password=" + getPass());
-//  }
-  
-  public boolean exists(String id) throws Exception{
+    	
+  public boolean checkName(String id) throws Exception{
 	  try {
 		  configure();
 	      
@@ -47,9 +36,9 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
 	      preparedStatement = connection.prepareStatement("select * from partecipations where artist_name = ? and event_id = ?");   
 	      preparedStatement.setString(1,id);
 	      preparedStatement.setInt(2,event_id);
-	      System.out.println(preparedStatement);
-          resultSet = preparedStatement.executeQuery();   
-          System.out.println(resultSet);
+
+	      resultSet = preparedStatement.executeQuery();   
+
           if(!resultSet.next())
         	  return false;
           else return true;
@@ -86,7 +75,7 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
   }
 
   public void persist(Artist entity) throws Exception{
-	 if(!exists(entity.getName()))
+	 if(!checkName(entity.getName()))
 	    try {
 	    	configure();
 	        
@@ -103,7 +92,7 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
   }
 
   public void update(Artist entity) throws Exception{
-	 if(exists(entity.getName()))
+	 if(checkName(entity.getName()))
 		 try {
 			  configure();
 		      
@@ -121,7 +110,7 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
   } 
   
   public void delete(String id) throws Exception {
-	 if(exists(id))
+	 if(checkName(id))
 	 try {
 		  configure();
 	      

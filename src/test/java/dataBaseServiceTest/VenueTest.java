@@ -23,8 +23,7 @@ public class VenueTest{
 //
 //	  vService.persist(v);
 
-//	  v = vService.findById(1);
-//	  System.out.println(v);
+	  System.out.println(vService.checkName("Forum"));
 
 //	  v.setId(2);
 //	  v.setCity("updatedCity");
@@ -40,12 +39,17 @@ public class VenueTest{
 //	  int id = 3;
 //	  vService.delete(id);
 
-	  venues = vService.findAll();
-	  for(Venue venue : venues)
-		  System.out.println(venue);
+//	  venues = vService.findAll();
+//	  for(Venue venue : venues)
+//		  System.out.println(venue);
 
 //	  vService.deleteAll();
+
+//	  venues = vService.findByName("The Forum");
 	  
+//	  for(Venue ve : venues)
+//		  System.out.println(ve.getName() + " " + ve.getLatitude() + " "
+//		  		+ ve.getLongitude());
   }
 
 } 

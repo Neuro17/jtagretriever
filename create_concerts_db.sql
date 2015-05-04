@@ -52,3 +52,6 @@ select * from `concerts_db`.`artists`;
 select * from `concerts_db`.`venues`;
 select * from `concerts_db`.`events_table`;
 select * from `concerts_db`.`partecipations`;
+
+select * from `concerts_db`.`venues` where `venue_name` like '%Forum%';
+select * from `concerts_db`.`events_table` where `title` like '%Alt%';
