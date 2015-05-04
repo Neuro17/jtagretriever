@@ -8,7 +8,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-//import scala.annotation.meta.getter;
 import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.Query.Unit;
@@ -17,6 +16,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+
 import app.models.Tweet;
 import app.models.TweetKey;
 import app.repository.TweetRepository;
@@ -27,16 +27,24 @@ import com.google.gson.GsonBuilder;
 
 import entity.Event;
 
+/**
+ * @author neuro
+ *
+ */
 @Component
 public class TwitterConnectorImpl implements TwitterConnector{
 
 	private static final Logger log = LogManager.getLogger(Twitter.class);
 	private static final int DEFAULT_COUNT = 100;
+	@SuppressWarnings("unused")
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	public int queryCount;
 	public Query query;
 	private Twitter twitter;
+	public boolean running;
+//	public Event event;
+//	public int radius;
 	
 	@Autowired
 	TweetRepository twitterRepo;
@@ -50,6 +58,14 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		this.queryCount = DEFAULT_COUNT;
 		this.twitter = TwitterFactory.getSingleton();
 	}
+
+//	@Autowired
+//	public TwitterConnectorImpl(Event e, int radius) {
+//		this.event = e;
+//		this.radius = radius;
+//		this.twitter = TwitterFactory.getSingleton();
+//		this.running = true;
+//	}
 
 	public int getQueryCount() {
 		return queryCount;
@@ -68,6 +84,10 @@ public class TwitterConnectorImpl implements TwitterConnector{
 
 	}
 	
+	/**
+	 * Method that performs request to twitter using twitter4j library
+	 * @return
+	 */
 	private ArrayList<Status> getTweet(){
 		QueryResult results = null;
 		ArrayList<Status> tweetsArrayList= new ArrayList<Status>();
@@ -91,6 +111,7 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		return tweetsArrayList;
 	}
 	
+	@Deprecated
 	public long untilNow(ArrayList<Status> tweets, long lastID) {
 		for (Status tweet: tweets) {
 	        if(tweet.getId() < lastID) 
@@ -99,8 +120,8 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		return lastID - 1;
 	}
 	
+	@Deprecated
 	public long sinceNow(ArrayList<Status> tweets, long lastID) {
-//		log.debug(lastID);
 		for (Status tweet: tweets) {
 			 if(tweet.getId() > lastID) 
 		        	lastID = tweet.getId();
@@ -108,10 +129,15 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		return lastID;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see app.twitter.TwitterConnector#TweetsStream(double, double, int, int)
+	 */
 	public ArrayList<Status> TweetsStream(double lat, double lng, int tweetsize,
 			int radius){
 	
 		log.trace("Entering TweeetsStream");
+		log.debug(twitterRepo);
 		
 		ArrayList<Status> tweetsArrayList= new ArrayList<Status>();
 		
@@ -136,16 +162,33 @@ public class TwitterConnectorImpl implements TwitterConnector{
 	        	pk.setEventName("test event");
 	        	pk.setId(tweet.getId());
 	        	
-	        	log.debug(twitterRepo);
+//	        	log.debug(twitterRepo);
+	        	log.debug(pk);
+	        	log.debug("stampo geolocation: " + tweet.getGeoLocation());
 	        	
-	        	twitterRepo.save( new Tweet(pk, tweet.getGeoLocation().getLatitude(),
-	        			tweet.getGeoLocation().getLongitude()));
-				
+	        	/*
+	        	 * a volte tweet.getGeoLocation torna null anche se nella query
+	        	 *  viene impostato il parmaetro per raccogliere solo i tweets
+	        	 *  per una data lat e lng
+	        	 * */
+	        	
+	        	if(tweet.getGeoLocation() != null) {
+	        		Tweet tmpTweet = new Tweet(pk, 
+		        			tweet.getGeoLocation().getLatitude(),
+		        			tweet.getGeoLocation().getLongitude(),
+		        			tweet.getText(),
+		        			tweet.getPlace().getName(),
+		        			tweet.getCreatedAt().toString());
+	        		twitterRepo.save(tmpTweet);
+	        	}
+	        
 		        if(tweet.getId() < lastID) 
 		        	lastID = tweet.getId();
 			}
 			
-			tmpTweets.clear();
+			if(tmpTweets.size() > 0 ) {
+				tmpTweets.clear();
+			}
 			query.setMaxId(lastID - 1);
 			
 			
@@ -155,6 +198,9 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see app.twitter.TwitterConnector#StreamConcert(entity.Event, int)
+	 */
 	public ArrayList<Status> StreamConcert(Event event, int radius) 
 			throws InterruptedException {
 				
@@ -179,8 +225,9 @@ public class TwitterConnectorImpl implements TwitterConnector{
 
 		do {
 			ArrayList<Status> tmpTweets= new ArrayList<Status>();
+			DateTime now = DateTime.now();
 			
-			if(DateTime.now().isAfter(startDate)){
+			if(now.isAfter(startDate)){
 				log.debug("Starting tweets stream");
 				tmpTweets = getTweet();
 				log.debug("retrieved " + tmpTweets.size() + " tweets");
@@ -194,7 +241,7 @@ public class TwitterConnectorImpl implements TwitterConnector{
 			
 			for (Status tweet: tmpTweets) {
 				TweetKey pk = new TweetKey();
-//				log.debug("Ho trovato dei tweet, ora dovrei salvarli!!!!");
+				log.debug("Ho trovato dei tweet, ora dovrei salvarli!!!!");
 	        	pk.setEventName(event.getTitle());
 	        	pk.setId(tweet.getId());
 	        	Tweet tmpTweet = new Tweet(pk, 
@@ -206,6 +253,8 @@ public class TwitterConnectorImpl implements TwitterConnector{
 //	        	
 //	        	log.debug(twitterRepo);
 //	        	TODO - ricordarsi di inserire tutti i campi necessari per la tabella
+	        	System.out.println("twitterRepo: " + twitterRepo);
+	        	System.out.println("tweets: " + tmpTweet.toString());
  	        	twitterRepo.save(tmpTweet);
 		        if(tweet.getId() > lastID) 
 		        	lastID = tweet.getId();
@@ -221,7 +270,18 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		return tweetsArrayList;
 		
 	}
+
 	
-	
-	
+//	TODO
+	public void run() {
+		
+		while(running) {
+//			try {
+//				StreamConcert(event, radius);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+		}		
+	}
 }
