@@ -6,7 +6,7 @@ import entity.Artist;
 
 public interface ArtistDAOInterface {
 
-	public boolean exists(String id)  throws Exception;
+	public boolean checkName(String id)  throws Exception;
 	
 	public boolean existsPartecipations(String id, int event_id) throws Exception;
 	

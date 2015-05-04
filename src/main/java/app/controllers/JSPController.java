@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import dataBaseService.ArtistService;
+import dataBaseService.EventService;
+import dataBaseService.VenueService;
 import app.example.GenericController;
 import app.instagram.PhotoRetriever;
 
@@ -75,27 +78,32 @@ public class JSPController extends GenericController{
 	  
 	  @RequestMapping("/search")
 	    public String searchPage(@ModelAttribute("tag") String tag, 
-	    		ArrayList<String> urlList, HttpServletRequest request) throws InstagramException {
-		  
-/*	traduce "Pink Floyd" in "PinkFloyd"	*/		  
-		  tag = tag.replaceAll("\\s", "");
+	    		ArrayList<String> urlList, HttpServletRequest request) throws Exception {
 
 		  System.out.println("----------------> Requested search for the tag = " + tag);
 
-//TODO effettuare controllo validità tag 
+//TODO 	effettuare controllo validità tag su javabandsintown
 		  
-	      /* do some process and send back the data */
+		  ArtistService aS = new ArtistService();
+		  VenueService vS = new VenueService();
+		  EventService eS = new EventService();
+		  
+		  if(aS.checkName(tag) || vS.checkName(tag) || eS.checkName(tag)){
 
-		  PhotoRetriever pr = new PhotoRetriever();
-        
-		  List<MediaFeedData> mediaList = pr.getMediaByTag(tag);
+			  /*	traduce "Pink Floyd" in "PinkFloyd"	*/		  
+			  tag = tag.replaceAll("\\s", "");
 		  
-          for (MediaFeedData mediaFeedData : mediaList) {
-        	  String url = mediaFeedData.getImages().getLowResolution().getImageUrl();
-        	  urlList.add(url);
-          }
-          
-          request.setAttribute("urlList",urlList);
+			  PhotoRetriever pr = new PhotoRetriever();
+	        
+			  List<MediaFeedData> mediaList = pr.getMediaByTag(tag);
+			  
+	          for (MediaFeedData mediaFeedData : mediaList) {
+	        	  String url = mediaFeedData.getImages().getLowResolution().getImageUrl();
+	        	  urlList.add(url);
+	          }
+	          
+	          request.setAttribute("urlList",urlList);
+		  }
 	        
 		  return "photoAlbum";
 	  }

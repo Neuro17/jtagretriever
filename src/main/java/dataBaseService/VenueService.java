@@ -36,13 +36,34 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 	      close();
 	    }	  
 	}
+	
+	  public boolean checkName(String venueName) throws Exception{
+		  try {
+			  configure();
+		      
+		      preparedStatement = connection.prepareStatement("select * "
+	      		+ "from venues where `venue_name` like '%" + venueName + "%'");   
+
+	          resultSet = preparedStatement.executeQuery();   
+	          
+	          if(!resultSet.next())
+	        	  return false;
+	          else return true;
+	          
+		    } catch (Exception e) {
+		      throw e;
+		    } finally {
+		      close();
+		    }	  
+	  }
 
   public Venue find(double lat, double lng) throws Exception{
 	  Venue venueTmp = null;
 	  try {
 		  this.configure();
 	      
-	      preparedStatement = connection.prepareStatement("select * from venues where latitude = ? and longitude = ?");   
+	      preparedStatement = connection.prepareStatement("select * "
+	      		+ "from venues where latitude = ? and longitude = ?");   
 	      preparedStatement.setDouble(1,lat);
 	      preparedStatement.setDouble(2,lng);
           resultSet = preparedStatement.executeQuery();   
@@ -71,6 +92,45 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 	    }	  
 	  return venueTmp;
 }
+
+  public ArrayList<Venue> findByName(String venueName) throws Exception{
+	  Venue venueTmp = null;
+	  ArrayList<Venue> venues = new ArrayList<Venue>();
+	  try {
+		  this.configure();
+	      
+	      preparedStatement = connection.prepareStatement("select * "
+	      		+ "from venues where `venue_name` like '%" + venueName + "%'");   
+//	      preparedStatement.setString(1,venueName);
+	      System.out.println(preparedStatement);
+          resultSet = preparedStatement.executeQuery();   
+
+          while(resultSet.next()){
+        	  Integer idTmp = resultSet.getInt("venue_id");
+              Double latitude = resultSet.getDouble("latitude");
+              Double longitude = resultSet.getDouble("longitude");
+              String name = resultSet.getString("venue_name");
+              String country = resultSet.getString("country");
+              String city = resultSet.getString("city");
+              String region = resultSet.getString("region");
+              venueTmp = new Venue();
+              venueTmp.setId(idTmp);
+              venueTmp.setLatitude(latitude);
+              venueTmp.setLongitude(longitude);
+              venueTmp.setName(name);
+              venueTmp.setCountry(country);
+              venueTmp.setCity(city);
+              venueTmp.setRegion(region);
+              
+              venues.add(venueTmp);
+	      }
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }	  
+	  return venues;
+}  
 
   public void persist(Venue entity) throws Exception{
 	  System.out.println("entering venueService.persist");
@@ -131,7 +191,8 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 	 try {
 		  this.configure();
 	      
-	      preparedStatement = connection.prepareStatement("delete from venues where latitude = ? and longitude = ?");
+	      preparedStatement = connection.prepareStatement("delete from venues "
+	      		+ "where latitude = ? and longitude = ?");
 	      preparedStatement.setDouble(1,lat);
 	      preparedStatement.setDouble(2,lng);
 	      preparedStatement.execute();

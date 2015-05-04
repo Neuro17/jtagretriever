@@ -45,16 +45,23 @@ public class EventTest{
 //
 //	  eService.persist(e);
 	  
-	  events = eService.findAll();
+//	  events = eService.findAll();
 
-	  for(Event event : events){
-		  System.out.println("\nEvent \t" + event.getId() + "\t" + event.getTitle() + "" +
-			  				"\t" + event.getDescription() + "\t"+ event.getDatetime()+"" +
-			  						"\tin Venue " + event.getVenue().getId() + " with Artists: ");
-		  ArrayList<Artist> artists = event.getArtist();
-		  for(Artist artist : artists)
-			  System.out.println(artist);
-	  }
+//	  events.add(eService.findById(9480486));
+	  
+//	  events = eService.findByName("George");
+	  
+//	  for(Event event : events){
+//		  if(event.getArtist().size() > 1){
+//			  System.out.println("\nEvent \t" + event.getId() + "\t" + event.getTitle() + 
+//					  				"\t"+ event.getDatetime()+"" +
+//				  						"\nin Venue " + event.getVenue().getName() 
+//				  								+ " with " + event.getArtist().size() + " Artists: ");
+//			  ArrayList<Artist> artists = event.getArtist();
+//			  for(Artist artist : artists)
+//				  System.out.println(artist);
+//		  }
+//	  }
 
 //	  v.setId(1);
 //	  
@@ -75,6 +82,7 @@ public class EventTest{
 
 //	  eService.deleteAll();
 	  
+	  System.out.println(eService.checkName("George"));
   }
 
 } 
