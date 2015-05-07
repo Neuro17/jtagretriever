@@ -36,27 +36,6 @@ public class JSPController extends GenericController{
 	    	
 	        return "jsp-spring-boot";
 	  }
-/*	  
-	  @RequestMapping(value = "/photoAlbum", method = RequestMethod.GET)
-		public ModelAndView getdata() throws InstagramException {
-	 
-			PhotoRetriever pr = new PhotoRetriever();
-	 
-			List<String> tagList = new ArrayList<String>();
-			tagList.add("fire");
-			tagList.add("entics");
-			tagList.add("justintime");
-			
-			List<MediaFeedData> mfd = pr.getMediaByTagList(tagList);
-			
-			//return back to photoAlbum.jsp
-			ModelAndView model = new ModelAndView("photoAlbum");
-			model.addObject("lists", mfd);
-	 
-			return model;
-	 
-	  }
-*/	  
 
 	  @RequestMapping("/home")
 	    public String homePage(ModelAndView modelAndView) {
@@ -72,7 +51,8 @@ public class JSPController extends GenericController{
 	  
 	  @RequestMapping("/popular")
 	    public String popularPage(ModelAndView modelAndView) {
-
+//TODO	usa le tabelle_searched per dare all utente le foto dei tag più cercati
+		  
 		  return "popular";
 	  }
 	  
@@ -80,19 +60,22 @@ public class JSPController extends GenericController{
 	    public String searchPage(@ModelAttribute("tag") String tag, 
 	    		ArrayList<String> urlList, HttpServletRequest request) throws Exception {
 
-		  System.out.println("----------------> Requested search for the tag = " + tag);
+System.out.println(">>> Requested search for the tag = " + tag);
 
-//TODO 	effettuare controllo validità tag su javabandsintown
-		  
 		  ArtistService aS = new ArtistService();
 		  VenueService vS = new VenueService();
 		  EventService eS = new EventService();
-
+		  
+//TODO 	la priorità è dare all utente le immagini
+//		prima ricerca su db e su bit e poi salvo valori di ricerca su tabelle_searched
+		  
 		  boolean validA = false,validV = false,validE = false;
 		  
 		  validA = aS.checkName(tag) || aS.manageTag(tag);
-		  validV = vS.checkName(tag) || vS.manageTag(tag);
-		  validE = eS.checkName(tag);
+		  if(!validA)
+			  validV = vS.checkName(tag) || vS.manageTag(tag);
+		  if(!validV)
+			  validE = eS.checkName(tag);
 
 		  if(validA || validV || validE){
 				  /*	traduce "Pink Floyd" in "PinkFloyd"	*/		  

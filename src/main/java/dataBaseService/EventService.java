@@ -18,7 +18,8 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 		  try {
 			  this.configure();
 		      
-		      preparedStatement = connection.prepareStatement("select * from events_table where event_id =?");   
+		      preparedStatement = connection.prepareStatement("select * "
+		      		+ "from events_table where event_id =?");   
 		      preparedStatement.setInt(1,id);
 	          resultSet = preparedStatement.executeQuery();   
 	          
@@ -44,7 +45,10 @@ public class EventService extends DatabaseService implements EventDAOInterface{
           
           if(!resultSet.next())
         	  return false;
-          else return true;
+          else{
+        	  updateResearches(eventName);
+        	  return true;
+          }
           
 	    } catch (Exception e) {
 	      throw e;
@@ -53,7 +57,27 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 	    }
   }
 	
-  public Event findById(Integer id) throws Exception{
+  private void updateResearches(String eventName) throws Exception {
+		 try {
+			  configure();
+		      
+			  String updateTableSQL = "INSERT INTO `concerts_db`.`events_table_searched`"
+			  		+ "(`title`, `total`) VALUES (?,1) "
+			  		+ "ON DUPLICATE KEY UPDATE `total` = `total` + 1;";
+			      preparedStatement = connection.prepareStatement(updateTableSQL);
+			      preparedStatement.setString(1, eventName);
+System.out.println(preparedStatement);
+			      preparedStatement .executeUpdate();
+				      
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+
+}
+
+public Event findById(Integer id) throws Exception{
 	  Event eTmp = new Event();
 	  ArrayList<Artist> eArtist = null;
 	  
@@ -204,10 +228,31 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 	    	}
 	    }
 	  }
-	  
+	  persistSearch(entity.getTitle());
   }
 
-  public void update(Event entity) throws Exception{
+  private void persistSearch(String title) throws Exception {
+System.out.println(">>> entering persistSearch");
+	  try {
+	    	configure();
+	        
+		    preparedStatement = connection.prepareStatement(
+		    		"INSERT INTO `concerts_db`.`events_table_searched`(`title`, `total`) "
+		    		+ "VALUES (?, ?)");
+		    preparedStatement.setString(1, title);
+		    preparedStatement.setInt(2, 1);
+System.out.println(preparedStatement);	      
+		    preparedStatement .executeUpdate();
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+System.out.println(">>> exiting persistSearch");
+
+}
+
+public void update(Event entity) throws Exception{
 	 VenueService vService = new VenueService();
 	 Venue vTmp = vService.find(entity.getVenue().getLatitude(),entity.getVenue().getLongitude());
 	 	 

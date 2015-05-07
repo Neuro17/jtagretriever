@@ -8,6 +8,12 @@ create table `concerts_db`.`artists`(
     primary key (`artist_name`)
 );
 
+create table `concerts_db`.`artists_searched`(
+	`artist_name` varchar(255) not null,
+    `total` int default 0,
+    primary key (`artist_name`)
+);
+
 create table `concerts_db`.`venues`(
 	`venue_id` int,
     `latitude` double,
@@ -19,6 +25,13 @@ create table `concerts_db`.`venues`(
     primary key(`latitude`,`longitude`)
 );
 
+#non metto foreign key verso venues perchè ho già verificato che almeno una venue è presente nel db
+create table `concerts_db`.`venues_searched`(
+    `venue_name` varchar(255) not null,
+    `total` int default 0,
+    primary key(`venue_name`)
+);
+
 create table `concerts_db`.`events_table`(
 		`event_id` int not null,
         `title` varchar(255),
@@ -27,6 +40,12 @@ create table `concerts_db`.`events_table`(
         `latitude` double not null,
         `longitude` double not null,
         primary key (`event_id`)
+);
+
+create table `concerts_db`.`events_table_searched`(
+        `title` varchar(255),
+        `total` int default 0,
+        primary key (`title`)
 );
 
 alter table `concerts_db`.`events_table` 
@@ -52,7 +71,14 @@ select * from `concerts_db`.`artists`;
 select * from `concerts_db`.`venues`;
 select * from `concerts_db`.`events_table`;
 select * from `concerts_db`.`partecipations`;
+select * from `concerts_db`.`artists_searched`;
+select * from `concerts_db`.`venues_searched`;
+select * from `concerts_db`.`events_table_searched`;
 
 select * from `concerts_db`.`venues` where `venue_name` like '%Foo%';
 select * from `concerts_db`.`artists` where `artist_name` like '%Lollapalooza%';
 select * from `concerts_db`.`events_table` where `title` like '%Alt%';
+
+INSERT INTO `concerts_db`.`events_table_searched`(`title`, `total`)
+    VALUES ('telo',1)
+        ON DUPLICATE KEY UPDATE `total` = `total` + 1;

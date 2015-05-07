@@ -11,18 +11,41 @@ import javabandsintown.entity.Artist;
 @PropertySource("classpath:config.properties")
 public class ArtistService extends DatabaseService implements ArtistDAOInterface{
     	
+  private void updateResearches(String artistName) throws Exception{
+		 try {
+			  configure();
+		      
+		      String updateTableSQL = "UPDATE artists_searched "
+		      		+ "SET total = total + 1 WHERE artist_name = ?";
+		      preparedStatement = connection.prepareStatement(updateTableSQL);
+		      preparedStatement.setString(1, artistName);
+System.out.println(preparedStatement);
+		      preparedStatement .executeUpdate();
+		      
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+  }
+	
   public boolean checkName(String id) throws Exception{
 	  try {
 		  configure();
 	      
-	      preparedStatement = connection.prepareStatement("select * from artists where artist_name = ?");   
+	      preparedStatement = connection.prepareStatement("select * "
+	      		+ "from artists where artist_name = ?");   
 	      preparedStatement.setString(1,id);
+	      
+System.out.println(preparedStatement);
+
           resultSet = preparedStatement.executeQuery();   
           
           if(!resultSet.next()){
         	  return false;
           }
           else {
+        	  updateResearches(id);
         	  return true;
           }
           
@@ -77,22 +100,49 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
 	    }	  
 	  return aTmp;
   }
-
-  public void persist(Artist entity) throws Exception{
-	 if(!checkName(entity.getName()))
-	    try {
+  
+  private void persistSearch(Artist entity) throws Exception{
+	  try {
 	    	configure();
 	        
-		    preparedStatement = connection.prepareStatement("INSERT INTO artists(artist_id,artist_name) VALUES(?,?)");
-		    preparedStatement.setString(1, entity.getId());
-		    preparedStatement.setString(2, entity.getName());
+		    preparedStatement = connection.prepareStatement(
+		    		"INSERT INTO `concerts_db`.`artists_searched`(`artist_name`, `total`) "
+		    		+ "VALUES (?, ?)");
+		    preparedStatement.setString(1, entity.getName());
+		    preparedStatement.setInt(2, 1);
+System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();
-	      
 	    } catch (Exception e) {
 	      throw e;
 	    } finally {
 	      close();
 	    }
+  }
+
+  public void persist(Artist entity) throws Exception{
+System.out.println(">>> entering persist");
+	 if(!checkName(entity.getName())){
+//salva l artista in concerts_db.artists
+	    try {
+	    	configure();
+	        
+		    preparedStatement = connection.prepareStatement("INSERT "
+		    		+ "INTO artists(artist_id,artist_name) VALUES(?,?)");
+		    preparedStatement.setString(1, entity.getId());
+		    preparedStatement.setString(2, entity.getName());
+		    
+System.out.println(preparedStatement);	      
+
+		    preparedStatement .executeUpdate();	      
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+//salva la ricerca dell artista in concerts_db.artists_researched
+	    persistSearch(entity);
+System.out.println(">>> exiting persist");
+	 }
   }
 
   public void update(Artist entity) throws Exception{

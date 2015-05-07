@@ -13,6 +13,25 @@ import javabandsintown.entity.Venue;
 
 public class VenueService extends DatabaseService implements VenueDAOInterface {
 
+	  private void updateResearches(String venueName) throws Exception {
+			 try {
+				  configure();
+			      
+			      String updateTableSQL = "UPDATE venues_searched "
+			      		+ "SET total = total + 1 WHERE venue_name = ?";
+			      preparedStatement = connection.prepareStatement(updateTableSQL);
+			      preparedStatement.setString(1, venueName);
+System.out.println(preparedStatement);
+			      preparedStatement .executeUpdate();
+			      
+		    } catch (Exception e) {
+		      throw e;
+		    } finally {
+		      close();
+		    }
+
+		}
+
 	public boolean exists(double lat,double lng) throws Exception{
 	  try {
 		  this.configure();
@@ -46,13 +65,16 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 		      preparedStatement = connection.prepareStatement("select * "
 	      		+ "from venues where `venue_name` like '%" + venueName + "%'");   
 
-	          resultSet = preparedStatement.executeQuery();   
+System.out.println(preparedStatement);
+	          
+		      resultSet = preparedStatement.executeQuery();   
 	          
 	          if(!resultSet.next())
 	        	  return false;
-	          else 
+	          else {
+	        	  updateResearches(venueName);
 	        	  return true;
-	          
+	          }
 		    } catch (Exception e) {
 		      throw e;
 		    } finally {
@@ -60,7 +82,7 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 		    }	  
 	  }
 
-  public Venue find(double lat, double lng) throws Exception{
+public Venue find(double lat, double lng) throws Exception{
 	  Venue venueTmp = null;
 	  try {
 		  this.configure();
@@ -258,10 +280,30 @@ public boolean manageTag(String tag) throws Exception {
 		for(Venue vTmp : venues)
 //			System.out.println(vTmp);
 			persist(vTmp);
+		persistSearches(tag);
 		return true;
 	}
 	else
 		return false;
+}
+
+private void persistSearches(String tag) throws Exception {	
+	  try {
+	    	configure();
+	        
+		    preparedStatement = connection.prepareStatement(
+		    		"INSERT INTO venues_searched(venue_name,total) VALUES(?,?)");
+		    preparedStatement.setString(1, tag);
+		    preparedStatement.setInt(2, 1);
+System.out.println(preparedStatement);	      
+		    preparedStatement .executeUpdate();
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+
+	
 }
   
 } 
