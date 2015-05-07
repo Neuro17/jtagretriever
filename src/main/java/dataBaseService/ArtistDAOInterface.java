@@ -2,7 +2,7 @@ package dataBaseService;
 
 import java.util.ArrayList;
 
-import entity.Artist;
+import javabandsintown.entity.Artist;
 
 public interface ArtistDAOInterface {
 

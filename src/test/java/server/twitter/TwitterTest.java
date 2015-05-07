@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
-import entity.Event;
-import entity.Venue;
+import javabandsintown.entity.Event;
+import javabandsintown.entity.Venue;
 import server.twitter.TwitterConnector;
 import twitter4j.Status;
 
@@ -36,8 +36,14 @@ public class TwitterTest {
 		
 		Event event = new Event();
 		event.setDatetime(start);
-		event.setVenue(new Venue(lat, lng));
-
+//		event.setVenue(new Venue(lat, lng));
+		
+		Venue venue = new Venue();
+		venue.setLatitude(lat);
+		venue.setLongitude(lng);
+		
+		event.setVenue(venue);
+		
 		twc.StreamConcert(event, 2);
 		
 //		for(Status tweet : twc.StreamConcert(event, 2)){

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import org.joda.time.LocalDate;
 
-import entity.Event;
+import javabandsintown.entity.Event;
 
 public interface EventDAOInterface {
 

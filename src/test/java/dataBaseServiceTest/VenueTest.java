@@ -2,8 +2,10 @@ package dataBaseServiceTest;
 
 import java.util.ArrayList;
 
+import javabandsintown.search.Bandsintown;
+import dataBaseService.ArtistService;
 import dataBaseService.VenueService;
-import entity.Venue;
+import javabandsintown.entity.Venue;
 
 public class VenueTest{
 	
@@ -23,7 +25,7 @@ public class VenueTest{
 //
 //	  vService.persist(v);
 
-	  System.out.println(vService.checkName("Forum"));
+//	  System.out.println(vService.checkName("Forum"));
 
 //	  v.setId(2);
 //	  v.setCity("updatedCity");
@@ -50,6 +52,12 @@ public class VenueTest{
 //	  for(Venue ve : venues)
 //		  System.out.println(ve.getName() + " " + ve.getLatitude() + " "
 //		  		+ ve.getLongitude());
+
+	  String tag = "Estadio GEBA";
+	  
+	  System.out.println(vService.checkName(tag)
+			  || vService.manageTag(tag));
+	  
   }
 
 } 

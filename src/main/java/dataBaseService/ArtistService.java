@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 import org.springframework.context.annotation.PropertySource;
 
-import entity.Artist;
+import javabandsintown.search.Bandsintown;
+import javabandsintown.entity.Artist;
 
 @PropertySource("classpath:config.properties")
 public class ArtistService extends DatabaseService implements ArtistDAOInterface{
@@ -18,9 +19,12 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
 	      preparedStatement.setString(1,id);
           resultSet = preparedStatement.executeQuery();   
           
-          if(!resultSet.next())
+          if(!resultSet.next()){
         	  return false;
-          else return true;
+          }
+          else {
+        	  return true;
+          }
           
 	    } catch (Exception e) {
 	      throw e;
@@ -187,5 +191,19 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
 		}
 	
 		return eventArtist;
+	}
+	
+	public boolean manageTag(String tag) throws Exception{
+		Bandsintown bandsintown = new Bandsintown();
+
+		Artist aTmp = bandsintown.getArtist.setArtist(tag).asJson().search();
+
+		if(aTmp != null){
+			persist(aTmp);
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 } 

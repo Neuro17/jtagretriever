@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import twitter4j.Query;
 import twitter4j.Status;
-import entity.Event;
+import javabandsintown.entity.Event;
 
 public interface TwitterConnector {
 	

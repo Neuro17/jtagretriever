@@ -3,7 +3,7 @@ package app.tools;
 import java.util.ArrayList;
 import java.util.Map;
 
-import entity.Event;
+import javabandsintown.entity.Event;
 
 public interface TagExtractor {
 	

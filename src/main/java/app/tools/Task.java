@@ -5,16 +5,14 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import search.Bandsintown;
+import javabandsintown.search.Bandsintown;
 import app.twitter.TwitterConnector;
 import app.twitter.impl.TwitterConnectorImpl;
 import dataBaseService.ArtistService;
 import dataBaseService.EventService;
 import dataBaseService.VenueService;
-import entity.Artist;
-import entity.Event;
-
-
+import javabandsintown.entity.Artist;
+import javabandsintown.entity.Event;
 
 /**
  * @author biagio

@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import search.Bandsintown;
+import javabandsintown.search.Bandsintown;
 import app.models.Tweet;
 import app.repository.TweetRepository;
 
@@ -19,8 +19,8 @@ import com.javadocmd.simplelatlng.util.LengthUnit;
 import com.mysql.fabric.xmlrpc.base.Array;
 
 import dataBaseService.EventService;
-import entity.Artist;
-import entity.Event;
+import javabandsintown.entity.Artist;
+import javabandsintown.entity.Event;
 
 @Component
 public class TagExtractorImp implements TagExtractor{

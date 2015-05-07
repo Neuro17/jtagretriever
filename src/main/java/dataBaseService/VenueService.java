@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import entity.Venue;
+import javabandsintown.search.Bandsintown;
+import javabandsintown.entity.Artist;
+import javabandsintown.entity.Venue;
 
 public class VenueService extends DatabaseService implements VenueDAOInterface {
 
@@ -48,7 +50,8 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 	          
 	          if(!resultSet.next())
 	        	  return false;
-	          else return true;
+	          else 
+	        	  return true;
 	          
 		    } catch (Exception e) {
 		      throw e;
@@ -133,7 +136,6 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 }  
 
   public void persist(Venue entity) throws Exception{
-	  System.out.println("entering venueService.persist");
 	  if(!exists(entity.getLatitude(),entity.getLongitude())){
 	    try {
 	    	this.configure();
@@ -149,8 +151,10 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 		    preparedStatement.setString(5, entity.getCountry());
 		    preparedStatement.setString(6, entity.getCity());
 		    preparedStatement.setString(7, entity.getRegion());
-			System.out.println(preparedStatement);
-		    preparedStatement .executeUpdate();
+		    
+		    System.out.println(preparedStatement);
+		    
+		    preparedStatement.executeUpdate();
 
 	    } catch (Exception e) {
 	      throw e;
@@ -158,8 +162,6 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 	      close();
 	    }
 	  }
-		System.out.println("exiting venueService.persist");
-
   }
 
   public void update(Venue entity) throws Exception{
@@ -246,5 +248,20 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 	for(Venue entity : entities)
 		this.delete(entity.getLatitude(),entity.getLongitude());
   }
+
+public boolean manageTag(String tag) throws Exception {
+	Bandsintown bandsintown = new Bandsintown();
+	
+	ArrayList<Venue> venues = bandsintown.getVenues.query(tag).asJson().search();
+
+	if(!venues.isEmpty()){
+		for(Venue vTmp : venues)
+//			System.out.println(vTmp);
+			persist(vTmp);
+		return true;
+	}
+	else
+		return false;
+}
   
 } 

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import app.twitter.TwitterConnector;
 import dataBaseService.EventService;
-import entity.Event;
+import javabandsintown.entity.Event;
 
 @Component
 @EnableAsync

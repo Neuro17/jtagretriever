@@ -6,9 +6,9 @@ import org.joda.time.DateTime;
 
 import dataBaseService.EventService;
 import dataBaseService.VenueService;
-import entity.Artist;
-import entity.Event;
-import entity.Venue;
+import javabandsintown.entity.Artist;
+import javabandsintown.entity.Event;
+import javabandsintown.entity.Venue;
 
 public class EventTest{
 	
@@ -83,6 +83,7 @@ public class EventTest{
 //	  eService.deleteAll();
 	  
 	  System.out.println(eService.checkName("George"));
+	  
   }
 
 } 

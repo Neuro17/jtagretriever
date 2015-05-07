@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import entity.Artist;
-import entity.Event;
-import entity.Venue;
+import javabandsintown.entity.Artist;
+import javabandsintown.entity.Event;
+import javabandsintown.entity.Venue;
 
 public class EventService extends DatabaseService implements EventDAOInterface{
 

@@ -2,8 +2,9 @@ package dataBaseServiceTest;
 
 import java.util.ArrayList;
 
+import javabandsintown.search.Bandsintown;
 import dataBaseService.ArtistService;
-import entity.Artist;
+import javabandsintown.entity.Artist;
 
 public class ArtistTest{
 	
@@ -27,12 +28,16 @@ public class ArtistTest{
 //	  String name = "madonna";
 //	  aService.delete(name);
 
-	  artists = aService.findAll();
-	  for(Artist artist : artists)
-		  System.out.println(artist);
+//	  artists = aService.findAll();
+//	  for(Artist artist : artists)
+//		  System.out.println(artist);
 
 //	  aService.deleteAll();
 	  
+	  String tag = "shakira";
+	  
+	  System.out.println(aService.checkName(tag) ||
+			  aService.manageTag(tag));
   }
 
 } 

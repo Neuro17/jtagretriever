@@ -29,7 +29,7 @@ import app.repository.TweetRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import entity.Event;
+import javabandsintown.entity.Event;
 
 @Component
 @Controller

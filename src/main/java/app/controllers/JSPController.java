@@ -87,25 +87,36 @@ public class JSPController extends GenericController{
 		  ArtistService aS = new ArtistService();
 		  VenueService vS = new VenueService();
 		  EventService eS = new EventService();
-		  
-		  if(aS.checkName(tag) || vS.checkName(tag) || eS.checkName(tag)){
 
-			  /*	traduce "Pink Floyd" in "PinkFloyd"	*/		  
-			  tag = tag.replaceAll("\\s", "");
+		  boolean validA = false,validV = false,validE = false;
 		  
-			  PhotoRetriever pr = new PhotoRetriever();
-	        
-			  List<MediaFeedData> mediaList = pr.getMediaByTag(tag);
+		  validA = aS.checkName(tag) || aS.manageTag(tag);
+		  validV = vS.checkName(tag) || vS.manageTag(tag);
+		  validE = eS.checkName(tag);
+
+		  if(validA || validV || validE){
+				  /*	traduce "Pink Floyd" in "PinkFloyd"	*/		  
+				  tag = tag.replaceAll("\\s", "");
 			  
-	          for (MediaFeedData mediaFeedData : mediaList) {
-	        	  String url = mediaFeedData.getImages().getLowResolution().getImageUrl();
-	        	  urlList.add(url);
-	          }
-	          
-	          request.setAttribute("urlList",urlList);
-		  }
-	        
-		  return "photoAlbum";
+				  PhotoRetriever pr = new PhotoRetriever();
+		        
+				  List<MediaFeedData> mediaList = pr.getMediaByTag(tag);
+				  
+		          for (MediaFeedData mediaFeedData : mediaList) {
+		        	  String url = mediaFeedData.getImages().getLowResolution().getImageUrl();
+		        	  urlList.add(url);
+		          }          
+		          request.setAttribute("urlList",urlList);
+				  return "photoAlbum";
+			  }
+		  else
+			  return "unperformed";
+	  }
+
+	  @RequestMapping("/unperformed")
+	    public String unperformedPage(ModelAndView modelAndView) {
+
+		  return "unperformed";
 	  }
 
 }

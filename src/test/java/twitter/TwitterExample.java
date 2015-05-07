@@ -20,8 +20,8 @@ import twitter4j.TwitterFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import entity.Event;
-import entity.Venue;
+import javabandsintown.entity.Event;
+import javabandsintown.entity.Venue;
 
 public class TwitterExample {
 	
@@ -165,8 +165,13 @@ public class TwitterExample {
 		event.setDatetime(start);
 		Venue v = new Venue();
 		
-		event.setVenue(new Venue(lat,lng));
-				
+//		event.setVenue(new Venue(lat,lng));
+		Venue venue = new Venue();
+		venue.setLatitude(lat);
+		venue.setLongitude(lng);
+		
+		event.setVenue(venue);
+					
 		ArrayList<Status> tweets = getConcertTweets(event, 2, null);
 		
 		

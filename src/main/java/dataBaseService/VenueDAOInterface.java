@@ -2,7 +2,7 @@ package dataBaseService;
 
 import java.util.ArrayList;
 
-import entity.Venue;
+import javabandsintown.entity.Venue;
 
 public interface VenueDAOInterface {
 	

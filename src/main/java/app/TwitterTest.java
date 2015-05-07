@@ -14,7 +14,7 @@ import twitter4j.Status;
 import app.tools.TagExtractor;
 import app.twitter.TwitterConnector;
 import dataBaseService.EventService;
-import entity.Event;
+import javabandsintown.entity.Event;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"app.repository",  "app.twitter", "app.tools", "app.twitter.impl"})
