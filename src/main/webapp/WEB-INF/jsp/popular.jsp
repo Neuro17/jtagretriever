@@ -1,15 +1,6 @@
 <jsp:include page="common/header.jsp"/>
 
-<%@ page import="org.jinstagram.Instagram" %>
-<%@ page import="org.jinstagram.entity.users.feed.MediaFeed" %>
-<%@ page import="org.jinstagram.entity.users.feed.MediaFeedData" %>
-<%@ page import="java.util.List" %>
-
-<%@ page import="app.instagram.PhotoRetriever" %>
-
-<%
-	PhotoRetriever pr = new PhotoRetriever();
-%>
+<%@ page import="java.util.ArrayList" %>
 
 <!-- tag for search box -->
 <meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
@@ -154,34 +145,26 @@
     <div class="row">
 
         <div class="col-lg-12">
-            <h1 class="page-header">Popular Media</h1>
+            <h1 class="page-header">Popular Researches</h1>
         </div>
-        <%
-
-//            MediaFeed mediaFeed = instagram.getPopularMedia();
-
-
-//            List<MediaFeedData> mediaList = mediaFeed.getData();
-        List<MediaFeedData> mediaList = pr.getMediaByTag("likeforlike");
-
-//           int mediaCount = mediaList.size();
-			int mediaCount = 0;
-			
-        %>
-
-        <h3>This page whould search latest concerts media</h3>
 
         <%
-            for (MediaFeedData mediaFeedData : mediaList) {
-
+	    	ArrayList<String> list = 
+	    		(ArrayList<String>)request.getAttribute("list"); 
+	    	for(String name : list){	
         %>
         <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-            <a class="thumbnail" href="#">
-                <img class="img-responsive" src="<%=mediaFeedData.getImages().getLowResolution().getImageUrl()%>"
-                     alt="">
+            <a class="thumbnail" href="search?tag=<%= name %>">
+                <h1><%= name%></h1>
             </a>
         </div>
-
+<!-- 
+		<div class="col-lg-3 col-md-4 col-xs-6 thumb">
+            <a class="thumbnail" href="#">
+                <h1>name</h1>
+            </a>
+        </div>
+ -->
         <%
             }
         %>

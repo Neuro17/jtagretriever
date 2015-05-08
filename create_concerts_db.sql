@@ -82,3 +82,6 @@ select * from `concerts_db`.`events_table` where `title` like '%Alt%';
 INSERT INTO `concerts_db`.`events_table_searched`(`title`, `total`)
     VALUES ('telo',1)
         ON DUPLICATE KEY UPDATE `total` = `total` + 1;
+        
+select * from `concerts_db`.`artists_searched` ORDER BY `total` DESC LIMIT 10;
+select * from `concerts_db`.`venues_searched` ORDER BY `total` DESC LIMIT 10;

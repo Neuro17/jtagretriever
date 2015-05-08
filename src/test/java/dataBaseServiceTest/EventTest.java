@@ -82,8 +82,12 @@ public class EventTest{
 
 //	  eService.deleteAll();
 	  
-	  System.out.println(eService.checkName("George"));
-	  
+//	  System.out.println(eService.checkName("George"));
+
+	  ArrayList<String> List = eService.top(10);
+	  for(String name : List)
+		  System.out.println(name);
+
   }
 
 } 

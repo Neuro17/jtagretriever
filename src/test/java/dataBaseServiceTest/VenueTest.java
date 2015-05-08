@@ -53,10 +53,15 @@ public class VenueTest{
 //		  System.out.println(ve.getName() + " " + ve.getLatitude() + " "
 //		  		+ ve.getLongitude());
 
-	  String tag = "Estadio GEBA";
-	  
-	  System.out.println(vService.checkName(tag)
-			  || vService.manageTag(tag));
+//	  String tag = "Estadio GEBA";
+//	  
+//	  System.out.println(vService.checkName(tag)
+//			  || vService.manageTag(tag));
+
+	  ArrayList<String> List = vService.top(10);
+	  for(String name : List)
+		  System.out.println(name);
+
 	  
   }
 

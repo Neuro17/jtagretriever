@@ -43,12 +43,13 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 
           resultSet = preparedStatement.executeQuery();   
           
-          if(!resultSet.next())
-        	  return false;
-          else{
-        	  updateResearches(eventName);
+          if(resultSet.last()){
+        	  String title = resultSet.getString("title");
+        	  updateResearches(title);
         	  return true;
           }
+          else
+        	  return false;
           
 	    } catch (Exception e) {
 	      throw e;
@@ -238,7 +239,8 @@ System.out.println(">>> entering persistSearch");
 	        
 		    preparedStatement = connection.prepareStatement(
 		    		"INSERT INTO `concerts_db`.`events_table_searched`(`title`, `total`) "
-		    		+ "VALUES (?, ?)");
+		    		+ "VALUES (?, ?)"
+		    		+ " ON DUPLICATE KEY UPDATE `total` = `total` + 1");
 		    preparedStatement.setString(1, title);
 		    preparedStatement.setInt(2, 1);
 System.out.println(preparedStatement);	      
@@ -438,6 +440,32 @@ public void update(Event entity) throws Exception{
 		ArrayList<Event> finalEvents = extractPartecipations(partialEvents);
 	    
 		return finalEvents;
+	}
+
+public ArrayList<String> top(int i) throws Exception {
+		ArrayList<String> titlesNames = new ArrayList<String>();
+
+		try {
+			  configure();
+
+		      preparedStatement = connection.prepareStatement("select * "
+		      		+ "from `concerts_db`.`events_table_searched` "
+		      		+ "ORDER BY `total` DESC LIMIT ?");   
+		      preparedStatement.setInt(1,i);
+System.out.println(preparedStatement);
+		      resultSet = preparedStatement.executeQuery();   
+				      
+		      while (resultSet.next()) {
+		          String title = resultSet.getString("title");
+		          titlesNames.add(title);
+		      }		
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+	  	
+		return titlesNames;
 	}
 
 } 

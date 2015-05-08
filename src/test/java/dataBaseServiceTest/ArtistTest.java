@@ -34,10 +34,15 @@ public class ArtistTest{
 
 //	  aService.deleteAll();
 	  
-	  String tag = "shakira";
+//	  String tag = "shakira";
+//	  
+//	  System.out.println(aService.checkName(tag) ||
+//			  aService.manageTag(tag));
+
+	  ArrayList<String> artistList = aService.top(10);
+	  for(String name : artistList)
+		  System.out.println(name);
 	  
-	  System.out.println(aService.checkName(tag) ||
-			  aService.manageTag(tag));
   }
 
 } 

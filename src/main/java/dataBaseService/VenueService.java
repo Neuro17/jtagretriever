@@ -69,11 +69,14 @@ System.out.println(preparedStatement);
 	          
 		      resultSet = preparedStatement.executeQuery();   
 	          
-	          if(!resultSet.next())
-	        	  return false;
-	          else {
-	        	  updateResearches(venueName);
+	          if(resultSet.last()){
+	        	  String venueNameTmp = resultSet.getString("venue_name");
+System.out.println(">>> found venue with name " + venueNameTmp);
+	        	  updateResearches(venueNameTmp);
 	        	  return true;
+	          }
+	          else {
+	        	  return false;
 	          }
 		    } catch (Exception e) {
 		      throw e;
@@ -174,7 +177,7 @@ public Venue find(double lat, double lng) throws Exception{
 		    preparedStatement.setString(6, entity.getCity());
 		    preparedStatement.setString(7, entity.getRegion());
 		    
-		    System.out.println(preparedStatement);
+System.out.println(preparedStatement);
 		    
 		    preparedStatement.executeUpdate();
 
@@ -183,10 +186,30 @@ public Venue find(double lat, double lng) throws Exception{
 	    } finally {
 	      close();
 	    }
+	    persistSearch(entity);
 	  }
   }
 
-  public void update(Venue entity) throws Exception{
+  private void persistSearch(Venue venue) throws Exception{
+	  try {
+	    	configure();
+	        
+		    preparedStatement = connection.prepareStatement(
+		    		"INSERT INTO `concerts_db`.`venues_searched`(`venue_name`, `total`) "
+		    		+ "VALUES (?, ?)"
+		    		+ " ON DUPLICATE KEY UPDATE `total` = `total` + 1");
+		    preparedStatement.setString(1, venue.getName());
+		    preparedStatement.setInt(2, 1);
+System.out.println(preparedStatement);	      
+		    preparedStatement .executeUpdate();
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+  }
+
+public void update(Venue entity) throws Exception{
 	 if(exists(entity.getLatitude(),entity.getLongitude()))
 		 try {
 			  this.configure();
@@ -292,7 +315,8 @@ private void persistSearches(String tag) throws Exception {
 	    	configure();
 	        
 		    preparedStatement = connection.prepareStatement(
-		    		"INSERT INTO venues_searched(venue_name,total) VALUES(?,?)");
+		    		"INSERT INTO venues_searched(venue_name,total) VALUES(?,?)"
+		    		+ "ON DUPLICATE KEY UPDATE `total` = `total` + 1");
 		    preparedStatement.setString(1, tag);
 		    preparedStatement.setInt(2, 1);
 System.out.println(preparedStatement);	      
@@ -305,5 +329,31 @@ System.out.println(preparedStatement);
 
 	
 }
+
+public ArrayList<String> top(int i) throws Exception {
+		ArrayList<String> venuesNames = new ArrayList<String>();
+
+		try {
+			  configure();
+
+		      preparedStatement = connection.prepareStatement("select * "
+		      		+ "from `concerts_db`.`venues_searched` "
+		      		+ "ORDER BY `total` DESC LIMIT ?");   
+		      preparedStatement.setInt(1,i);
+System.out.println(preparedStatement);
+		      resultSet = preparedStatement.executeQuery();   
+				      
+		      while (resultSet.next()) {
+		          String name = resultSet.getString("venue_name");
+		          venuesNames.add(name);
+		      }		
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+	  	
+		return venuesNames;
+	}
   
 } 

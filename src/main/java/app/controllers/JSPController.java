@@ -50,17 +50,30 @@ public class JSPController extends GenericController{
 	  }
 	  
 	  @RequestMapping("/popular")
-	    public String popularPage(ModelAndView modelAndView) {
+	    public String popularPage(ArrayList<String> list, 
+	    		HttpServletRequest request) throws Exception {
+// return a list of top 10 searched object for each entity
 //TODO	usa le tabelle_searched per dare all utente le foto dei tag più cercati
+		  ArtistService aS = new ArtistService();
+		  VenueService vS = new VenueService();
+		  EventService eS = new EventService();
+		  
+		  ArrayList<String> topA = aS.top(5);
+		  ArrayList<String> topV = vS.top(5);
+		  ArrayList<String> topE = eS.top(5);
+		  
+		  topA.addAll(topV);
+		  topA.addAll(topE);
+		  list = topA;
+
+		  request.setAttribute("list",list);		  
 		  
 		  return "popular";
 	  }
 	  
 	  @RequestMapping("/search")
-	    public String searchPage(@ModelAttribute("tag") String tag, 
-	    		ArrayList<String> urlList, HttpServletRequest request) throws Exception {
-
-System.out.println(">>> Requested search for the tag = " + tag);
+	  public String searchPage(@ModelAttribute("tag") String tag, 
+	      ArrayList<String> urlList, HttpServletRequest request) throws Exception {
 
 		  ArtistService aS = new ArtistService();
 		  VenueService vS = new VenueService();
@@ -86,7 +99,8 @@ System.out.println(">>> Requested search for the tag = " + tag);
 				  List<MediaFeedData> mediaList = pr.getMediaByTag(tag);
 				  
 		          for (MediaFeedData mediaFeedData : mediaList) {
-		        	  String url = mediaFeedData.getImages().getLowResolution().getImageUrl();
+		        	  String url = mediaFeedData.getImages()
+		        			  .getLowResolution().getImageUrl();
 		        	  urlList.add(url);
 		          }          
 		          request.setAttribute("urlList",urlList);

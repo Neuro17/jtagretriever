@@ -36,9 +36,7 @@ System.out.println(preparedStatement);
 	      preparedStatement = connection.prepareStatement("select * "
 	      		+ "from artists where artist_name = ?");   
 	      preparedStatement.setString(1,id);
-	      
 System.out.println(preparedStatement);
-
           resultSet = preparedStatement.executeQuery();   
           
           if(!resultSet.next()){
@@ -120,7 +118,6 @@ System.out.println(preparedStatement);
   }
 
   public void persist(Artist entity) throws Exception{
-System.out.println(">>> entering persist");
 	 if(!checkName(entity.getName())){
 //salva l artista in concerts_db.artists
 	    try {
@@ -130,9 +127,7 @@ System.out.println(">>> entering persist");
 		    		+ "INTO artists(artist_id,artist_name) VALUES(?,?)");
 		    preparedStatement.setString(1, entity.getId());
 		    preparedStatement.setString(2, entity.getName());
-		    
 System.out.println(preparedStatement);	      
-
 		    preparedStatement .executeUpdate();	      
 	    } catch (Exception e) {
 	      throw e;
@@ -141,7 +136,6 @@ System.out.println(preparedStatement);
 	    }
 //salva la ricerca dell artista in concerts_db.artists_researched
 	    persistSearch(entity);
-System.out.println(">>> exiting persist");
 	 }
   }
 
@@ -216,7 +210,8 @@ System.out.println(">>> exiting persist");
 		try {
 			  configure();
 		      
-		      preparedStatement = connection.prepareStatement("select * from partecipations where event_id =?");   
+		      preparedStatement = connection.prepareStatement("select * "
+		      		+ "from partecipations where event_id =?");   
 		      preparedStatement.setInt(1,eventId);
 	          resultSetTmp = preparedStatement.executeQuery();   
 	          
@@ -255,5 +250,31 @@ System.out.println(">>> exiting persist");
 		else{
 			return false;
 		}
+	}
+
+	public ArrayList<String> top(int i) throws Exception {
+		ArrayList<String> artistsNames = new ArrayList<String>();
+
+		try {
+			  configure();
+
+		      preparedStatement = connection.prepareStatement("select * "
+		      		+ "from `concerts_db`.`artists_searched` "
+		      		+ "ORDER BY `total` DESC LIMIT ?");   
+		      preparedStatement.setInt(1,i);
+System.out.println(preparedStatement);
+		      resultSet = preparedStatement.executeQuery();   
+				      
+		      while (resultSet.next()) {
+		          String name = resultSet.getString("artist_name");
+		          artistsNames.add(name);
+		      }		
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+	  	
+		return artistsNames;
 	}
 } 
