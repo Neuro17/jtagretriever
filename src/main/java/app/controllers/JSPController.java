@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
@@ -44,8 +46,25 @@ public class JSPController extends GenericController{
 	  }
 	  
 	  @RequestMapping("/gallery")
-	    public String galleryPage(ModelAndView modelAndView) {
+	    public String galleryPage(HttpServletRequest request,
+		      HttpServletResponse response) {
+		  
+		  Cookie[] cookies = request.getCookies();
 
+		  ArrayList<String> lastSearches = new ArrayList<String>();
+//	gestione cookies		  
+		  if(cookies != null){
+			  for(Cookie cookie : cookies)
+			          lastSearches.add(cookie.getValue());
+//tolgo il primo perchè è un valore casuale
+			  lastSearches.remove(0);
+//System.out.println(">>>\tCookie red");	  
+//for(String search : lastSearches)
+//	System.out.println("\t\t" +search);
+		  
+			  request.setAttribute("list",lastSearches);		  
+//	fine gestione cookies		  
+		  }
 		  return "gallery";
 	  }
 	  
@@ -73,7 +92,8 @@ public class JSPController extends GenericController{
 	  
 	  @RequestMapping("/search")
 	  public String searchPage(@ModelAttribute("tag") String tag, 
-	      ArrayList<String> urlList, HttpServletRequest request) throws Exception {
+	      ArrayList<String> urlList, HttpServletRequest request,
+	      HttpServletResponse response) throws Exception {
 
 		  ArtistService aS = new ArtistService();
 		  VenueService vS = new VenueService();
@@ -91,7 +111,12 @@ public class JSPController extends GenericController{
 			  validE = eS.checkName(tag);
 
 		  if(validA || validV || validE){
-				  /*	traduce "Pink Floyd" in "PinkFloyd"	*/		  
+//	gestione cookie
+		          Cookie cookie  = new Cookie(tag.replaceAll("\\s", ""), tag);
+		          response.addCookie(cookie);
+//	fine gestione cookie		          
+
+			  	  /*	traduce "Pink Floyd" in "PinkFloyd"	*/		  
 				  tag = tag.replaceAll("\\s", "");
 			  
 				  PhotoRetriever pr = new PhotoRetriever();

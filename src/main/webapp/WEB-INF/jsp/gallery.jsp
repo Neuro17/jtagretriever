@@ -1,10 +1,6 @@
 <jsp:include page="common/header.jsp"/>
 
-<%@ page import="org.jinstagram.Instagram" %>
-<%@ page import="org.jinstagram.entity.users.feed.MediaFeedData" %>
-<%@ page import="java.util.List" %>
-
-<%@ page import="app.instagram.PhotoRetriever" %>
+<%@ page import="java.util.ArrayList" %>
 
 <!-- tag for search box -->
 <meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
@@ -149,29 +145,19 @@
     <div class="row">
 
         <div class="col-lg-12">
-            <h1 class="page-header">YourGalleries should remember latest searches</h1>
+            <h1 class="page-header">Your last searches</h1>
         </div>
         <%
-        	PhotoRetriever pr = new PhotoRetriever();
-        
-            List<MediaFeedData> mediaList = pr.getMediaByTag("red");
-
+	        ArrayList<String> list = 
+			(ArrayList<String>)request.getAttribute("list"); 
+				if(list != null)
+					for(String name : list){
         %>
-
-        </h3>
-        
-        <%
-            for (MediaFeedData mediaFeedData : mediaList) {
-
-
-        %>
-        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-            <a class="thumbnail" href="#">
-                <img class="img-responsive" src="<%=mediaFeedData.getImages().getLowResolution().getImageUrl()%>"
-                     alt="">
-            </a>
-        </div>
-
+	        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+	            <a class="thumbnail" href="search?tag=<%= name %>">
+	                <h1><%= name%></h1>
+	            </a>
+	        </div>
         <%
             }
         %>
