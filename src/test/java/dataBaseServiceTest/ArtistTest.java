@@ -1,6 +1,9 @@
 package dataBaseServiceTest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javabandsintown.search.Bandsintown;
 import dataBaseService.ArtistService;
@@ -39,10 +42,13 @@ public class ArtistTest{
 //	  System.out.println(aService.checkName(tag) ||
 //			  aService.manageTag(tag));
 
-	  ArrayList<String> artistList = aService.top(10);
-	  for(String name : artistList)
-		  System.out.println(name);
-	  
+	  HashMap<String,String> map = aService.top(10);
+	  Iterator it = map.entrySet().iterator();
+      while (it.hasNext()) {
+          Map.Entry pair = (Map.Entry)it.next();
+          System.out.println(pair.getKey() + " = " + pair.getValue());
+          it.remove(); // avoids a ConcurrentModificationException
+      }
   }
 
 } 

@@ -149,7 +149,10 @@ public class Extractor {
 				artist = new Artist(artistTmp.get("name").getAsString());
 			else
 				artist = new Artist(artistTmp.get("name").getAsString(), artistTmp.get("mbid").getAsString());
-			
+
+			if(!artistTmp.get("thumb_url").isJsonNull())
+				artist.setUrlImage(artistTmp.get("thumb_url").getAsString());
+
 			log.trace("Exiting extractArtist");
 			return artist;
 		}

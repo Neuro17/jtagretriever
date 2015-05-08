@@ -3,15 +3,18 @@
 <html>
 <head>
     <title>musiConcerts</title>
-
+<!--
+    	   	
+-->
 	<style>
-	    body {
-	    	background : #555 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB9JREFUeNpi/P//PwM6YGLAAuCCmpqacC2MRGsHCDAA+fIHfeQbO8kAAAAASUVORK5CYII=);
-			font: 13px 'Lucida sans', Arial, Helvetica;
-	        color: #eee;
-	        text-align: center;
-	    }
-	    
+	
+		body {
+			background : #555 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB9JREFUeNpi/P//PwM6YGLAAuCCmpqacC2MRGsHCDAA+fIHfeQbO8kAAAAASUVORK5CYII=);
+	    	font: 13px 'Lucida sans', Arial, Helvetica;
+		    color: #eee;
+		    text-align: center; 
+		}
+	
 		.form-wrapper {
 		    width: 450px;
 		    padding: 8px;
@@ -38,7 +41,8 @@
 		}
 		
 		.form-wrapper #search:focus {
-		    outline: 0; 
+		    outline: 0;
+		    color: #000; 
 		    border-color: #aaa;
 		    box-shadow: 0 1px 1px #bbb inset;  
 		}
@@ -120,7 +124,7 @@
     </div>
 </nav>
 
-<body >
+<body>
 
 	<form  class="form-wrapper" action="search" method="post" commnadName="tag">
 	    <input type="text" id="search" name="tag" size="21" placeholder="Search for Artist, Concerts ..." maxlength="120" required />

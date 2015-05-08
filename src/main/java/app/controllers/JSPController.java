@@ -1,6 +1,7 @@
 package app.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,35 +57,34 @@ public class JSPController extends GenericController{
 		  if(cookies != null){
 			  for(Cookie cookie : cookies)
 			          lastSearches.add(cookie.getValue());
-//tolgo il primo perchè è un valore casuale
+//			tolgo il primo perchè è un valore casuale
 			  lastSearches.remove(0);
-//System.out.println(">>>\tCookie red");	  
-//for(String search : lastSearches)
-//	System.out.println("\t\t" +search);
-		  
+//				fine gestione cookies		  
 			  request.setAttribute("list",lastSearches);		  
-//	fine gestione cookies		  
 		  }
 		  return "gallery";
 	  }
 	  
 	  @RequestMapping("/popular")
-	    public String popularPage(ArrayList<String> list, 
-	    		HttpServletRequest request) throws Exception {
+	    public String popularPage(HashMap<String,String> map,
+	    		ArrayList<String> list, HttpServletRequest request) throws Exception {
 // return a list of top 10 searched object for each entity
-//TODO	usa le tabelle_searched per dare all utente le foto dei tag più cercati
 		  ArtistService aS = new ArtistService();
 		  VenueService vS = new VenueService();
 		  EventService eS = new EventService();
+//TODO 	differenzia artisti venue ed event 
+//		in modo da dare immagini diverse a seconda dei casi		  
+//		assegnandoli a tre differenti oggetti da passare al servlet
+		  HashMap<String,String> topA = aS.top(8);
+		  ArrayList<String> topV = vS.top(8);
+		  ArrayList<String> topE = eS.top(8);
 		  
-		  ArrayList<String> topA = aS.top(5);
-		  ArrayList<String> topV = vS.top(5);
-		  ArrayList<String> topE = eS.top(5);
+		  map = topA;
 		  
-		  topA.addAll(topV);
-		  topA.addAll(topE);
-		  list = topA;
+		  topV.addAll(topE);
+		  list = topV;
 
+		  request.setAttribute("map", map);
 		  request.setAttribute("list",list);		  
 		  
 		  return "popular";

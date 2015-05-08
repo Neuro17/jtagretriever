@@ -6,6 +6,8 @@ public class Artist {
 
 	private String name;
 	
+	private String urlImage;
+	
 	public Artist(){
 	}
 	
@@ -33,9 +35,18 @@ public class Artist {
 		this.id = id;
 	}
 
+	public String getUrlImage() {
+		return urlImage;
+	}
+
+	public void setUrlImage(String urlImage) {
+		this.urlImage = urlImage;
+	}
+	
 	@Override
 	public String toString() {
-		return "Bandsintown artist [name=" + name + ", id=" + id + "]";
+		return "Bandsintown artist [name=" + name + ", id=" + id + ", "
+				+ "urlImage=" + urlImage + "]";
 	}
 
 }

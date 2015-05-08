@@ -22,12 +22,13 @@ public class BandsInTownApp {
 //		
 
 //non trovando l artista ritorna un puntatore a null
-		artist = bandsintown.getArtist.setArtist("Shakira").asJson().search();
+		artist = bandsintown.getArtist.setArtist("Snoop Dogg").asJson().search();
 		System.out.println(artist);		
 		
 //		artist = bandsintown.getArtist.setArtist("paul kalkbrenner").asJson().search();
 //		System.out.println(artist);
 		
+/*
 		events = bandsintown.getEvents.setArtist("paul kalkbrenner").asJson().setDate("all").search();
 		for(Event e : events)
 			System.out.println(e);
@@ -79,7 +80,7 @@ public class BandsInTownApp {
 			System.out.println(v);
 		}
 		System.out.println(venues.size());
-
+*/
 	}
 
 }

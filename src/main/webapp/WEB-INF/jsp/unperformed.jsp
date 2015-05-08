@@ -38,6 +38,7 @@
 		
 		.form-wrapper #search:focus {
 		    outline: 0; 
+		    color: #000;
 		    border-color: #aaa;
 		    box-shadow: 0 1px 1px #bbb inset;  
 		}

@@ -40,6 +40,7 @@
 		
 		.form-wrapper #search:focus {
 		    outline: 0; 
+		    color : #000;
 		    border-color: #aaa;
 		    box-shadow: 0 1px 1px #bbb inset;  
 		}
@@ -109,7 +110,7 @@
             </button>
             <a class="navbar-brand" href="home">musiConcerts</a>
         </div>
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse" >
             <ul class="nav navbar-nav">
 				<li><a></a></li>
                 <li><a></a></li>
@@ -149,9 +150,9 @@
         </div>
         <%
 	        ArrayList<String> list = 
-			(ArrayList<String>)request.getAttribute("list"); 
-				if(list != null)
-					for(String name : list){
+				(ArrayList<String>)request.getAttribute("list"); 
+			if(list != null)
+				for(String name : list){
         %>
 	        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
 	            <a class="thumbnail" href="search?tag=<%= name %>">

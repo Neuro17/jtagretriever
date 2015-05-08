@@ -2,7 +2,10 @@ package dataBaseService;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
+import org.hibernate.mapping.Map;
 import org.springframework.context.annotation.PropertySource;
 
 import javabandsintown.search.Bandsintown;
@@ -104,10 +107,12 @@ System.out.println(preparedStatement);
 	    	configure();
 	        
 		    preparedStatement = connection.prepareStatement(
-		    		"INSERT INTO `concerts_db`.`artists_searched`(`artist_name`, `total`) "
-		    		+ "VALUES (?, ?)");
+		    		"INSERT INTO `concerts_db`.`artists_searched`"
+		    		+ "(`artist_name`,`url_image`,`total`) "
+		    		+ "VALUES (?, ?, ?)");
 		    preparedStatement.setString(1, entity.getName());
-		    preparedStatement.setInt(2, 1);
+		    preparedStatement.setString(2, entity.getUrlImage());
+		    preparedStatement.setInt(3, 1);
 System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();
 	    } catch (Exception e) {
@@ -124,7 +129,8 @@ System.out.println(preparedStatement);
 	    	configure();
 	        
 		    preparedStatement = connection.prepareStatement("INSERT "
-		    		+ "INTO artists(artist_id,artist_name) VALUES(?,?)");
+		    		+ "INTO artists(artist_id,artist_name) "
+		    		+ "VALUES(?,?)");
 		    preparedStatement.setString(1, entity.getId());
 		    preparedStatement.setString(2, entity.getName());
 System.out.println(preparedStatement);	      
@@ -252,8 +258,8 @@ System.out.println(preparedStatement);
 		}
 	}
 
-	public ArrayList<String> top(int i) throws Exception {
-		ArrayList<String> artistsNames = new ArrayList<String>();
+	public HashMap<String,String> top(int i) throws Exception {
+		HashMap<String, String> artistsMap = new HashMap<String, String>();
 
 		try {
 			  configure();
@@ -266,8 +272,9 @@ System.out.println(preparedStatement);
 		      resultSet = preparedStatement.executeQuery();   
 				      
 		      while (resultSet.next()) {
-		          String name = resultSet.getString("artist_name");
-		          artistsNames.add(name);
+		    	  String name = resultSet.getString("artist_name");
+		    	  String urlImage = resultSet.getString("url_image");
+		    	  artistsMap.put(name,urlImage);
 		      }		
 	    } catch (Exception e) {
 	      throw e;
@@ -275,6 +282,6 @@ System.out.println(preparedStatement);
 	      close();
 	    }
 	  	
-		return artistsNames;
+		return artistsMap;
 	}
 } 

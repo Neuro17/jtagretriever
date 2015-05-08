@@ -10,6 +10,7 @@ create table `concerts_db`.`artists`(
 
 create table `concerts_db`.`artists_searched`(
 	`artist_name` varchar(255) not null,
+    `url_image` varchar(255),
     `total` int default 0,
     primary key (`artist_name`)
 );

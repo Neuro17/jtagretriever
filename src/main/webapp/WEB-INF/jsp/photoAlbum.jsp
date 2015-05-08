@@ -39,7 +39,8 @@
 		}
 		
 		.form-wrapper #search:focus {
-		    outline: 0; 
+		    outline: 0;
+		    color: #000; 
 		    border-color: #aaa;
 		    box-shadow: 0 1px 1px #bbb inset;  
 		}
@@ -147,7 +148,8 @@
         </div>
 
         <%
-        	ArrayList<String> urlList = (ArrayList<String>)request.getAttribute("urlList"); 
+        	ArrayList<String> urlList = 
+        		(ArrayList<String>)request.getAttribute("urlList"); 
         	for(String url : urlList){	
 		 %>
         <div class="col-lg-3 col-md-4 col-xs-6 thumb">
