@@ -61,7 +61,8 @@ System.out.println(preparedStatement);
 	  try {
 		  configure();
 	      
-	      preparedStatement = connection.prepareStatement("select * from partecipations where artist_name = ? and event_id = ?");   
+	      preparedStatement = connection.prepareStatement("select * "
+	      		+ "from partecipations where artist_name = ? and event_id = ?");   
 	      preparedStatement.setString(1,id);
 	      preparedStatement.setInt(2,event_id);
 
@@ -83,14 +84,18 @@ System.out.println(preparedStatement);
 	  try {
 			  configure();
 		      
-		      preparedStatement = connection.prepareStatement("select * from artists where artist_name = ?");   
+		      preparedStatement = connection.prepareStatement("select * "
+		      		+ "from artists where artist_name = ?");   
       preparedStatement.setString(1,id);
       resultSet = preparedStatement.executeQuery();   
       
       if(resultSet.last()){
           String nameTmp = resultSet.getString("artist_name");
           String idTmp = resultSet.getString("artist_id");
+          String urlImage = resultSet.getString("url_image");
+          
           aTmp = new Artist(nameTmp,idTmp);
+          aTmp.setUrlImage(urlImage);
       }
       else 
     	  System.out.println("Artist with Name : " + id + " not found");
@@ -108,11 +113,10 @@ System.out.println(preparedStatement);
 	        
 		    preparedStatement = connection.prepareStatement(
 		    		"INSERT INTO `concerts_db`.`artists_searched`"
-		    		+ "(`artist_name`,`url_image`,`total`) "
-		    		+ "VALUES (?, ?, ?)");
+		    		+ "(`artist_name`,`total`) "
+		    		+ "VALUES (?, ?)");
 		    preparedStatement.setString(1, entity.getName());
-		    preparedStatement.setString(2, entity.getUrlImage());
-		    preparedStatement.setInt(3, 1);
+		    preparedStatement.setInt(2, 1);
 System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();
 	    } catch (Exception e) {
@@ -129,10 +133,11 @@ System.out.println(preparedStatement);
 	    	configure();
 	        
 		    preparedStatement = connection.prepareStatement("INSERT "
-		    		+ "INTO artists(artist_id,artist_name) "
-		    		+ "VALUES(?,?)");
+		    		+ "INTO artists(artist_id,artist_name,url_image) "
+		    		+ "VALUES(?,?,?)");
 		    preparedStatement.setString(1, entity.getId());
 		    preparedStatement.setString(2, entity.getName());
+		    preparedStatement.setString(3, entity.getUrlImage());
 System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();	      
 	    } catch (Exception e) {
@@ -150,10 +155,12 @@ System.out.println(preparedStatement);
 		 try {
 			  configure();
 		      
-		      String updateTableSQL = "UPDATE artists SET artist_id = ? WHERE artist_name = ?";
+		      String updateTableSQL = "UPDATE artists "
+		      		+ "SET artist_id = ? AND url_image = ? WHERE artist_name = ?";
 		      preparedStatement = connection.prepareStatement(updateTableSQL);
 		      preparedStatement.setString(1, entity.getId());
-		      preparedStatement.setString(2, entity.getName());
+		      preparedStatement.setString(2, entity.getUrlImage());
+		      preparedStatement.setString(3, entity.getName());
 		      preparedStatement .executeUpdate();
 		      
 	    } catch (Exception e) {
@@ -168,7 +175,8 @@ System.out.println(preparedStatement);
 	 try {
 		  configure();
 	      
-	      preparedStatement = connection.prepareStatement("delete from artists where artist_name = ?");
+	      preparedStatement = connection.prepareStatement("delete from artists "
+	      		+ "where artist_name = ?");
 	      preparedStatement.setString(1,id);
 	      preparedStatement.execute();
 	      
@@ -190,7 +198,9 @@ System.out.println(preparedStatement);
 	      while (resultSet.next()) {
 	          String name = resultSet.getString("artist_name");
 	          String id = resultSet.getString("artist_id");
+	          String urlImage = resultSet.getString("url_image");
 	          Artist a = new Artist(name,id);
+	          a.setUrlImage(urlImage);
 	          entities.add(a);
 	      }
 	
@@ -260,7 +270,8 @@ System.out.println(preparedStatement);
 
 	public HashMap<String,String> top(int i) throws Exception {
 		HashMap<String, String> artistsMap = new HashMap<String, String>();
-
+		ArrayList<String> artistsList = new ArrayList<String>();
+		
 		try {
 			  configure();
 
@@ -273,14 +284,20 @@ System.out.println(preparedStatement);
 				      
 		      while (resultSet.next()) {
 		    	  String name = resultSet.getString("artist_name");
-		    	  String urlImage = resultSet.getString("url_image");
-		    	  artistsMap.put(name,urlImage);
+		    	  artistsList.add(name);
 		      }		
 	    } catch (Exception e) {
 	      throw e;
 	    } finally {
 	      close();
 	    }
+		
+		ArtistService aS = new ArtistService();
+		for(String name : artistsList){
+			Artist aTmp = aS.findById(name);
+			if(aTmp != null)
+				artistsMap.put(aTmp.getName(), aTmp.getUrlImage());
+		}
 	  	
 		return artistsMap;
 	}

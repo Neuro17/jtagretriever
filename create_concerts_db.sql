@@ -5,12 +5,12 @@ create database `concerts_db`;
 create table `concerts_db`.`artists`(
 	`artist_id` varchar(255),
     `artist_name` varchar(255) not null,
+    `url_image` varchar(255),
     primary key (`artist_name`)
 );
 
 create table `concerts_db`.`artists_searched`(
 	`artist_name` varchar(255) not null,
-    `url_image` varchar(255),
     `total` int default 0,
     primary key (`artist_name`)
 );

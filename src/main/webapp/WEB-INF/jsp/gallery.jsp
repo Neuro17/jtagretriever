@@ -1,6 +1,10 @@
 <jsp:include page="common/header.jsp"/>
 
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.HashMap" %>
 
 <!-- tag for search box -->
 <meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
@@ -149,21 +153,23 @@
             <h1 class="page-header">Your last searches</h1>
         </div>
         <%
-	        ArrayList<String> list = 
-				(ArrayList<String>)request.getAttribute("list"); 
-			if(list != null)
-				for(String name : list){
+	    	HashMap<String,String> map = 
+	    		(HashMap<String,String>)request.getAttribute("map"); 
+	        Iterator it = map.entrySet().iterator();
+	        while (it.hasNext()) {
+	            Map.Entry pair = (Map.Entry)it.next();
         %>
-	        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-	            <a class="thumbnail" href="search?tag=<%= name %>">
-	                <h1><%= name%></h1>
-	            </a>
-	        </div>
+        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+            <a class="thumbnail" href="search?tag=<%= pair.getKey() %>">
+                            <img class="img-responsive"
+                            	src="<%=pair.getValue()%>" alt="">
+                <h1><%= pair.getKey()%></h1>
+            </a>
+        </div>
         <%
-            }
+		        it.remove(); // avoids a ConcurrentModificationException
+			}
         %>
-
-
     </div>
 
     <hr>

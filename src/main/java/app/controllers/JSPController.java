@@ -5,10 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javabandsintown.entity.Artist;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 import org.springframework.stereotype.Controller;
@@ -41,48 +44,56 @@ public class JSPController extends GenericController{
 	  }
 
 	  @RequestMapping("/home")
-	    public String homePage(ModelAndView modelAndView) {
+	    public String getHomePage(ModelAndView modelAndView) {
 
 		  return "home";
 	  }
 	  
 	  @RequestMapping("/gallery")
-	    public String galleryPage(HttpServletRequest request,
-		      HttpServletResponse response) {
+	    public String getGalleryPage(HttpServletRequest request,
+		      HttpServletResponse response) throws Exception {
 		  
 		  Cookie[] cookies = request.getCookies();
+		  HashMap<String,String> map = new HashMap<String,String>();
+		  ArrayList<String> artistsList = new ArrayList<String>();
 
-		  ArrayList<String> lastSearches = new ArrayList<String>();
-//	gestione cookies		  
+		  ArtistService aS = new ArtistService();
+		  
+//		gestione cookies		  
 		  if(cookies != null){
-			  for(Cookie cookie : cookies)
-			          lastSearches.add(cookie.getValue());
-//			tolgo il primo perchè è un valore casuale
-			  lastSearches.remove(0);
-//				fine gestione cookies		  
-			  request.setAttribute("list",lastSearches);		  
+			  for(Cookie cookie : cookies){
+			      String name = cookie.getValue();
+			      artistsList.add(name);
+			  }
+		  for(String name : artistsList){
+			  Artist aTmp = aS.findById(name);
+			  if(aTmp != null)
+				  map.put(name, aTmp.getUrlImage());
+		  }
+//		fine gestione cookies		  
+			  request.setAttribute("map",map);		  
 		  }
 		  return "gallery";
 	  }
 	  
 	  @RequestMapping("/popular")
-	    public String popularPage(HashMap<String,String> map,
+	    public String getPopularPage(HashMap<String,String> map,
 	    		ArrayList<String> list, HttpServletRequest request) throws Exception {
-// return a list of top 10 searched object for each entity
+//TODO impostare periodicamente l aggionamento dell urlImage per ogni artista nel db
+
 		  ArtistService aS = new ArtistService();
-		  VenueService vS = new VenueService();
-		  EventService eS = new EventService();
-//TODO 	differenzia artisti venue ed event 
-//		in modo da dare immagini diverse a seconda dei casi		  
-//		assegnandoli a tre differenti oggetti da passare al servlet
+//		  VenueService vS = new VenueService();
+//		  EventService eS = new EventService();
+//TODO 	decidere se in popular inserire solo artisti o anche le altre entità
+
 		  HashMap<String,String> topA = aS.top(8);
-		  ArrayList<String> topV = vS.top(8);
-		  ArrayList<String> topE = eS.top(8);
+//		  ArrayList<String> topV = vS.top(8);
+//		  ArrayList<String> topE = eS.top(8);
 		  
 		  map = topA;
 		  
-		  topV.addAll(topE);
-		  list = topV;
+//		  topV.addAll(topE);
+//		  list = topV;
 
 		  request.setAttribute("map", map);
 		  request.setAttribute("list",list);		  
@@ -91,16 +102,15 @@ public class JSPController extends GenericController{
 	  }
 	  
 	  @RequestMapping("/search")
-	  public String searchPage(@ModelAttribute("tag") String tag, 
+	  public String getSearchPage(@ModelAttribute("tag") String tag, 
 	      ArrayList<String> urlList, HttpServletRequest request,
 	      HttpServletResponse response) throws Exception {
 
 		  ArtistService aS = new ArtistService();
 		  VenueService vS = new VenueService();
 		  EventService eS = new EventService();
-		  
-//TODO 	la priorità è dare all utente le immagini
-//		prima ricerca su db e su bit e poi salvo valori di ricerca su tabelle_searched
+
+		  tag = WordUtils.capitalizeFully(tag);
 		  
 		  boolean validA = false,validV = false,validE = false;
 		  
@@ -112,11 +122,13 @@ public class JSPController extends GenericController{
 
 		  if(validA || validV || validE){
 //	gestione cookie
-		          Cookie cookie  = new Cookie(tag.replaceAll("\\s", ""), tag);
-		          response.addCookie(cookie);
+			  if(validA){
+				  Cookie cookie;
+			      cookie  = new Cookie(tag.replaceAll("\\s", ""), tag);
+			      response.addCookie(cookie);
+			  }
 //	fine gestione cookie		          
 
-			  	  /*	traduce "Pink Floyd" in "PinkFloyd"	*/		  
 				  tag = tag.replaceAll("\\s", "");
 			  
 				  PhotoRetriever pr = new PhotoRetriever();
@@ -136,7 +148,7 @@ public class JSPController extends GenericController{
 	  }
 
 	  @RequestMapping("/unperformed")
-	    public String unperformedPage(ModelAndView modelAndView) {
+	    public String getUnperformedPage(ModelAndView modelAndView) {
 
 		  return "unperformed";
 	  }
