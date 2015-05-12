@@ -90,7 +90,8 @@ public class PhotoRetriever {
     }
     
     public List<MediaFeedData> getMediaByTag(String tag) throws InstagramException{
-
+    	
+    	System.out.println(tag);
     	TagMediaFeed tmf = instagram.getRecentMediaTags(tag);
     	
 		return tmf.getData();		
@@ -111,7 +112,11 @@ public class PhotoRetriever {
     	List<MediaFeedData> mfdList = new ArrayList<MediaFeedData>();
 
     	for(String tag : tagList){
-    		mfdList.addAll(getMediaByTag(tag));
+    		List<MediaFeedData> tmp = getMediaByTag(tag);
+    		if(tmp != null) {
+    			mfdList.addAll(tmp);
+    		}
+    		
     	}
     	
     	return mfdList;

@@ -80,9 +80,11 @@ public class TagExtractorImp implements TagExtractor{
 		tag.add(event.getVenue().getCity().toLowerCase().replaceAll("\\s",""));
 		tag.add(event.getVenue().getCountry().toLowerCase().replaceAll("\\s",""));
 		tag.add(event.getVenue().getName().toLowerCase().replaceAll("\\s",""));
-		tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s",""));
-		tag.add(event.getTitle().toLowerCase().replaceAll("\\s",""));
-		tag.add(event.getDatetime().toString().toLowerCase().replaceAll("\\s",""));
+		if(event.getVenue().getRegion() != null) { 
+			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s",""));
+		}
+//		tag.add(event.getTitle().toLowerCase().replaceAll("\\s",""));
+//		tag.add(event.getDatetime().toString().toLowerCase().replaceAll("\\s",""));
 		
 		return tag;
 	}

@@ -13,7 +13,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 		"app.dao",
 		"app.repository",
 		"app.scheduler",
-		"app.twitter"})
+		"app.twitter",
+		"app.tools"})
 @EnableAutoConfiguration
 @EnableScheduling
 public class SpringBootApp {
