@@ -35,9 +35,9 @@ public class VenueEventsSearch extends BandsintownConnector {
 	 * @return VenueEventsSearch
 	 */
 	public VenueEventsSearch query(String query){
-		log.trace("Entering query");
+//		log.trace("Entering query");
 		uriBld.setParameter(Parameters.getQuery(), query);
-		log.trace("Exiting query");
+//		log.trace("Exiting query");
 		return this;
 	}
 	
@@ -74,7 +74,7 @@ public class VenueEventsSearch extends BandsintownConnector {
 	
 	public ArrayList<Venue> search() {
 		//TODO - torna anche le venue che hanno nel nome la parola cercata e non solo se sono in quella città
-		log.trace("Entering search");
+//		log.trace("Entering search");
 		JsonObject venues;
 		
 		BandsintownConfig.setApiVersion("1.0");
@@ -85,8 +85,8 @@ public class VenueEventsSearch extends BandsintownConnector {
 		
 		venues = executeRequest();
 		
-		log.debug(venues);
-		log.trace("Exiting search");
+//		log.debug(venues);
+//		log.trace("Exiting search");
 		
 		BandsintownConfig.setApiVersion("2.0");
 		
@@ -100,7 +100,7 @@ public class VenueEventsSearch extends BandsintownConnector {
 		
 		for(NameValuePair s : lastUriBld.getQueryParams()){
 			if(s.getName().equals(Parameters.getPage())){
-				log.debug("trovato");
+//				log.debug("trovato");
 				hasPageParam = true;
 				setPage(new Integer(s.getValue()) + 1);
 			}

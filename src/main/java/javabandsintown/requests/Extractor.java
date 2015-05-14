@@ -26,41 +26,49 @@ public class Extractor {
 	private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	public static ArrayList<Event> extractEvents(JsonElement item){
-		log.trace("Entering extractEvents");
+//		log.trace("Entering extractEvents");
 		ArrayList<Event> events = new ArrayList<Event>();
 		if(item != null){
 			JsonObject eventsAsJson = item.getAsJsonObject();
 			
-			log.debug(item);
-			log.debug(eventsAsJson);
+//			log.debug(item);
+//			log.debug(eventsAsJson);
 			
 			for(JsonElement e : eventsAsJson.get("resultsPage").getAsJsonArray()){
 				events.add(extractEvent(e));
 			}
-			log.trace("Exiting extractEvents");
+//			log.trace("Exiting extractEvents");
 			return events;
 		}
-		else 
+		else{ 
+			log.trace("No events found");
 			return null;
+		}
 	}
 	
 	public static ArrayList<Event> extractGMTReferencesEvents(JsonElement item){
-		log.trace("Entering extractEvents");
+//		log.trace("Entering extractEvents");
 		ArrayList<Event> events = new ArrayList<Event>();
-		JsonObject eventsAsJson = item.getAsJsonObject();
+		if(item != null){
+			JsonObject eventsAsJson = item.getAsJsonObject();
 		
-		log.debug(item);
-		log.debug(eventsAsJson);
+//		log.debug(item);
+//		log.debug(eventsAsJson);
 		
-		for(JsonElement e : eventsAsJson.get("resultsPage").getAsJsonArray()){
-			events.add(extractGMTReferencesEvent(e));
+			for(JsonElement e : eventsAsJson.get("resultsPage").getAsJsonArray()){
+				events.add(extractGMTReferencesEvent(e));
+			}
+	//		log.trace("Exiting extractEvents");
+			return events;
 		}
-		log.trace("Exiting extractEvents");
-		return events;
+		else{ 
+			log.trace("No events found");
+			return null;
+		}
 	}
 	
 	public static Event extractEvent(JsonElement item){
-		log.trace("Entering extractEvent");
+//		log.trace("Entering extractEvent");
 		JsonObject eventsAsJson = item.getAsJsonObject();
 		Event event = new Event();
 		
@@ -72,13 +80,13 @@ public class Extractor {
 		
 		if(!eventsAsJson.get("description").isJsonNull())
 			event.setDescription(eventsAsJson.get("description").getAsString());
-		
-		log.trace("Exiting extractEvent");
+		log.debug("Event found : " + event);
+//		log.trace("Exiting extractEvent");
 		return event;
 	}
 	
 	public static Event extractGMTReferencesEvent(JsonElement item){
-		log.trace("Entering extractGMTReferencesEvent");
+//		log.trace("Entering extractGMTReferencesEvent");
 		
 		JsonObject eventsAsJson = item.getAsJsonObject();
 		Event event = new Event();
@@ -98,17 +106,18 @@ public class Extractor {
 //sottraggo le ore da aggiungere al GMT		
 		event.setDatetime(new DateTime(tmpDateTime.minusHours(timeToAdd)));
 		
-		log.trace("/ntmp - " + tmpDateTime + "\nfnl- " + event.getDatetime());
+//		log.trace("/ntmp - " + tmpDateTime + "\nfnl- " + event.getDatetime());
 		
 		if(!eventsAsJson.get("description").isJsonNull())
 			event.setDescription(eventsAsJson.get("description").getAsString());
 		
-		log.trace("Exiting extractGMTReferencesEvent");
+		log.debug("Event found : " + event);		
+//		log.trace("Exiting extractGMTReferencesEvent");
 		return event;
 	}
 	
 	public static Venue extractVenue(JsonElement jsonElement) {
-		log.trace("Entering extractVenue");
+//		log.trace("Entering extractVenue");
 		JsonObject venueAsJson = jsonElement.getAsJsonObject();
 		Venue venue = new Venue();
 		
@@ -122,25 +131,27 @@ public class Extractor {
 		
 		if(!venueAsJson.get("region").isJsonNull())
 			venue.setRegion(venueAsJson.get("region").getAsString());
-		
-		log.trace("Exiting extractVenue");
+
+		log.debug("Venue found : " + venue);
+
+//		log.trace("Exiting extractVenue");
 		return venue;
 	}
 	
 	public static ArrayList<Artist> extractArtists(JsonElement jsonElement) {
-		log.trace("Entering extractArtists");
+//		log.trace("Entering extractArtists");
 		JsonArray artistsAsJson = jsonElement.getAsJsonArray();
 		ArrayList<Artist> artists = new ArrayList<Artist>();
 		
 		for(JsonElement a : artistsAsJson)
 			artists.add(extractArtist(a));
-		
-		log.trace("Exiting extractArtists");
+
+//		log.trace("Exiting extractArtists");
 		return artists;
 	}
 
 	public static Artist extractArtist(JsonElement item){
-		log.trace("Entering extractArtist");
+//		log.trace("Entering extractArtist");
 		Artist artist;
 		if(item != null){
 			JsonObject artistTmp = item.getAsJsonObject();
@@ -153,15 +164,18 @@ public class Extractor {
 			if(!artistTmp.get("thumb_url").isJsonNull())
 				artist.setUrlImage(artistTmp.get("thumb_url").getAsString());
 
-			log.trace("Exiting extractArtist");
+			log.debug("Artist found : " + artist);
+//			log.trace("Exiting extractArtist");
 			return artist;
 		}
-		else
+		else{
+			log.debug("No artist found");
 			return null;
+		}
 	}
 
 	public static ArrayList<Venue> extractVenues(JsonElement item) {
-		log.trace("Entering extractEvents");
+//		log.trace("Entering extractEvents");
 		ArrayList<Venue> venues = new ArrayList<Venue>();
 		JsonObject venuesAsJson = item.getAsJsonObject();
 		
@@ -171,7 +185,8 @@ public class Extractor {
 		for(JsonElement e : venuesAsJson.get("resultsPage").getAsJsonArray()){
 			venues.add(extractVenue(e));
 		}
-		log.trace("Exiting extractEvents");
+
+//		log.trace("Exiting extractEvents");
 		return venues;
 	}
 	

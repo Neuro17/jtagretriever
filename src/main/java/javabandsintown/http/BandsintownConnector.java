@@ -19,64 +19,65 @@ public abstract class BandsintownConnector extends HttpConnectorImpl {
 	protected int pages;
 	
 	protected void buildURI(){
-		log.trace("Building URI");
+//		log.trace("Building URI");
 		
 		uriBld.setScheme(BandsintownConfig.getScheme()).setHost(BandsintownConfig.getHost());
 		
 		try {
-			log.debug("Built base url: " + uriBld.build());
+			uriBld.build();
+//			log.debug("Built base url: " + uriBld.build());
 		} catch (URISyntaxException e) {
 			log.error(e.getMessage());
 		}
 		
-		log.trace("Succesfully built URI"); 
+//		log.trace("Succesfully built URI"); 
 	}
 	
 	protected BandsintownConnector setArtistID(String id) {
-		log.trace("Entering setArtistID");
+//		log.trace("Entering setArtistID");
 		uriBld.setParameter(Parameters.getArtistId(), id);
-		log.trace("Exiting setArtistID");
+//		log.trace("Exiting setArtistID");
 		return this;
 	}
 	
 	protected BandsintownConnector asJson(){
-		log.trace("Entering asJson");
+//		log.trace("Entering asJson");
 		uriBld.setParameter(Parameters.getFormat(), "json");
-		log.trace("Exiting asJson");
+//		log.trace("Exiting asJson");
 		return this;
 	}
 	
 	protected BandsintownConnector asXML(){
-		log.trace("Entering asXML");
+//		log.trace("Entering asXML");
 		uriBld.setParameter(Parameters.getFormat(), "XML");
-		log.trace("Exiting asXML");
+//		log.trace("Exiting asXML");
 		return this;
 	}
 	
 	private BandsintownConnector setAppId() {
-		log.trace("Entering setAppId");
+//		log.trace("Entering setAppId");
 		uriBld.setParameter(Parameters.getAppId(), BandsintownConfig.getApiKey());
-		log.trace("Exiting setAppId");
+//		log.trace("Exiting setAppId");
 		return this;
 	}
 	
 	private BandsintownConnector setApiVersion(){
-		log.trace("Entering setApiVersion");
+//		log.trace("Entering setApiVersion");
 		uriBld.setParameter(Parameters.getApiVersion(), BandsintownConfig.getApiVersion());
-		log.trace("Exiting setApiVersion");
+//		log.trace("Exiting setApiVersion");
 		return this;
 	}
 	
 	protected void build(){
-		log.trace("Entering build");
+//		log.trace("Entering build");
 		setAppId();
 		setApiVersion();
 		try {
 			uri = uriBld.build();
-			log.debug(uri);
+//			log.debug(uri);
 		} catch (URISyntaxException e) {
 			log.error(e.getMessage());
 		}
-		log.trace("Exiting build");
+//		log.trace("Exiting build");
 	}
 }

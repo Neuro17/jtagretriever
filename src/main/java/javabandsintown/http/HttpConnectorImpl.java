@@ -38,11 +38,11 @@ public abstract class HttpConnectorImpl {
 	 * @throws IOException 
 	 */
 	protected JsonObject executeRequest(){
-		log.trace("Entering executeRequest");
+//		log.trace("Entering executeRequest");
 		InputStream response = null;
 		
 		try {
-			log.debug(uri);
+//			log.debug(uri);
 			url = uri.toURL();
 		} catch (MalformedURLException e1) {
 			
@@ -51,10 +51,10 @@ public abstract class HttpConnectorImpl {
 		try {
 			response = url.openStream();
 			
-			log.debug(response.toString());
-			log.debug(uri.toString());
+//			log.debug(response.toString());
+//			log.debug(uri.toString());
 			jsonResponse = parseResponseAsJson(response);
-			log.debug(jsonResponse);
+//			log.debug(jsonResponse);
 			
 //			log.debug(gson.toJson(jsonResponse));
 			
@@ -69,7 +69,7 @@ public abstract class HttpConnectorImpl {
 			jsonResponse =  null;
 		}
 		uriBld.clearParameters();
-		log.trace("Exiting executeRequest");
+//		log.trace("Exiting executeRequest");
 		return jsonResponse;
 	}
 	
@@ -82,7 +82,7 @@ public abstract class HttpConnectorImpl {
 	 * @throws IOException
 	 */
 	protected JsonObject parseResponseAsJson(InputStream response){
-		log.trace("Entering parseResponseAsJson");
+//		log.trace("Entering parseResponseAsJson");
 		JsonObject jsonResponse = new JsonObject();
 		
 		BufferedReader rd = new BufferedReader(new InputStreamReader(response));
@@ -107,7 +107,7 @@ public abstract class HttpConnectorImpl {
 			jsonResponse.add("resultsPage", jsonParser.parse(result.toString()).getAsJsonArray());
 		} 
 		
-		log.trace("Exiting parseResponseAsJson");
+//		log.trace("Exiting parseResponseAsJson");
 		return jsonResponse;
 	}
 	
