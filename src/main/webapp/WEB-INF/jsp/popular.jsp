@@ -1,4 +1,5 @@
 <jsp:include page="common/header.jsp"/>
+<jsp:include page="common/stylesheet.jsp"/>
 
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.HashMap" %>

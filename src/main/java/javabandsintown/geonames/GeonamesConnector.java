@@ -32,23 +32,24 @@ public abstract class GeonamesConnector extends HttpConnectorImpl{
 		uriBld.setPath(GeonamesConfig.getScheme() + GeonamesConfig.getHost() + GeonamesConfig.getTimeZoneJson());
 
 		try {
-			log.debug("Built base url: " + uriBld.build());
+			uriBld.build();
+//			log.debug("Built base url: " + uriBld.build());
 		} catch (URISyntaxException e) {
 			log.error(e.getMessage());
 		}
 		
-		log.trace("Succesfully built URI"); 
+//		log.trace("Succesfully built URI"); 
 	}
 	
 	protected void build(){
-		log.trace("Entering build");
+//		log.trace("Entering build");
 		try {
 			uri = uriBld.build();
-			log.debug(uri);
+//			log.debug(uri);
 		} catch (URISyntaxException e) {
 			log.error(e.getMessage());
 		}
-		log.trace("Exiting build");
+//		log.trace("Exiting build");
 	}
 
 }

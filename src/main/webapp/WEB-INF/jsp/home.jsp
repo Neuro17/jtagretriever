@@ -1,10 +1,12 @@
 <jsp:include page="common/header.jsp"/>
+<jsp:include page="common/stylesheet.jsp"/>
 
 <html>
 <head>
     <title>musiConcerts</title>
-
 </head>
+<!-- tag for search box -->
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
 
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
