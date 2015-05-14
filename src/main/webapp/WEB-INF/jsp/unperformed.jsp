@@ -1,5 +1,4 @@
 <jsp:include page="common/header.jsp"/>
-<jsp:include page="common/stylesheet.jsp"/>
 
 <!-- tag for search box -->
 <meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
