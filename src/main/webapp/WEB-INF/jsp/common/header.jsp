@@ -19,6 +19,8 @@
     <link href="http://getbootstrap.com/examples/theme/theme.css" rel="stylesheet">
 
     <link href="http://startbootstrap.com/templates/thumbnail-gallery/css/thumbnail-gallery.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./css/main.css">
 
     <script src="js/ie-emulation-modes-warning.js"></script>
     <style type="text/css"></style>
