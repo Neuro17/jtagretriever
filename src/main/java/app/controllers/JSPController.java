@@ -95,9 +95,8 @@ public class JSPController extends GenericController{
 
 //		  VenueService vS = new VenueService();
 //		  EventService eS = new EventService();
-//TODO 	decidere se in popular inserire solo artisti o anche le altre entità
 
-		  HashMap<String,String> topA = aS.top(8);
+		  HashMap<String,String> topA = aS.top(12);
 //		  ArrayList<String> topV = vS.top(8);
 //		  ArrayList<String> topE = eS.top(8);
 		  
@@ -115,15 +114,8 @@ public class JSPController extends GenericController{
 	  @RequestMapping("/search")
 	  public String getSearchPage(@ModelAttribute("tag") String tag, 
 	      ArrayList<String> urlList, HttpServletRequest request,
-	      HttpServletResponse response) throws Exception {
-		//TODO copia le modifiche di javabandsintown su github
-  
-		//TODO	dopo ricerca di un artista cerca gli eventi dell artista e li propone 
-//				come menu tendina
-				
-		//TODO	20 foto
-		  
-//		  TODO - aggiungere a photoretriever funzione con location data e tag
+	      HttpServletResponse response) throws Exception {  
+
 		  tag = WordUtils.capitalizeFully(tag);
 		  
 		  boolean validA = false,validV = false,validE = false;
@@ -135,30 +127,42 @@ public class JSPController extends GenericController{
 			  validE = eS.checkName(tag);
 
 		  if(validA || validV || validE){
-//	gestione cookie
+//	gestione cookie solo relativamente ad artisti
 			  if(validA){
 				  Cookie cookie;
 			      cookie  = new Cookie(tag.replaceAll("\\s", ""), tag);
 			      response.addCookie(cookie);
 			  }
-//	fine gestione cookie		          
+//	fine gestione cookie		       
 
-				  tag = tag.replaceAll("\\s", "");
+//TODO continue developing
 			  
-				  PhotoRetriever pr = new PhotoRetriever();
-		        
-				  List<MediaFeedData> mediaList = pr.getMediaByTag(tag);
-				  
-		          for (MediaFeedData mediaFeedData : mediaList) {
-		        	  String url = mediaFeedData.getImages()
-		        			  .getLowResolution().getImageUrl();
-		        	  urlList.add(url);
-		          }          
-		          request.setAttribute("urlList",urlList);
-				  return "photoAlbum";
-			  }
+//				redirecting per home con lista concerti artista
+//			  if(validA)
+//				  return "artist-home";
+			  
+			  tag = tag.replaceAll("\\s", "");
+			  
+			  PhotoRetriever pr = new PhotoRetriever();
+	        
+			  List<MediaFeedData> mediaList = pr.getMediaByTag(tag,100);
+			  
+	          for (MediaFeedData mediaFeedData : mediaList) {
+	        	  String url = mediaFeedData.getImages()
+	        			  .getLowResolution().getImageUrl();
+	        	  urlList.add(url);
+	          }          
+	          request.setAttribute("urlList",urlList);
+			  return "photoAlbum";
+		  }
 		  else
 			  return "unperformed";
+	  }
+	  
+	  @RequestMapping("/artist-home")
+	    public String getArtistHomePage(ModelAndView modelAndView) {
+
+		  return "photoAlbum";
 	  }
 	  
 	  /**
@@ -186,7 +190,7 @@ public class JSPController extends GenericController{
 		  tag = tagExtractor.extractTagFromBandsintown(events.get(0));
 		  
 		  PhotoRetriever pr = new PhotoRetriever();
-	      System.out.println(tag);
+System.out.println(tag);
 		  List<MediaFeedData> mediaList = pr.getMediaByTagList(tag);
 		  
           for (MediaFeedData mediaFeedData : mediaList) {
@@ -214,7 +218,7 @@ public class JSPController extends GenericController{
 	  public String getConcertTest(@ModelAttribute("tag") String eventName, 
 	      ArrayList<String> urlList, HttpServletRequest request,
 	      HttpServletResponse response) throws Exception {
-		  ArrayList<String> tag = new ArrayList<String>();
+		  ArrayList<String> tags = new ArrayList<String>();
 		  
 		  if(twitterRepo.findByEventName(eventName) != null){
 			  
