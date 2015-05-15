@@ -80,7 +80,7 @@ public class Extractor {
 		
 		if(!eventsAsJson.get("description").isJsonNull())
 			event.setDescription(eventsAsJson.get("description").getAsString());
-		log.debug("Event found : " + event);
+//		log.debug("Event found : " + event);
 //		log.trace("Exiting extractEvent");
 		return event;
 	}
@@ -111,7 +111,7 @@ public class Extractor {
 		if(!eventsAsJson.get("description").isJsonNull())
 			event.setDescription(eventsAsJson.get("description").getAsString());
 		
-		log.debug("Event found : " + event);		
+//		log.debug("Event found : " + event);		
 //		log.trace("Exiting extractGMTReferencesEvent");
 		return event;
 	}
@@ -132,7 +132,7 @@ public class Extractor {
 		if(!venueAsJson.get("region").isJsonNull())
 			venue.setRegion(venueAsJson.get("region").getAsString());
 
-		log.debug("Venue found : " + venue);
+//		log.debug("Venue found : " + venue);
 
 //		log.trace("Exiting extractVenue");
 		return venue;
@@ -155,7 +155,7 @@ public class Extractor {
 		Artist artist;
 		if(item != null){
 			JsonObject artistTmp = item.getAsJsonObject();
-			log.debug(artistTmp);
+//			log.debug(artistTmp);
 			if(artistTmp.get("mbid").isJsonNull())
 				artist = new Artist(artistTmp.get("name").getAsString());
 			else
@@ -164,7 +164,7 @@ public class Extractor {
 			if(!artistTmp.get("thumb_url").isJsonNull())
 				artist.setUrlImage(artistTmp.get("thumb_url").getAsString());
 
-			log.debug("Artist found : " + artist);
+//			log.debug("Artist found : " + artist);
 //			log.trace("Exiting extractArtist");
 			return artist;
 		}

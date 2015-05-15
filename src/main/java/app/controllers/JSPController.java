@@ -6,6 +6,7 @@ import java.util.List;
 
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
+import javabandsintown.http.BandsintownConnector;
 import javabandsintown.search.Bandsintown;
 
 import javax.servlet.http.Cookie;
@@ -13,7 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jinstagram.entity.users.feed.MediaFeedData;
+import org.jinstagram.exceptions.InstagramException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,7 +34,9 @@ import dataBaseService.VenueService;
 
 @Controller
 public class JSPController extends GenericController{
-	
+
+	private static final Logger log = LogManager.getLogger(JSPController.class);
+
 	@Autowired
 	TweetRepository twitterRepo;
 	
@@ -125,7 +131,6 @@ public class JSPController extends GenericController{
 			  validV = vS.checkName(tag) || vS.manageTag(tag);
 		  if(!validV)
 			  validE = eS.checkName(tag);
-
 		  if(validA || validV || validE){
 //	gestione cookie solo relativamente ad artisti
 			  if(validA){
@@ -134,13 +139,21 @@ public class JSPController extends GenericController{
 			      response.addCookie(cookie);
 			  }
 //	fine gestione cookie		       
+			  
+			  if(validA){
+				  String artistName = tag;
+log.trace("processing artist events");
+				  ArrayList<Event> events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
+log.trace("events found " + events.size());
+				for(Event e : events)
+					eS.persist(e);
 
-//TODO continue developing
+				  request.setAttribute("eventList", events);
+
+				  return "artist-events";  	
+			  }
 			  
-//				redirecting per home con lista concerti artista
-//			  if(validA)
-//				  return "artist-home";
-			  
+log.trace("searching for Venue or Event");			  
 			  tag = tag.replaceAll("\\s", "");
 			  
 			  PhotoRetriever pr = new PhotoRetriever();
@@ -158,51 +171,44 @@ public class JSPController extends GenericController{
 		  else
 			  return "unperformed";
 	  }
-	  
-	  @RequestMapping("/artist-home")
-	    public String getArtistHomePage(ModelAndView modelAndView) {
 
-		  return "photoAlbum";
-	  }
-	  
-	  /**
-	   * Display concerts list given an artistName from home page
-	   * 
-	 * @param artistName
-	 * @param urlList
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/search-test")
+	  @RequestMapping("/artist-home")
 	  public String getSearchPageTest(@ModelAttribute("tag") String artistName, 
-	      ArrayList<String> urlList, HttpServletRequest request,
-	      HttpServletResponse response) throws Exception {
-		  ArrayList<Event> events = new ArrayList<Event>();
-		  ArrayList<String> tag = new ArrayList<String>();
+			  HttpServletRequest request,HttpServletResponse response,
+			  ArrayList<Event> events) throws Exception {
+log.trace("requested artist-home");
+//		  ArrayList<Event> events = new ArrayList<Event>();
 		  
-		  if (aS.checkName(artistName) || aS.manageTag(artistName)) {
-		  	events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
-		  	
-		  }
-		  
-		  tag = tagExtractor.extractTagFromBandsintown(events.get(0));
-		  
-		  PhotoRetriever pr = new PhotoRetriever();
-System.out.println(tag);
-		  List<MediaFeedData> mediaList = pr.getMediaByTagList(tag);
-		  
-          for (MediaFeedData mediaFeedData : mediaList) {
-        	  String url = mediaFeedData.getImages()
-        			  .getLowResolution().getImageUrl();
-        	  urlList.add(url);
-          }          
-          request.setAttribute("urlList",urlList);
-		  return "photoAlbum";
-		  
+		  events = bandsintown.getEvents.setArtist(artistName).setDate("upcoming").search();
+log.trace("found " + events.size() + " for artist " + artistName);
+		  request.setAttribute("eventList", events);
+
+		  return "artist-event-home";
 	  }
-	  
+	
+		@RequestMapping("/artist-event-home")
+		public String getArtistEventHome(@ModelAttribute("eventId") int eventId,
+				HttpServletRequest request, HttpServletResponse response,
+			  ArrayList<String> urlList) throws Exception{
+log.trace("eventId requested " + eventId);
+			Event event = eS.findById(eventId);
+log.trace("event found " + event);
+			ArrayList<String> tags = new ArrayList<String>();
+
+			tags = tagExtractor.extractTagFromBandsintown(event);
+		  
+			PhotoRetriever pr = new PhotoRetriever();
+
+			List<MediaFeedData> mediaList = pr.getMediaByTagList(tags);
+
+			for (MediaFeedData mediaFeedData : mediaList) {
+				String url = mediaFeedData.getImages()
+						.getLowResolution().getImageUrl();
+				urlList.add(url);
+			}          
+			request.setAttribute("urlList",urlList);
+			return "photoAlbum";  
+		}
 	
 	  /**
 	   * Shows a list of photos given an eventName from search-test page
