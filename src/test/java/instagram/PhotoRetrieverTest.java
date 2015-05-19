@@ -78,11 +78,11 @@ public class PhotoRetrieverTest {
 		
 //		PhotoRetriever pr = new PhotoRetriever();
 //
-		double lat = 45.464161;
-		double lng = 9.190336;
-		DateTime start = (new DateTime()).minusHours(6);
-		DateTime end = (new DateTime());
-		Long radius = 4000L;
+//		double lat = 45.464161;
+//		double lng = 9.190336;
+//		DateTime start = (new DateTime()).minusHours(6);
+//		DateTime end = (new DateTime());
+//		Long radius = 4000L;
 //		
 //		String tag1 = "sun";
 //		String tag2 = "newyork";
@@ -124,6 +124,11 @@ public class PhotoRetrieverTest {
 //        }
 		
 		PhotoRetriever pr = new PhotoRetriever();
+		double lat = 45.464161;
+		double lng = 9.190336;
+		DateTime start = (new DateTime()).minusDays(10);
+		DateTime end = (new DateTime()).minusDays(5);
+		Long radius = 4000L;
 		
 //		List<MediaFeedData> mfd = pr.getMediaByTag("newyork", 44);	
 //		log.trace(mfd.size());
@@ -138,12 +143,19 @@ public class PhotoRetrieverTest {
 //		log.trace(pr.getMediaByTagList(tagList,5).size());
 
 		String tag = "milano";
-		List<MediaFeedData> mfd = 
-				pr.getMedia(tag, lat, lng, start, end, radius, 53);
-		for(MediaFeedData media : mfd){
-			log.trace(media.getLink());
+//		List<MediaFeedData> mfd = 
+//				pr.getMedia(tag, lat, lng, start, end, radius, 53);
+//		for(MediaFeedData media : mfd){
+//			log.trace(media.getLink());
+//			log.trace(new DateTime(Long.parseLong(media.getCreatedTime())* 1000));
+//		}
+//		log.trace(mfd.size());
+
+		List<MediaFeedData> mediaList = pr.getMedia2(tag, lat, lng,start, end,radius, 55);
+		for(MediaFeedData media : mediaList){
+//			log.trace(media.getLink());
 //			log.trace(new DateTime(Long.parseLong(media.getCreatedTime())* 1000));
 		}
-		log.trace(mfd.size());
+
 	}
 }

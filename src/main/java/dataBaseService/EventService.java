@@ -5,15 +5,20 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import app.controllers.JSPController;
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
 import javabandsintown.entity.Venue;
 
 public class EventService extends DatabaseService implements EventDAOInterface{
 
+	private static final Logger log = LogManager.getLogger(EventService.class);
+	
 	public boolean exists(Integer id) throws Exception{
 		  try {
 			  this.configure();
@@ -195,6 +200,10 @@ public Event findById(Integer id) throws Exception{
 		    preparedStatement.setInt(1, entity.getId());
 		    preparedStatement.setString(2, entity.getTitle());
 		    preparedStatement.setTimestamp(3, new Timestamp(entity.getDatetime().getMillis()));
+//log.trace("description for event " + entity.getDescription());
+			if(entity.getDescription() != null && entity.getDescription().length() > 255){
+				entity.setDescription(entity.getDescription().substring(0, 255));
+			}
 		    preparedStatement.setString(4, entity.getDescription());
 		    preparedStatement.setDouble(5, entity.getVenue().getLatitude());
 		    preparedStatement.setDouble(6, entity.getVenue().getLongitude());
@@ -233,7 +242,6 @@ public Event findById(Integer id) throws Exception{
   }
 
   private void persistSearch(String title) throws Exception {
-System.out.println(">>> entering persistSearch");
 	  try {
 	    	configure();
 	        
@@ -250,8 +258,6 @@ System.out.println(preparedStatement);
 	    } finally {
 	      close();
 	    }
-System.out.println(">>> exiting persistSearch");
-
 }
 
 public void update(Event entity) throws Exception{
@@ -260,7 +266,7 @@ public void update(Event entity) throws Exception{
 	 	 
 	 if(exists(entity.getId()) && vTmp != null){
 		 
-		 System.out.println("updating events table");
+//		 System.out.println("updating events table");
 		 try {
 			this.configure();
 			  		  
@@ -284,10 +290,10 @@ public void update(Event entity) throws Exception{
 	      close();
 	    }
 
-		 System.out.println("updated events table");
+//		 System.out.println("updated events table");
 
 
-		 System.out.println("deleting from partecipations table");
+//		 System.out.println("deleting from partecipations table");
 	 try {
 		this.configure();
 
@@ -302,9 +308,9 @@ public void update(Event entity) throws Exception{
 	} finally {
 	  close();
 	}
-	 System.out.println("deleted from partecipations table");
+//	 System.out.println("deleted from partecipations table");
 	 
-	 System.out.println("adding to partecipations table");
+//	 System.out.println("adding to partecipations table");
     ArrayList<Artist> eArtist = entity.getArtist();
     for(Artist a : eArtist)
     	try {
@@ -323,7 +329,7 @@ public void update(Event entity) throws Exception{
     } finally {
       close();
     }
-	 System.out.println("added to partecipations table");
+//	 System.out.println("added to partecipations table");
  }
 
 } 

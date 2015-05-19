@@ -18,6 +18,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -131,6 +133,7 @@ public class JSPController extends GenericController{
 			  validV = vS.checkName(tag) || vS.manageTag(tag);
 		  if(!validV)
 			  validE = eS.checkName(tag);
+
 		  if(validA || validV || validE){
 //	gestione cookie solo relativamente ad artisti
 			  if(validA){
@@ -142,15 +145,33 @@ public class JSPController extends GenericController{
 			  
 			  if(validA){
 				  String artistName = tag;
-log.trace("processing artist events");
-				  ArrayList<Event> events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
-log.trace("events found " + events.size());
-				for(Event e : events)
+
+				  ArrayList<Event> events = bandsintown.getEvents
+						  .setArtist(artistName).setDate("all").search();
+
+				if(events.size() == 0)
+					return "empty-events";
+				
+				DateTime now = new DateTime();
+				List<Event> eventsToArtistEventsPage = new ArrayList<Event>();
+
+				for(Event e : events){
+					if(e.getDatetime().isAfter(now.minusMonths(2)) &&
+							e.getDatetime().isBefore(now.plusDays(1))){
+						eventsToArtistEventsPage.add(e);
+					}
+				}
+				
+				for(Event e : eventsToArtistEventsPage)
 					eS.persist(e);
-
-				  request.setAttribute("eventList", events);
-
-				  return "artist-events";  	
+				
+				request.setAttribute("eventList", eventsToArtistEventsPage);
+				
+//	returns a page with a list of events each linked with ?eventId=XXXXXX
+//	after clicking on one of these, you will be redirect to artist-event-home
+//	that manage to find the tag and then returns to photoAlbum
+				
+				return "artist-events";  
 			  }
 			  
 log.trace("searching for Venue or Event");			  
@@ -176,11 +197,11 @@ log.trace("searching for Venue or Event");
 	  public String getSearchPageTest(@ModelAttribute("tag") String artistName, 
 			  HttpServletRequest request,HttpServletResponse response,
 			  ArrayList<Event> events) throws Exception {
-log.trace("requested artist-home");
-//		  ArrayList<Event> events = new ArrayList<Event>();
 		  
-		  events = bandsintown.getEvents.setArtist(artistName).setDate("upcoming").search();
-log.trace("found " + events.size() + " for artist " + artistName);
+//		  ArrayList<Event> events = new ArrayList<Event>();
+
+		  events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
+
 		  request.setAttribute("eventList", events);
 
 		  return "artist-event-home";
@@ -190,18 +211,26 @@ log.trace("found " + events.size() + " for artist " + artistName);
 		public String getArtistEventHome(@ModelAttribute("eventId") int eventId,
 				HttpServletRequest request, HttpServletResponse response,
 			  ArrayList<String> urlList) throws Exception{
-log.trace("eventId requested " + eventId);
+
 			Event event = eS.findById(eventId);
-log.trace("event found " + event);
+
 			ArrayList<String> tags = new ArrayList<String>();
 
 			tags = tagExtractor.extractTagFromBandsintown(event);
 		  
 			PhotoRetriever pr = new PhotoRetriever();
-
-			List<MediaFeedData> mediaList = pr.getMediaByTagList(tags);
+			
+//			List<MediaFeedData> mediaList = pr.getMediaByTagList(tags);
+			
+			String artistName = event.getArtist().get(0).getName().replaceAll("\\s", "");
+			
+			List<MediaFeedData> mediaList = pr.getMedia(artistName, 
+					event.getVenue().getLatitude(), event.getVenue().getLongitude(),
+					event.getDatetime().minusHours(24), event.getDatetime().plusHours(24),
+					5000L, 100);
 
 			for (MediaFeedData mediaFeedData : mediaList) {
+//log.debug((new DateTime(Long.parseLong(mediaFeedData.getCreatedTime())*1000)).toString());
 				String url = mediaFeedData.getImages()
 						.getLowResolution().getImageUrl();
 				urlList.add(url);
@@ -233,10 +262,16 @@ log.trace("event found " + event);
 		  return null;
 	  }
 
-	  @RequestMapping("/unperformed")
-	    public String getUnperformedPage(ModelAndView modelAndView) {
+	@RequestMapping("/emptyEvents")
+	public String getEmptyEventsPage(ModelAndView modelAndView) {
 
-		  return "unperformed";
-	  }
+		return "empty-events";
+	}
+	
+	@RequestMapping("/unperformed")
+	public String getUnperformedPage(ModelAndView modelAndView) {
+
+		return "unperformed";
+	}
 
 }

@@ -1,7 +1,7 @@
 <jsp:include page="common/header.jsp"/>
 
 <%@ page import="javabandsintown.entity.Event" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <html>
 <head>
     <title>musiConcerts</title>
@@ -49,15 +49,20 @@
         
         
 		<%
-        	ArrayList<Event> eventList = 
-        		(ArrayList<Event>)request.getAttribute("eventList");
+        	List<Event> eventList = 
+        		(List<Event>)request.getAttribute("eventList");
 //			System.out.println("artist-events page with " + eventList.size() + " events");
 			int position = 0;
         	for(Event event : eventList){	
 		 %>
 	        <div class="alert alert-info" role="alert">
 	        	<a class="thumbnail" href="artist-event-home?eventId=<%= event.getId()%>">
-                	<h1><%= event.getTitle()%></h1>
+                	<h1><%= event.getTitle()%><br>
+                		day : <%= event.getDatetime().getDayOfMonth()%><br>
+                		month : <%= event.getDatetime().getMonthOfYear()%><br>
+                		year : <%= event.getDatetime().getYear()%><br>
+                			
+                	</h1>
             	</a>
             </div>
 		<%
