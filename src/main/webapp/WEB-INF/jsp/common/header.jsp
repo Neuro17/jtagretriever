@@ -18,7 +18,7 @@
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/theme/theme.css" rel="stylesheet">
 
-    <link href="http://startbootstrap.com/templates/thumbnail-gallery/css/thumbnail-gallery.css" rel="stylesheet">
+<!--     <link href="http://startbootstrap.com/templates/thumbnail-gallery/css/thumbnail-gallery.css" rel="stylesheet"> -->
     
     <link rel="stylesheet" href="./css/main.css">
 

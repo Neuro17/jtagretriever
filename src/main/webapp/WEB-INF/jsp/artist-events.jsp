@@ -37,7 +37,7 @@
 
 <body>
 	
-    <div class="col-lg-8 col-lg-offset-2" id="search-bar">
+    <div class="col-lg-10 col-lg-offset-1">
 <!--         <form action="search" method="post" commnadName="tag"> -->
 <!--         	<div class="input-group input-group-lg"  id="search-input"> -->
 <!--             <input type="text" name="tag" class="form-control" placeholder="Search your artist .... enjoy the magic" required />  -->
@@ -47,29 +47,34 @@
 <!--         </div> -->
 <!--         </form> -->
         
-        
-		<%
-        	List<Event> eventList = 
-        		(List<Event>)request.getAttribute("eventList");
-//			System.out.println("artist-events page with " + eventList.size() + " events");
-			int position = 0;
-        	for(Event event : eventList){	
-		 %>
-	        <div class="alert alert-info" role="alert">
-	        	<a class="thumbnail" href="artist-event-home?eventId=<%= event.getId()%>">
-                	<h1><%= event.getTitle()%><br>
-                		day : <%= event.getDatetime().getDayOfMonth()%><br>
-                		month : <%= event.getDatetime().getMonthOfYear()%><br>
-                		year : <%= event.getDatetime().getYear()%><br>
-                			
-                	</h1>
-            	</a>
-            </div>
-		<%
-				position++;
-            }
-        %>
-        
+        <table class="table">
+        	<thead>
+		      <tr>
+		        <th>Event</th>
+		        <th>Date</th>
+		      </tr>
+		    </thead>
+        	<tbody>
+                
+			<%
+	        	List<Event> eventList = 
+	        		(List<Event>)request.getAttribute("eventList");
+	//			System.out.println("artist-events page with " + eventList.size() + " events");
+				int position = 0;
+	        	for(Event event : eventList){	
+			 %>
+		       				    
+				<tr>
+				  <td><a href="artist-event-home?eventId=<%= event.getId()%>"><%= event.getTitle()%></a></td>
+				  <td><%= event.getDatetime()%></td>
+				</tr>
+	
+			<%
+					position++;
+	            }
+	        %>
+		    </tbody>
+        </table>
     </div>
 
 <!-- 	<form  class="form-wrapper" action="search" method="post" commnadName="tag"> -->

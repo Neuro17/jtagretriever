@@ -27,7 +27,20 @@ body {
 	width: 100px;
 }
 
-/* #search-input { */
+table.table tr td {
+  		font-size: 20px;
+  		text-align:left;
+}
+    
+table.table tr td a {
+	color: white;
+}
+    
+table.table thead tr th {
+	font-size: 30px;
+}
+
+/* #search-input { */0
 /* 	height: 100px; */
 /* } */
 /* 		.form-wrapper { */
