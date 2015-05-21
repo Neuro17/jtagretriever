@@ -19,6 +19,12 @@ public class Venue {
 	public Venue(){
 	}
 	
+	public Venue(double latitude, double longitude) {
+		super();
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+
 	public Integer getId() {
 		return id;
 	}

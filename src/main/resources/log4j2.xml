@@ -17,6 +17,10 @@
 	 		<AppenderRef ref="Console"/>
 	 	</Logger>
 	 	
+	 	<Logger name="javabandsintown" level="ERROR" additivity="false">
+            <AppenderRef ref="File" />
+        </Logger>   
+	 	
 	   <Root level="trace">
 	     <AppenderRef ref="Console"/>
 	     <AppenderRef ref="File" level="trace" />

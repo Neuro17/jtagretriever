@@ -30,6 +30,8 @@ import app.example.GenericController;
 import app.instagram.PhotoRetriever;
 import app.repository.TweetRepository;
 import app.tools.TagExtractor;
+import app.tools.Task;
+import app.tools.Tools;
 import dataBaseService.ArtistService;
 import dataBaseService.EventService;
 import dataBaseService.VenueService;
@@ -44,6 +46,7 @@ public class JSPController extends GenericController{
 	
 	@Autowired
 	TagExtractor tagExtractor;
+	
 	
 	ArtistService aS = new ArtistService();
 	VenueService vS = new VenueService();
@@ -120,77 +123,59 @@ public class JSPController extends GenericController{
 	  }
 	  
 	  @RequestMapping("/search")
-	  public String getSearchPage(@ModelAttribute("tag") String tag, 
-	      ArrayList<String> urlList, HttpServletRequest request,
-	      HttpServletResponse response) throws Exception {  
-
+	  public String getSearchPage(@ModelAttribute("tag") String tag, ArrayList<String> urlList, HttpServletRequest request, HttpServletResponse response) throws Exception {  
+		  Artist artistTmp = null;
+		  ArrayList<Event> events = null;
+		  List<Event> eventsToArtistEventsPage = new ArrayList<Event>();
+		  
 		  tag = WordUtils.capitalizeFully(tag);
 		  
 		  boolean validA = false,validV = false,validE = false;
 		  
 		  validA = aS.checkName(tag) || aS.manageTag(tag);
-		  if(!validA)
-			  validV = vS.checkName(tag) || vS.manageTag(tag);
-		  if(!validV)
-			  validE = eS.checkName(tag);
-
-		  if(validA || validV || validE){
-//	gestione cookie solo relativamente ad artisti
-			  if(validA){
-				  Cookie cookie;
-			      cookie  = new Cookie(tag.replaceAll("\\s", ""), tag);
-			      response.addCookie(cookie);
-			  }
-//	fine gestione cookie		       
+		  log.debug(validA);
+		  if(!validA){
+			  return "empty-events";
 			  
-			  if(validA){
-				  String artistName = tag;
+		  }
+		 
+		  Cookie cookie;
+		  cookie  = new Cookie(tag.replaceAll("\\s", ""), tag);
+		  response.addCookie(cookie);
 
-				  ArrayList<Event> events = bandsintown.getEvents
-						  .setArtist(artistName).setDate("all").search();
+		  String artistName = tag;
+		  		  
+		  artistTmp = aS.findById(artistName);
+		  if(artistTmp != null) {
+			  events = aS.getAllEvents(artistName);
+			  Task.addArtistToFile(artistName);
+		  }
+		  else {
+			  events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
+		  }
+		  log.debug(events);
+		  DateTime now = DateTime.now();
+			
+		  for(Event e : events){
+			  log.debug(now + " " + e.getDatetime());
+			  if(e.getDatetime().isAfter(now.minusMonths(2)) &&
+					  e.getDatetime().isBefore(now.plusDays(1))){
 
-				if(events.size() == 0)
-					return "empty-events";
-				
-				DateTime now = new DateTime();
-				List<Event> eventsToArtistEventsPage = new ArrayList<Event>();
+				  eventsToArtistEventsPage.add(e);
+			  }
+		  }
+		  
+		  if(events.size() == 0 || eventsToArtistEventsPage.size() == 0) {
+			  return "empty-events";
+		  }
 
-				for(Event e : events){
-					if(e.getDatetime().isAfter(now.minusMonths(2)) &&
-							e.getDatetime().isBefore(now.plusDays(1))){
-						eventsToArtistEventsPage.add(e);
-					}
-				}
-				
-				for(Event e : eventsToArtistEventsPage)
-					eS.persist(e);
-				
-				request.setAttribute("eventList", eventsToArtistEventsPage);
-				
+		  request.setAttribute("eventList", eventsToArtistEventsPage);
+
 //	returns a page with a list of events each linked with ?eventId=XXXXXX
 //	after clicking on one of these, you will be redirect to artist-event-home
 //	that manage to find the tag and then returns to photoAlbum
-				
-				return "artist-events";  
-			  }
-			  
-log.trace("searching for Venue or Event");			  
-			  tag = tag.replaceAll("\\s", "");
-			  
-			  PhotoRetriever pr = new PhotoRetriever();
-	        
-			  List<MediaFeedData> mediaList = pr.getMediaByTag(tag,100);
-			  
-	          for (MediaFeedData mediaFeedData : mediaList) {
-	        	  String url = mediaFeedData.getImages()
-	        			  .getLowResolution().getImageUrl();
-	        	  urlList.add(url);
-	          }          
-	          request.setAttribute("urlList",urlList);
-			  return "photoAlbum";
-		  }
-		  else
-			  return "unperformed";
+		  log.debug(eventsToArtistEventsPage);
+		  return "artist-events";  
 	  }
 
 	  @RequestMapping("/artist-home")

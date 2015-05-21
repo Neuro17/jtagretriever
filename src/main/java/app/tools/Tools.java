@@ -1,6 +1,8 @@
 package app.tools;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -81,12 +83,42 @@ public class Tools {
 		    }
 	}
 	
+	public static boolean appendFileFromResource(String filename, String line){
+		BufferedWriter writer = null;
+        try {
+            File logFile = new File(RESOURCE_PATH.concat(filename));
+
+            log.debug(logFile);
+
+            writer = new BufferedWriter(new FileWriter(logFile, true));
+            writer.write(line.concat("\n"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // Close the writer regardless of what happens...
+                writer.close();
+            } catch (Exception e) {
+            }
+        }
+		
+		return false;
+	}
+	
 	public static void main(String [] args) {
 		String file = "artists.txt";
 		
 		for(String line : Tools.readFileFromResource(file, "#")) {
 			log.debug(line);
 		}
+		
+		Tools.appendFileFromResource("tmp.txt", "faccia di culo!");
+		Tools.appendFileFromResource("tmp.txt", "faccia di merda");
+		
+		for(String line : Tools.readFileFromResource("tmp.txt")) {
+			log.debug(line);
+		}
+		
 	}
 
 }

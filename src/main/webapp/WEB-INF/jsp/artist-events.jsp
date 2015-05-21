@@ -47,7 +47,7 @@
 <!--         </div> -->
 <!--         </form> -->
         
-        <table class="table">
+        <table class="table table-fixed">
         	<thead>
 		      <tr>
 		        <th>Event</th>

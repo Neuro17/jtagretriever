@@ -39,6 +39,13 @@ public class Event {
 		
 	}
 
+	public Event(int id, String title, DateTime datetime, Venue venue) {
+		this.id = id;
+		this.title = title;
+		this.datetime = datetime;
+		this.venue = venue;
+	}
+
 	public Integer getId() {
 		return id;
 	}

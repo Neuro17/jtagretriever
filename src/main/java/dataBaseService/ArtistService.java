@@ -1,15 +1,20 @@
 package dataBaseService;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.hibernate.mapping.Map;
+import org.joda.time.DateTime;
+import org.neo4j.cypher.internal.compiler.v2_1.ast.rewriters.deMorganRewriter;
 import org.springframework.context.annotation.PropertySource;
 
 import javabandsintown.search.Bandsintown;
 import javabandsintown.entity.Artist;
+import javabandsintown.entity.Event;
+import javabandsintown.entity.Venue;
 
 @PropertySource("classpath:config.properties")
 public class ArtistService extends DatabaseService implements ArtistDAOInterface{
@@ -300,5 +305,44 @@ System.out.println(preparedStatement);
 		}
 	  	
 		return artistsMap;
+	}
+	
+	public ArrayList<Event> getAllEvents(String artistName) throws Exception{
+		ArrayList<Event> events = new ArrayList<Event>();
+		if(checkName(artistName)) { 
+			try {
+				configure();
+   		
+				preparedStatement = connection.prepareStatement("SELECT e.event_id,"
+						+ "e.title, e.datetime, e.latitude, e.longitude "
+						 + "FROM concerts_db.partecipations as p "
+						 + "right join concerts_db.events_table as e "
+						 + "on p.event_id = e.event_id "
+						 + "WHERE p.artist_name like ?");
+				preparedStatement.setString(1, artistName); 
+				System.out.println(preparedStatement);
+				resultSet = preparedStatement.executeQuery();
+//				System.out.println(resultSet.next());
+				 
+			      
+			    while (resultSet.next()) {
+			    	int id = resultSet.getInt("event_id");
+			    	String title = resultSet.getString("title");
+			    	Timestamp ts = resultSet.getTimestamp("datetime");    	
+					DateTime date = new DateTime((long)ts.getTime());
+					Double lat = resultSet.getDouble("latitude");
+					Double lng = resultSet.getDouble("longitude");
+					Venue venueTmp = new Venue(lat, lng);
+					events.add(new Event(id, title, date, venueTmp));
+//			    	String name = resultSet.getString("artist_name");
+//			    	artistsLieventst.add(name);
+			    }	  
+			} catch (Exception e) {
+		      throw e;
+		    } finally {
+		      close();
+		    }
+		}
+		return events;
 	}
 } 

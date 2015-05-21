@@ -83,7 +83,7 @@ System.out.println(preparedStatement);
 
 }
 
-public Event findById(Integer id) throws Exception{
+  public Event findById(Integer id) throws Exception{
 	  Event eTmp = new Event();
 	  ArrayList<Artist> eArtist = null;
 	  

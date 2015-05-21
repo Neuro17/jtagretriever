@@ -19,7 +19,7 @@ body {
 }
 
 .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn {
-    height: 100px;
+    height: 80px;
     font-size: 30px;
 }
 
@@ -39,6 +39,22 @@ table.table tr td a {
 table.table thead tr th {
 	font-size: 30px;
 }
+
+/* .table-fixed thead { */
+/*   width: 97%; */
+/* } */
+/* .table-fixed tbody { */
+/*   height: 230px; */
+/*   overflow-y: auto; */
+/*   width: 100%; */
+/* } */
+/* .table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th { */
+/*   display: block; */
+/* } */
+/* .table-fixed tbody td, .table-fixed thead > tr> th { */
+/*   float: left; */
+/*   border-bottom-width: 0; */
+/* } */
 
 /* #search-input { */0
 /* 	height: 100px; */

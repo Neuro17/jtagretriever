@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javabandsintown.search.Bandsintown;
 import app.twitter.TwitterConnector;
@@ -33,6 +34,7 @@ public class Task {
 	public static void initArtistDB(){
 		ArrayList<String> artists = Tools.readFileFromResource(ARTISTS_FILE, "#");
 		ArrayList<Artist> art = new ArrayList<Artist>();
+		ArtistService artService = new ArtistService();
 		
 		for(String artist : artists) {
 			Artist artTmp = bandsintown.getArtist.setArtist(artist).search();
@@ -55,7 +57,7 @@ public class Task {
 				
 				log.debug(artist.getName());
 				ArrayList<Event> events = bandsintown.getEvents.
-						setArtist(artist.getName()).setDate("upcoming").searchGMTReferences();
+						setArtist(artist.getName()).setDate("all").searchGMTReferences();
 				
 				for (Event e : events) {
 					eventDAO.persist(e);
@@ -76,6 +78,21 @@ public class Task {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+
+	public static void addArtistToFile(String artistName) {
+		boolean found = false;
+		ArrayList<String> artists = Tools.readFileFromResource(ARTISTS_FILE, "#");
+		for(String artist : artists){
+			if(artist.equalsIgnoreCase(artistName)) {
+				log.debug(artist);
+				found = true;
+			}
+		}
+		if(!found) {
+			Tools.appendFileFromResource(ARTISTS_FILE, artistName);
 		}
 	}
 	

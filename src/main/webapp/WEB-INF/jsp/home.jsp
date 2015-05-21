@@ -35,7 +35,7 @@
 
 <body>
 	
-    <div class="col-lg-8 col-lg-offset-2" id="search-bar">
+    <div class="col-lg-6 col-lg-offset-3" id="search-bar">
         <form action="search" method="post" commnadName="tag">
         	<div class="input-group input-group-lg"  id="search-input">
             <input type="text" name="tag" class="form-control" placeholder="Search your artist .... enjoy the magic" required /> 
