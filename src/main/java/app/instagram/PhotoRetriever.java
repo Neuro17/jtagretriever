@@ -35,8 +35,9 @@ public class PhotoRetriever {
     //	ogni metodo senza (int count) di default ritorna 20 MediaFeedData
     
     public List<MediaFeedData> getMediaByLocation(double lat,double lng) throws InstagramException{
-    	
+// null    	
     	MediaFeed mediaFeed = instagram.searchMedia(lat, lng);
+//log.trace(mediaFeed.getPagination() + " getMediaByLocation(double lat,double lng)");
     	return mediaFeed.getData();
     }
     
@@ -47,8 +48,9 @@ public class PhotoRetriever {
     }
     
     public List<MediaFeedData> getMediaByLocation(double lat,double lng, Long radius) throws InstagramException{
-    	
+//	null   	
     	MediaFeed mediaFeed = instagram.searchMedia(lat, lng, null, null, radius.intValue());
+//log.trace(mediaFeed.getPagination() + " getMediaByLocation(double lat,double lng, Long radius)");
     	return mediaFeed.getData();
     }
     
@@ -59,9 +61,10 @@ public class PhotoRetriever {
     }
     
     public List<MediaFeedData> getMediaByLocation(double lat,double lng, DateTime start, DateTime end) throws InstagramException{
-
+//null
     	MediaFeed mediaFeed = 
     			instagram.searchMedia(lat, lng, end.toDate(), start.toDate(), 0);
+//log.trace(mediaFeed.getPagination() + " getMediaByLocation(double lat,double lng, DateTime start, DateTime end)");
     	return mediaFeed.getData();
     	
     }
@@ -75,8 +78,9 @@ public class PhotoRetriever {
     }
         
     public List<MediaFeedData> getMediaByLocation(double lat,double lng, DateTime start, DateTime end, Long radius) throws InstagramException{
-
+//null
     	MediaFeed mediaFeed = instagram.searchMedia(lat, lng, end.toDate(), start.toDate(), radius.intValue());
+//log.trace(mediaFeed.getPagination() + " getMediaByLocation(double lat,double lng, DateTime start, DateTime end, Long radius)");
     	return mediaFeed.getData();
     	
     }
@@ -91,6 +95,7 @@ public class PhotoRetriever {
     public List<MediaFeedData> getMediaByTag(String tag) throws InstagramException{
     	
     	TagMediaFeed tmf = instagram.getRecentMediaTags(tag);    	
+log.trace(tmf.getPagination() + " getMediaByTag(String tag)");
 		return tmf.getData();		
 
     }
@@ -156,9 +161,10 @@ public class PhotoRetriever {
     		searchT = instagram.getTagMediaInfoNextPage(searchT.getPagination());
 	    	listofmedia = searchT.getData();
 	     	finalMFD.addAll(checkMedia(listofmedia,lat,lng,start,end,radius));
-log.trace("partial " + finalMFD.size());;
+log.trace("partial size " + finalMFD.size());
     	}
 
+log.trace("final size " + finalMFD.size());
     	if(finalMFD.size() > count)
     		return finalMFD.subList(0, count);    
     	else
@@ -168,61 +174,53 @@ log.trace("partial " + finalMFD.size());;
     public List<MediaFeedData> getMedia2(String tag,double lat,double lng, 
     		DateTime start, DateTime end, Long radius, int count) throws InstagramException{
 
-//log.trace("entering getMedia2");
-//log.trace("searching for " + lat + " " + lng);
-//log.trace("from " + start + " to " + end);
+log.trace("entering getMedia2");
+log.trace("searching for " + lat + " " + lng);
+log.trace("from " + start + " to " + end);
 
 		List<MediaFeedData> finalMFD = new ArrayList<MediaFeedData>();
-		
-		LocationSearchFeed locations = instagram.searchLocation(lat, lng,radius.intValue());
-		List<Location> locationList = locations.getLocationList();
-		MediaFeed mf = null;
 
-		for(Location loc : locationList){
-log.trace("processing " + loc.getName());
-			mf = instagram.getRecentMediaByLocation(loc.getId());
-			
-			finalMFD.addAll(checkTags(mf.getData(),tag));
-			
-			while(mf.getPagination().getNextUrl() != null && finalMFD.size() < count){
-				mf = instagram.getRecentMediaNextPage(mf.getPagination());
-				finalMFD.addAll(checkTags(mf.getData(),tag));
-				
+		TagMediaFeed tmf = instagram.getRecentMediaTags(tag,  
+				String.valueOf(start.getMillis()) + "000",
+				String.valueOf(end.getMillis()) + "000", 
+				count);
+		
+		List<MediaFeedData> medias = tmf.getData();
+		finalMFD.addAll(checkLocation(medias,lat,lng,radius));
+
+    	while(tmf.getPagination() != null && finalMFD.size() < count){
+    		tmf = instagram.getTagMediaInfoNextPage(tmf.getPagination());    		
+			medias = tmf.getData();
+	     	finalMFD.addAll(checkLocation(medias,lat,lng,radius));
 log.trace("partial size " + finalMFD.size());
-			}
-		}
-    	
-log.trace(finalMFD.size());
-		if(finalMFD.size() > count)
-    		return finalMFD.subList(0, count);    
-    	else
-    		return finalMFD;
+    	}
+
+log.trace("final size " + finalMFD.size());
+
+		return finalMFD;
     }
 
-	private List<MediaFeedData> checkTags(List<MediaFeedData> mediaList, String tag) {
-		List<MediaFeedData> partialMFD = new ArrayList<MediaFeedData>();
-//log.trace("entering checkTags");
-		for(MediaFeedData mfd : mediaList){
-//log.debug(mfd.getLocation().getLatitude());
-//log.debug(mfd.getLocation().getLongitude());
-//log.debug(new DateTime(Long.parseLong(mfd.getCreatedTime())*1000));
-			if(mfd.getTags().contains(tag))
-				partialMFD.add(mfd);
-		}
+	private List<MediaFeedData> checkLocation(
+			List<MediaFeedData> medias, double lat, double lng, Long radius) {
+
+		ArrayList<MediaFeedData> finalMFD = new ArrayList<MediaFeedData>();
 		
-		return partialMFD;
+		for(MediaFeedData media : medias){
+// in assenza di locatiom aggiunge altrimenti controlla la coincidenza
+			if(media.getLocation() == null || checkRadius(media.getLocation(), lng, lng, radius))
+				finalMFD.add(media);
+		}
+		return finalMFD;
 	}
 
 	private List<MediaFeedData> checkMedia(List<MediaFeedData> mediaList, double lat, double lng,
 			DateTime end, DateTime start, Long radius) {
-
+//controlla solo lat e lng entro radius
 		List<MediaFeedData> finalMediaList = new ArrayList<MediaFeedData>(); 
 		
 		for(MediaFeedData media : mediaList){
 			if(media.getLocation() != null && media.getCreatedTime() != null){
-				if(checkLocation(media.getLocation(),lat,lng,radius) 
-						&& checkDate(media.getCreatedTime(),start,end)
-						){
+				if(checkRadius(media.getLocation(),lat,lng,radius)){
 					finalMediaList.add(media);
 //log.trace(media.getTags());
 				}
@@ -232,22 +230,7 @@ log.trace(finalMFD.size());
 		return finalMediaList;
 	}
 
-	private boolean checkDate(String createdTime, DateTime start, DateTime end) {
-
-		DateTime createdDateTime = new DateTime(Long.parseLong(createdTime)*1000);
-
-		if(createdDateTime.isBefore(end.getMillis()) && 
-				createdDateTime.isAfter(start.getMillis())){
-//log.trace(createdDateTime + " valid");
-			return true;
-		}
-		else{
-//log.trace(createdDateTime + " not valid");
-			return false;
-		}
-	}
-
-	private boolean checkLocation(Location location, double lat, double lng,Long radius) {
+	private boolean checkRadius(Location location, double lat, double lng,Long radius) {
 
 		if(distFrom(location.getLatitude(),location.getLongitude(),lat,lng) <= radius)
 			return true;
@@ -264,7 +247,7 @@ log.trace(finalMFD.size());
 	               Math.sin(dLng/2) * Math.sin(dLng/2);
 	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 	    float dist = (float) (earthRadius * c);
-//log.debug(dist);
+
 	    return dist;
 	}
 	

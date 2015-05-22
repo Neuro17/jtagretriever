@@ -75,87 +75,22 @@ public class PhotoRetrieverTest {
 
 //		searchPageTest();
 		
-		
-//		PhotoRetriever pr = new PhotoRetriever();
-//
-//		double lat = 45.464161;
-//		double lng = 9.190336;
-//		DateTime start = (new DateTime()).minusHours(6);
-//		DateTime end = (new DateTime());
-//		Long radius = 4000L;
-//		
-//		String tag1 = "sun";
-//		String tag2 = "newyork";
-//		
-//		int limit = 10;
-//		
-//		Instagram instagram = null;
-//	    String CLIENT_ID = "f72f37aa491541a79412ce319f2e061f";
-//	    
-//	    instagram = new Instagram(CLIENT_ID);
-//	    
-//	    TagMediaFeed tmf = instagram.getRecentMediaTags(tag2);	    
-//	    List<MediaFeedData> mfd = tmf.getData();
-//	    
-//	    log.debug(mfd.size());
-//	    
-//	    MediaFeed mf = instagram.getRecentMediaNextPage(tmf.getPagination());
-//	    mfd.addAll(mf.getData());
-//	    
-//	    log.debug(mfd.size());
-		
-//		while(mediaList.size() < limit){
-//			List<MediaFeedData> mediaListTmp = 
-//					pr.getMediaByLocation(lat, lng, start, end, radius);
-//			log.trace("tmp : " + mediaListTmp.size());
-//			for(MediaFeedData mfd : mediaListTmp){
-//				List<String> tags = mfd.getTags();
-//				if(tags.contains(tag2)){
-//					log.trace("valid mfd " + mfd.getLink());
-//					mediaList.add(mfd);
-//				}
-//			}
-//		}	
-
-//		int i = 0;
-//		for(MediaFeedData mfd : mediaList){
-//        	log.debug(i + " " + mfd.getImages().getLowResolution().getImageUrl());
-//        	i++;
-//        }
-		
-		PhotoRetriever pr = new PhotoRetriever();
 		double lat = 45.464161;
 		double lng = 9.190336;
-		DateTime start = (new DateTime()).minusDays(10);
-		DateTime end = (new DateTime()).minusDays(5);
-		Long radius = 4000L;
+		DateTime start = (new DateTime()).minusDays(6);
+		DateTime end = (new DateTime().minusDays(3));
+		Long radius = 5000L;
+		String tag = "expo";
+				
+		PhotoRetriever pr = new PhotoRetriever();
 		
-//		List<MediaFeedData> mfd = pr.getMediaByTag("newyork", 44);	
-//		log.trace(mfd.size());
-	
-//		List<MediaFeedData> mfd = pr.getMediaByLocation(lat, lng,15 );
-//		log.trace(mfd.size());
-		
-//		ArrayList<String> tagList = new ArrayList<String>();
-//		tagList.add("mare");
-//		tagList.add("spiaggia");
-//		tagList.add("sole");
-//		log.trace(pr.getMediaByTagList(tagList,5).size());
-
-		String tag = "milano";
-//		List<MediaFeedData> mfd = 
-//				pr.getMedia(tag, lat, lng, start, end, radius, 53);
-//		for(MediaFeedData media : mfd){
+		List<MediaFeedData> medias = pr.getMedia2(tag, lat, lng, start, end, radius,50);
+		log.trace("final size " + medias.size());
+//		List<MediaFeedData> mediaList = pr.getMedia2(tag, lat, lng,start, end,radius, 55);
+//		for(MediaFeedData media : mediaList){
 //			log.trace(media.getLink());
 //			log.trace(new DateTime(Long.parseLong(media.getCreatedTime())* 1000));
 //		}
-//		log.trace(mfd.size());
-
-		List<MediaFeedData> mediaList = pr.getMedia2(tag, lat, lng,start, end,radius, 55);
-		for(MediaFeedData media : mediaList){
-//			log.trace(media.getLink());
-//			log.trace(new DateTime(Long.parseLong(media.getCreatedTime())* 1000));
-		}
 
 	}
 }

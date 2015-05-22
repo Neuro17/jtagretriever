@@ -51,14 +51,13 @@ public class GeonamesGet extends GeonamesConnector{
 	public String search(){
 //		log.trace("Entering search on geonames.org");
 		JsonObject geoNamesAsJson;
-		String s;
+		String s = null;
 		
 		build();
 //		log.debug(uri);
 		geoNamesAsJson = executeRequest();
-//		log.debug(geoNamesAsJson);
-		
-		s = geoNamesAsJson.getAsJsonObject().get("timezoneId").getAsString();
+		if(geoNamesAsJson != null)
+			s = geoNamesAsJson.getAsJsonObject().get("timezoneId").getAsString();
 		
 //		log.trace("Exiting search from geonames.org");
 		
@@ -69,7 +68,11 @@ public class GeonamesGet extends GeonamesConnector{
 		setLat(lat);
 		setLng(lng);
 		setUsername();
-		return TimeZone.getTimeZone(search()).getRawOffset()/3600000;
+		String searchResult = search();
+		if( searchResult != null)
+			return TimeZone.getTimeZone(searchResult).getRawOffset()/3600000;
+		else 
+			return -99;
 	}
 	
 	public String getGMTStandard(){

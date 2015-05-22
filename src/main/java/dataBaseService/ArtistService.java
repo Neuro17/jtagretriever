@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.mapping.Map;
 import org.joda.time.DateTime;
 import org.neo4j.cypher.internal.compiler.v2_1.ast.rewriters.deMorganRewriter;
 import org.springframework.context.annotation.PropertySource;
 
+import app.controllers.JSPController;
 import javabandsintown.search.Bandsintown;
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
@@ -18,7 +21,17 @@ import javabandsintown.entity.Venue;
 
 @PropertySource("classpath:config.properties")
 public class ArtistService extends DatabaseService implements ArtistDAOInterface{
-    	
+  
+	private static final Logger log = LogManager.getLogger(ArtistService.class);
+	
+	private static String complete(int i){
+		if(i < 10)
+			return  "0" + Integer.toString(i);
+		else
+			return
+					Integer.toString(i);
+	}
+	
   private void updateResearches(String artistName) throws Exception{
 		 try {
 			  configure();
@@ -38,6 +51,7 @@ System.out.println(preparedStatement);
   }
 	
   public boolean checkName(String id) throws Exception{
+log.trace("entering checkname");
 	  try {
 		  configure();
 	      
@@ -260,12 +274,30 @@ System.out.println(preparedStatement);
 	}
 	
 	public boolean manageTag(String tag) throws Exception{
+log.trace("entering manageTag");
 		Bandsintown bandsintown = new Bandsintown();
 
 		Artist aTmp = bandsintown.getArtist.setArtist(tag).asJson().search();
 
 		if(aTmp != null){
 			persist(aTmp);
+			EventService eS = new EventService();
+log.trace("searching events for artist " + aTmp.getName());
+		
+			DateTime now = new DateTime();
+			DateTime timeAgo = now.minusMonths(6);
+
+			String nowString = now.getYear() + "-" + complete(now.getMonthOfYear()) + "-" + complete(now.getDayOfMonth());
+			String timeAgoString = timeAgo.getYear() + "-" + complete(timeAgo.getMonthOfYear()) + "-" + complete(timeAgo.getDayOfMonth());
+			String datesString = timeAgoString + "," + nowString; 
+
+			ArrayList<Event> events = bandsintown.getEvents
+					.setArtist(aTmp.getName())
+					.setDate(datesString).search();
+		
+log.trace("persisting " + events.size() + " events for artist " + aTmp.getName());
+			for(Event e : events)
+				eS.persist(e);
 			return true;
 		}
 		else{

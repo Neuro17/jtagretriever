@@ -184,6 +184,8 @@ System.out.println(preparedStatement);
 	  VenueService vService = new VenueService();
 	  ArtistService aService = new ArtistService();
 	  
+	  if(entity != null){
+	  
 	  vService.persist(entity.getVenue());
 	  
 	  if(!this.exists(entity.getId()) && 
@@ -239,6 +241,7 @@ System.out.println(preparedStatement);
 	    }
 	  }
 	  persistSearch(entity.getTitle());
+	  }
   }
 
   private void persistSearch(String title) throws Exception {

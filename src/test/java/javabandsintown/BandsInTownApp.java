@@ -8,9 +8,18 @@ import javabandsintown.search.Bandsintown;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 
 public class BandsInTownApp {
-	
+
+	private static String complete(int i){
+		if(i < 10)
+			return  "0" + Integer.toString(i);
+		else
+			return
+					Integer.toString(i);
+	}
+
 	public static void main(String[] args) {
 		Artist artist;
 		ArrayList<Event> events = new ArrayList<Event>();
@@ -22,18 +31,32 @@ public class BandsInTownApp {
 //		
 
 //non trovando l artista ritorna un puntatore a null
-		artist = bandsintown.getArtist.setArtist("Snoop Dogg").asJson().search();
-		System.out.println(artist);		
+//		artist = bandsintown.getArtist.setArtist("Snoop Dogg").asJson().search();
+//		System.out.println(artist);		
 		
 //		artist = bandsintown.getArtist.setArtist("paul kalkbrenner").asJson().search();
 //		System.out.println(artist);
 		
-/*
-		events = bandsintown.getEvents.setArtist("paul kalkbrenner").asJson().setDate("all").search();
-		for(Event e : events)
-			System.out.println(e);
+		events = bandsintown.getEvents.setArtist("paul kalkbrenner").asJson().setDate("2015-02-22,2015-05-22").search();
+//		for(Event e : events)
+//			System.out.println(e);
+System.out.println("first check " + events.size());
 		
-		events = bandsintown.getEvents.setArtist("tale of us").setDate("2014-11-07,2014-12-12").search();
+		DateTime now = new DateTime();
+		DateTime timeAgo = now.minusMonths(3);
+		String nowString = now.getYear() + "-" + complete(now.getMonthOfYear()) + "-" + complete(now.getDayOfMonth());
+		String timeAgoString = timeAgo.getYear() + "-" + complete(timeAgo.getMonthOfYear()) + "-" + complete(timeAgo.getDayOfMonth());
+System.out.println(nowString);
+System.out.println(timeAgoString);
+		String datesString = timeAgoString + "," + nowString; 
+System.out.println(datesString);
+
+		events = bandsintown.getEvents
+				.setArtist("paul kalkbrenner")
+				.setDate(datesString).search();
+System.out.println(events.size() + " events ");
+		
+/*		events = bandsintown.getEvents.setArtist("tale of us").setDate("2014-11-07,2014-12-12").search();
 		for(Event e : events)
 			System.out.println(e);
 		
@@ -82,5 +105,4 @@ public class BandsInTownApp {
 		System.out.println(venues.size());
 */
 	}
-
 }

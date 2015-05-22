@@ -130,51 +130,41 @@ public class JSPController extends GenericController{
 		  
 		  tag = WordUtils.capitalizeFully(tag);
 		  
-		  boolean validA = false,validV = false,validE = false;
+		  boolean validA = false, validV = false, validE = false;
 		  
 		  validA = aS.checkName(tag) || aS.manageTag(tag);
-		  log.debug(validA);
+log.debug(validA);
 		  if(!validA){
 			  return "empty-events";
-			  
 		  }
 		 
 		  Cookie cookie;
 		  cookie  = new Cookie(tag.replaceAll("\\s", ""), tag);
 		  response.addCookie(cookie);
 
-		  String artistName = tag;
-		  		  
-		  artistTmp = aS.findById(artistName);
-		  if(artistTmp != null) {
-			  events = aS.getAllEvents(artistName);
-			  Task.addArtistToFile(artistName);
-		  }
-		  else {
-			  events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
-		  }
-		  log.debug(events);
 		  DateTime now = DateTime.now();
+		  		  
+		  artistTmp = aS.findById(tag);
+		  events = aS.getAllEvents(artistTmp.getName());
+		  Task.addArtistToFile(artistTmp.getName());
+log.debug("total events found " + events.size());
 			
 		  for(Event e : events){
-			  log.debug(now + " " + e.getDatetime());
-			  if(e.getDatetime().isAfter(now.minusMonths(2)) &&
+			  if(e.getDatetime().isAfter(now.minusMonths(6)) &&
 					  e.getDatetime().isBefore(now.plusDays(1))){
-
 				  eventsToArtistEventsPage.add(e);
 			  }
 		  }
+log.trace("events to page " + eventsToArtistEventsPage.size());
 		  
 		  if(events.size() == 0 || eventsToArtistEventsPage.size() == 0) {
 			  return "empty-events";
 		  }
 
 		  request.setAttribute("eventList", eventsToArtistEventsPage);
-
 //	returns a page with a list of events each linked with ?eventId=XXXXXX
 //	after clicking on one of these, you will be redirect to artist-event-home
 //	that manage to find the tag and then returns to photoAlbum
-		  log.debug(eventsToArtistEventsPage);
 		  return "artist-events";  
 	  }
 
@@ -209,7 +199,7 @@ public class JSPController extends GenericController{
 			
 			String artistName = event.getArtist().get(0).getName().replaceAll("\\s", "");
 			
-			List<MediaFeedData> mediaList = pr.getMedia(artistName, 
+			List<MediaFeedData> mediaList = pr.getMedia2(artistName, 
 					event.getVenue().getLatitude(), event.getVenue().getLongitude(),
 					event.getDatetime().minusHours(24), event.getDatetime().plusHours(24),
 					5000L, 100);

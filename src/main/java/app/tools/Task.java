@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javabandsintown.search.Bandsintown;
 import app.twitter.TwitterConnector;
 import app.twitter.impl.TwitterConnectorImpl;
+import dataBaseService.ArtistDAOInterface;
 import dataBaseService.ArtistService;
 import dataBaseService.EventService;
 import dataBaseService.VenueService;
@@ -96,11 +97,27 @@ public class Task {
 		}
 	}
 	
+	public static void initUpcomingArtistEvents(String artistName){
+		try {
+				Artist artist = artDAO.findById(artistName);
+				log.debug(artist.getName());
+				ArrayList<Event> events = bandsintown.getEvents.
+						setArtist(artist.getName()).setDate("upcoming").searchGMTReferences();
+				
+				for (Event e : events) {
+					eventDAO.persist(e);
+				}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public static void main(String[] args) {
 		initArtistDB();
 		initEventDB();
 //		startTweetExtraction();
+//		initUpcomingArtistEvents("Calvin Harris");
 	}
 
 }

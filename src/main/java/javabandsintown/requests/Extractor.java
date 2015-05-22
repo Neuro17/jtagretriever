@@ -102,14 +102,16 @@ public class Extractor {
 		
 		event.setVenue(extractVenue(eventsAsJson.get("venue")));
 		tmpDateTime = new DateTime(eventsAsJson.get("datetime").getAsString());
-		timeToAdd = gng.getHoursToAddToGMT(event.getVenue().getLatitude(), event.getVenue().getLongitude());
-//sottraggo le ore da aggiungere al GMT		
-		event.setDatetime(new DateTime(tmpDateTime.minusHours(timeToAdd)));
-		
-//		log.trace("/ntmp - " + tmpDateTime + "\nfnl- " + event.getDatetime());
-		
+				
 		if(!eventsAsJson.get("description").isJsonNull())
 			event.setDescription(eventsAsJson.get("description").getAsString());
+		
+		timeToAdd = gng.getHoursToAddToGMT(event.getVenue().getLatitude(), event.getVenue().getLongitude());
+		if(timeToAdd == -99)
+			event = null;
+		else
+//sottraggo le ore da aggiungere al GMT		
+			event.setDatetime(new DateTime(tmpDateTime.minusHours(timeToAdd)));
 		
 //		log.debug("Event found : " + event);		
 //		log.trace("Exiting extractGMTReferencesEvent");
