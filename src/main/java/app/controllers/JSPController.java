@@ -188,21 +188,20 @@ log.trace("events to page " + eventsToArtistEventsPage.size());
 			  ArrayList<String> urlList) throws Exception{
 
 			Event event = eS.findById(eventId);
-
+log.trace(event);
 			ArrayList<String> tags = new ArrayList<String>();
-
+log.trace("extracting tags from bandsintown");
 			tags = tagExtractor.extractTagFromBandsintown(event);
-		  
+log.trace("tags for event " + tags);
+
 			PhotoRetriever pr = new PhotoRetriever();
+						
+//			String artistName = event.getArtist().get(0).getName().replaceAll("\\s", "");
 			
-//			List<MediaFeedData> mediaList = pr.getMediaByTagList(tags);
-			
-			String artistName = event.getArtist().get(0).getName().replaceAll("\\s", "");
-			
-			List<MediaFeedData> mediaList = pr.getMedia2(artistName, 
+			List<MediaFeedData> mediaList = pr.getMedia3(tags, 
 					event.getVenue().getLatitude(), event.getVenue().getLongitude(),
-					event.getDatetime().minusHours(24), event.getDatetime().plusHours(24),
-					5000L, 100);
+					event.getDatetime().minusHours(6), event.getDatetime().plusHours(18),
+					5000L, 25);
 
 			for (MediaFeedData mediaFeedData : mediaList) {
 //log.debug((new DateTime(Long.parseLong(mediaFeedData.getCreatedTime())*1000)).toString());

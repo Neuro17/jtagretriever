@@ -77,11 +77,11 @@ public class TagExtractorImp implements TagExtractor{
 			tag.add(artist.getName().toLowerCase().replaceAll("\\s",""));
 		}
 		
-		tag.add(event.getVenue().getCity().toLowerCase().replaceAll("\\s",""));
-		tag.add(event.getVenue().getCountry().toLowerCase().replaceAll("\\s",""));
-		tag.add(event.getVenue().getName().toLowerCase().replaceAll("\\s",""));
+		tag.add(event.getVenue().getCity().toLowerCase().replaceAll("\\s","").replaceAll("!","").replaceAll("-",""));
+		tag.add(event.getVenue().getCountry().toLowerCase().replaceAll("\\s","").replaceAll("!","").replaceAll("-",""));
+		tag.add(event.getVenue().getName().toLowerCase().replaceAll("\\s","").replaceAll("!","").replaceAll("-",""));
 		if(event.getVenue().getRegion() != null) { 
-			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s",""));
+			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s","").replaceAll("!","").replaceAll("-",""));
 		}
 //		tag.add(event.getTitle().toLowerCase().replaceAll("\\s",""));
 //		tag.add(event.getDatetime().toString().toLowerCase().replaceAll("\\s",""));

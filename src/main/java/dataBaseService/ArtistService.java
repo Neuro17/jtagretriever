@@ -285,7 +285,7 @@ log.trace("entering manageTag");
 log.trace("searching events for artist " + aTmp.getName());
 		
 			DateTime now = new DateTime();
-			DateTime timeAgo = now.minusMonths(6);
+			DateTime timeAgo = now.minusMonths(9);
 
 			String nowString = now.getYear() + "-" + complete(now.getMonthOfYear()) + "-" + complete(now.getDayOfMonth());
 			String timeAgoString = timeAgo.getYear() + "-" + complete(timeAgo.getMonthOfYear()) + "-" + complete(timeAgo.getDayOfMonth());

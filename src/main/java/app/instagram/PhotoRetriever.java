@@ -1,6 +1,7 @@
 package app.instagram;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -199,18 +200,94 @@ log.trace("final size " + finalMFD.size());
 
 		return finalMFD;
     }
+    
+	public List<MediaFeedData> getMedia3(ArrayList<String> tags,
+			double lat, double lng, DateTime start,
+			DateTime end, long radius, int countForTag) throws InstagramException {
+		
+log.trace("entering getMedia3");
+log.trace("searching for position (" + lat + "," + lng + ")");
+log.trace("from " + start + " to " + end);
+log.trace("for doubleTags " + tags);
 
-	private List<MediaFeedData> checkLocation(
-			List<MediaFeedData> medias, double lat, double lng, Long radius) {
+				int iterationForTag = 7;
 
-		ArrayList<MediaFeedData> finalMFD = new ArrayList<MediaFeedData>();
+				List<MediaFeedData> finalMFD = new ArrayList<MediaFeedData>();
+				
+				for(String tag : tags){	
+					List<MediaFeedData> partialMFD = new ArrayList<MediaFeedData>();
+					
+log.trace("processing tag " + tag);
+
+					TagMediaFeed tmf = instagram.getRecentMediaTags(tag,  
+							String.valueOf(start.getMillis()) + "000",
+							String.valueOf(end.getMillis()) + "000", 
+							countForTag);
+					List<MediaFeedData> medias = tmf.getData();
+					
+					if(tags.indexOf(tag) == 0)
+						partialMFD.addAll(medias);
+					else
+						partialMFD.addAll(checkDoubleTag(medias,tags,tag));
+//log.trace("initial partial size " + partialMFD.size() + " for tag " + tag);
+
+					int iteration = 0;
+			    	while(tmf.getPagination() != null 
+			    			&& partialMFD.size() < countForTag 
+			    			&& iteration < iterationForTag){
+			    		tmf = instagram.getTagMediaInfoNextPage(tmf.getPagination());    		
+						medias = tmf.getData();
+						if(tags.indexOf(tag) == 0)
+							partialMFD.addAll(medias);
+						else
+							partialMFD.addAll(checkDoubleTag(medias,tags,tag));
+//log.trace("medium partial size " + partialMFD.size() + " for tag " + tag + " on iteration " + iteration);
+						iteration++;
+		    		}
+			    	if(partialMFD.size() != 0)
+			    		finalMFD.addAll(partialMFD);
+log.trace(partialMFD.size() + " results for tag " + tag);
+				}			
+log.trace(finalMFD.size() + " total results");
+				return finalMFD;
+	}
+
+	private List<MediaFeedData> checkDoubleTag(
+			List<MediaFeedData> medias, ArrayList<String> tags, String tagAlreadyChecked) {
+
+//log.trace("checkDoubleTag - tagList initial size " + tags.size());
+		if(tagAlreadyChecked.length() > 140)
+			return null;
+		
+		ArrayList<String> tagList = new ArrayList<String>(tags);
+
+		int index = tagList.indexOf(tagAlreadyChecked);
+//log.trace("index of tag " + tagAlreadyChecked + " " + index);
+		tagList.remove(index);
+		
+		List<MediaFeedData> MFD = new ArrayList<MediaFeedData>();
+		for(MediaFeedData media : medias){
+			for(String t : tagList)
+				if(media.getTags().contains(t)){
+					MFD.add(media);
+					break;
+				}
+		}		
+//log.trace("checkDoubleTag - tagList final size " + tags.size());
+		return MFD;
+	}
+
+	private List<MediaFeedData> checkLocation(List<MediaFeedData> medias, 
+			double lat, double lng, Long radius) {
+
+		ArrayList<MediaFeedData> MFD = new ArrayList<MediaFeedData>();
 		
 		for(MediaFeedData media : medias){
 // in assenza di locatiom aggiunge altrimenti controlla la coincidenza
 			if(media.getLocation() == null || checkRadius(media.getLocation(), lng, lng, radius))
-				finalMFD.add(media);
+				MFD.add(media);
 		}
-		return finalMFD;
+		return MFD;
 	}
 
 	private List<MediaFeedData> checkMedia(List<MediaFeedData> mediaList, double lat, double lng,
@@ -232,8 +309,10 @@ log.trace("final size " + finalMFD.size());
 
 	private boolean checkRadius(Location location, double lat, double lng,Long radius) {
 
-		if(distFrom(location.getLatitude(),location.getLongitude(),lat,lng) <= radius)
+		if(distFrom(location.getLatitude(),location.getLongitude(),lat,lng) <= radius){
+log.trace("valid location " + location);
 			return true;
+		}
 		else
 			return false;
 	}

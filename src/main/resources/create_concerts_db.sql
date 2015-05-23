@@ -67,7 +67,7 @@ foreign key (`event_id`) references `concerts_db`.`events_table`(`event_id`) on 
 alter table `concerts_db`.`partecipations` 
 add constraint `FK_artists` 
 foreign key (`artist_name`) references `concerts_db`.`artists`(`artist_name`) on delete cascade;
-
+/*
 select * from `concerts_db`.`artists`;
 select * from `concerts_db`.`venues`;
 select * from `concerts_db`.`events_table`;
@@ -86,3 +86,4 @@ INSERT INTO `concerts_db`.`events_table_searched`(`title`, `total`)
         
 select * from `concerts_db`.`artists_searched` ORDER BY `total` DESC LIMIT 10;
 select * from `concerts_db`.`venues_searched` ORDER BY `total` DESC LIMIT 10;
+*/
