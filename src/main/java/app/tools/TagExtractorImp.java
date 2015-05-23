@@ -77,11 +77,18 @@ public class TagExtractorImp implements TagExtractor{
 			tag.add(artist.getName().toLowerCase().replaceAll("\\s",""));
 		}
 		
-		tag.add(event.getVenue().getCity().toLowerCase().replaceAll("\\s","").replaceAll("!","").replaceAll("-",""));
-		tag.add(event.getVenue().getCountry().toLowerCase().replaceAll("\\s","").replaceAll("!","").replaceAll("-",""));
-		tag.add(event.getVenue().getName().toLowerCase().replaceAll("\\s","").replaceAll("!","").replaceAll("-",""));
+		tag.add(event.getVenue().getCity().toLowerCase().replaceAll("\\s","")
+				.replaceAll("!","").replaceAll("-",""));
+		
+		tag.add(event.getVenue().getCountry().toLowerCase().replaceAll("\\s","")
+				.replaceAll("!","").replaceAll("-",""));
+		
+		tag.add(event.getVenue().getName().toLowerCase().replaceAll("\\s","")
+				.replaceAll("!","").replaceAll("-",""));
+		
 		if(event.getVenue().getRegion() != null) { 
-			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s","").replaceAll("!","").replaceAll("-",""));
+			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s","")
+					.replaceAll("!","").replaceAll("-",""));
 		}
 //		tag.add(event.getTitle().toLowerCase().replaceAll("\\s",""));
 //		tag.add(event.getDatetime().toString().toLowerCase().replaceAll("\\s",""));
@@ -90,16 +97,19 @@ public class TagExtractorImp implements TagExtractor{
 	}
 	
 	public ArrayList<String> extractTag(Event e, double radius) {
-		Map<String, Integer> rawTag = extractTagFromTweets(e, radius);
 		ArrayList<String> tag = new ArrayList<String>();
-		int occurrency = 3;
-		
-		for(Map.Entry<String, Integer> entry : rawTag.entrySet()){
-			if(entry.getValue() >= occurrency) {
-				tag.add(entry.getKey());
+		if(tweetRepo.count() > 0) {
+			Map<String, Integer> rawTag = extractTagFromTweets(e, radius);
+			
+			int occurrency = 3;
+			
+			for(Map.Entry<String, Integer> entry : rawTag.entrySet()){
+				if(entry.getValue() >= occurrency) {
+					tag.add(entry.getKey());
+				}
 			}
 		}
-		
+				
 		tag.addAll(extractTagFromBandsintown(e));
 		return tag;
 	}
