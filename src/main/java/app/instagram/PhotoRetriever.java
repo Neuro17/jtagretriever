@@ -22,7 +22,7 @@ import org.jinstagram.model.QueryParam;
 import org.joda.time.DateTime;
 
 public class PhotoRetriever {
-	
+//	
 	private final static Logger log = LogManager.getLogger(PhotoRetriever.class);
 
 	private Instagram instagram = null;

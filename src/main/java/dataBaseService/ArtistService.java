@@ -23,7 +23,7 @@ import javabandsintown.entity.Venue;
 public class ArtistService extends DatabaseService implements ArtistDAOInterface{
   
 	private static final Logger log = LogManager.getLogger(ArtistService.class);
-	
+//	
 	private static String complete(int i){
 		if(i < 10)
 			return  "0" + Integer.toString(i);

@@ -25,7 +25,7 @@ import app.tools.TagExtractorImp;
 public class PhotoRetrieverTest {
 	
 	private final static Logger log = LogManager.getLogger(PhotoRetrieverTest.class);
-
+//
 	public static void mainTest() throws InstagramException{
 		List<String> tagList = new ArrayList<String>();
 		tagList.add("pappa");

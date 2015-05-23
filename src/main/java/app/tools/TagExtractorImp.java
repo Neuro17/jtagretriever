@@ -24,7 +24,7 @@ import javabandsintown.entity.Event;
 
 @Component
 public class TagExtractorImp implements TagExtractor{
-	
+//	
 	private static final Logger log = LogManager.getLogger(TagExtractorImp.class);
 	
 	@Autowired

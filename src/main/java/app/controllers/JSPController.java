@@ -186,7 +186,7 @@ log.trace("events to page " + eventsToArtistEventsPage.size());
 		public String getArtistEventHome(@ModelAttribute("eventId") int eventId,
 				HttpServletRequest request, HttpServletResponse response,
 			  ArrayList<String> urlList) throws Exception{
-
+//
 			Event event = eS.findById(eventId);
 log.trace(event);
 			ArrayList<String> tags = new ArrayList<String>();
