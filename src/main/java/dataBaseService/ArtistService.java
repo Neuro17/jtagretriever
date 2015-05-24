@@ -51,7 +51,7 @@ System.out.println(preparedStatement);
   }
 	
   public boolean checkName(String id) throws Exception{
-log.trace("entering checkname");
+//log.trace("entering checkname");
 	  try {
 		  configure();
 	      
@@ -274,7 +274,7 @@ System.out.println(preparedStatement);
 	}
 	
 	public boolean manageTag(String tag) throws Exception{
-log.trace("entering manageTag");
+//log.trace("entering manageTag");
 		Bandsintown bandsintown = new Bandsintown();
 
 		Artist aTmp = bandsintown.getArtist.setArtist(tag).asJson().search();
@@ -282,20 +282,25 @@ log.trace("entering manageTag");
 		if(aTmp != null){
 			persist(aTmp);
 			EventService eS = new EventService();
-log.trace("searching events for artist " + aTmp.getName());
+//log.trace("searching events for artist " + aTmp.getName());
 		
 			DateTime now = new DateTime();
 			DateTime timeAgo = now.minusMonths(9);
+			DateTime timeForward = now.plusMonths(3);
 
-			String nowString = now.getYear() + "-" + complete(now.getMonthOfYear()) + "-" + complete(now.getDayOfMonth());
-			String timeAgoString = timeAgo.getYear() + "-" + complete(timeAgo.getMonthOfYear()) + "-" + complete(timeAgo.getDayOfMonth());
-			String datesString = timeAgoString + "," + nowString; 
+			String timeForwardString = timeForward.getYear() + "-" + 
+					complete(timeForward.getMonthOfYear()) + "-" + 
+					complete(timeForward.getDayOfMonth());
+			String timeAgoString = timeAgo.getYear() + "-" + 
+					complete(timeAgo.getMonthOfYear()) + "-" + 
+					complete(timeAgo.getDayOfMonth());
+			String datesString = timeAgoString + "," + timeForwardString; 
 
 			ArrayList<Event> events = bandsintown.getEvents
 					.setArtist(aTmp.getName())
 					.setDate(datesString).search();
 		
-log.trace("persisting " + events.size() + " events for artist " + aTmp.getName());
+//log.trace("persisting " + events.size() + " events for artist " + aTmp.getName());
 			for(Event e : events)
 				eS.persist(e);
 			return true;

@@ -1,6 +1,7 @@
 package app.controllers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import app.example.GenericController;
 import app.instagram.PhotoRetriever;
 import app.repository.TweetRepository;
+import app.tools.CustomComparator;
 import app.tools.TagExtractor;
 import app.tools.Task;
 import app.tools.Tools;
@@ -129,11 +131,11 @@ public class JSPController extends GenericController{
 		  List<Event> eventsToArtistEventsPage = new ArrayList<Event>();
 		  
 		  tag = WordUtils.capitalizeFully(tag);
-		  
+
 		  boolean validA = false, validV = false, validE = false;
 		  
 		  validA = aS.checkName(tag) || aS.manageTag(tag);
-log.debug(validA);
+//log.debug(validA);
 		  if(!validA){
 			  return "empty-events";
 		  }
@@ -188,23 +190,25 @@ log.trace("events to page " + eventsToArtistEventsPage.size());
 			  ArrayList<String> urlList) throws Exception{
 //
 			Event event = eS.findById(eventId);
-log.trace(event);
-			ArrayList<String> tags = new ArrayList<String>();
-log.trace("extracting tags from bandsintown");
-			tags = tagExtractor.extractTagFromBandsintown(event);
+			
+			ArrayList<String> tags = tagExtractor.extractTag(event,5000L);
 log.trace("tags for event " + tags);
 
 			PhotoRetriever pr = new PhotoRetriever();
 						
 //			String artistName = event.getArtist().get(0).getName().replaceAll("\\s", "");
 			
-			List<MediaFeedData> mediaList = pr.getMedia3(tags, 
+			List<MediaFeedData> mediaList = pr.getMedia4bis(tags, 
 					event.getVenue().getLatitude(), event.getVenue().getLongitude(),
 					event.getDatetime().minusHours(6), event.getDatetime().plusHours(18),
-					5000L, 25);
+					5000L, 16);
+			
+			Collections.sort(mediaList,new CustomComparator());
 
+log.trace("time");
 			for (MediaFeedData mediaFeedData : mediaList) {
 //log.debug((new DateTime(Long.parseLong(mediaFeedData.getCreatedTime())*1000)).toString());
+log.trace(mediaFeedData.getLikes().getCount());
 				String url = mediaFeedData.getImages()
 						.getLowResolution().getImageUrl();
 				urlList.add(url);

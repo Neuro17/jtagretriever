@@ -86,4 +86,6 @@ INSERT INTO `concerts_db`.`events_table_searched`(`title`, `total`)
         
 select * from `concerts_db`.`artists_searched` ORDER BY `total` DESC LIMIT 10;
 select * from `concerts_db`.`venues_searched` ORDER BY `total` DESC LIMIT 10;
+
+select t.text from `concerts_db`.`tweet_test` as t where t.event_name like '%cash%';
 */

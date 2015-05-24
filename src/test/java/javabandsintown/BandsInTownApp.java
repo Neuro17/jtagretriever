@@ -36,7 +36,7 @@ public class BandsInTownApp {
 		
 //		artist = bandsintown.getArtist.setArtist("paul kalkbrenner").asJson().search();
 //		System.out.println(artist);
-		
+/*		
 		events = bandsintown.getEvents.setArtist("paul kalkbrenner").asJson().setDate("2015-02-22,2015-05-22").search();
 //		for(Event e : events)
 //			System.out.println(e);
@@ -55,6 +55,9 @@ System.out.println(datesString);
 				.setArtist("paul kalkbrenner")
 				.setDate(datesString).search();
 System.out.println(events.size() + " events ");
+*/
+		artist = bandsintown.getArtist.setArtist("francesco renga").search();
+System.out.println(artist);
 		
 /*		events = bandsintown.getEvents.setArtist("tale of us").setDate("2014-11-07,2014-12-12").search();
 		for(Event e : events)

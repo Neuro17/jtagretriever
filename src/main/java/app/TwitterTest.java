@@ -59,7 +59,7 @@ public class TwitterTest implements CommandLineRunner {
 		
 //		Event event;
 		try {
-			Event event = eventDAO.findById(9069374);
+			Event event = eventDAO.findById(9794397);
 			twitter.StreamConcert(event, 2);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -101,12 +101,12 @@ public class TwitterTest implements CommandLineRunner {
 	@Override
     public void run(String... strings) throws Exception {
 //		log.debug(tweet);
-		log.debug(twitter);
+//		log.debug(twitter);
 		
 //		TweetsStreamTest(100);
-//		
-////		StreamConcertTest();
 		
-		TagExtractorTest();
+		StreamConcertTest();
+		
+//		TagExtractorTest();
 	}
 }

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -200,8 +202,9 @@ log.trace("final size " + finalMFD.size());
 
 		return finalMFD;
     }
-    
-	public List<MediaFeedData> getMedia3(ArrayList<String> tags,
+
+//	each photo have two of the tags taken from the tags
+    public List<MediaFeedData> getMedia3(ArrayList<String> tags,
 			double lat, double lng, DateTime start,
 			DateTime end, long radius, int countForTag) throws InstagramException {
 		
@@ -250,6 +253,156 @@ log.trace(partialMFD.size() + " results for tag " + tag);
 				}			
 log.trace(finalMFD.size() + " total results");
 				return finalMFD;
+	}
+
+
+//	each photo have two of the tags taken from the tags and geolocalized
+    public List<MediaFeedData> getMedia3bis(ArrayList<String> tags,
+			double lat, double lng, DateTime start,
+			DateTime end, long radius, int countForTag) throws InstagramException {
+		
+log.trace("entering getMedia3");
+log.trace("searching for position (" + lat + "," + lng + ")");
+log.trace("from " + start + " to " + end);
+log.trace("for doubleTags " + tags);
+
+				int iterationForTag = 5;
+
+				List<MediaFeedData> finalMFD = new ArrayList<MediaFeedData>();
+				
+				for(String tag : tags){	
+					List<MediaFeedData> partialMFD = new ArrayList<MediaFeedData>();
+					
+log.trace("processing tag " + tag);
+
+					TagMediaFeed tmf = instagram.getRecentMediaTags(tag,  
+							String.valueOf(start.getMillis()) + "000",
+							String.valueOf(end.getMillis()) + "000", 
+							countForTag);
+					List<MediaFeedData> medias = tmf.getData();
+					
+					if(tags.indexOf(tag) == 0)
+						partialMFD.addAll(medias);
+					else{
+						finalMFD.addAll(checkDoubleTag(checkLocation(medias,lat,lng,radius), tags, tag));
+					}
+//log.trace("initial partial size " + partialMFD.size() + " for tag " + tag);
+
+					int iteration = 0;
+			    	while(tmf.getPagination() != null 
+			    			&& partialMFD.size() < countForTag 
+			    			&& iteration < iterationForTag){
+			    		tmf = instagram.getTagMediaInfoNextPage(tmf.getPagination());    		
+						medias = tmf.getData();
+						if(tags.indexOf(tag) == 0)
+							partialMFD.addAll(medias);
+						else
+							finalMFD.addAll(checkDoubleTag(checkLocation(medias,lat,lng,radius), tags, tag));
+//log.trace("medium partial size " + partialMFD.size() + " for tag " + tag + " on iteration " + iteration);
+						iteration++;
+		    		}
+			    	if(partialMFD.size() != 0)
+			    		finalMFD.addAll(partialMFD);
+log.trace(partialMFD.size() + " results for tag " + tag);
+				}			
+log.trace(finalMFD.size() + " total results");
+				return finalMFD;
+	}
+    
+//	considers a mainTag and each photo must contain it and another from the tags
+	public List<MediaFeedData> getMedia4(ArrayList<String> tags,
+			double lat, double lng, DateTime start,
+			DateTime end, long radius, int count) throws InstagramException {
+		
+log.trace("entering getMedia");
+log.trace("searching for position (" + lat + "," + lng + ")");
+log.trace("from " + start + " to " + end);
+				List<MediaFeedData> finalMFD = new ArrayList<MediaFeedData>();
+				Set<MediaFeedData> finalMFDset = new HashSet<MediaFeedData>(); 
+				String mainTag = tags.get(0);
+				tags.remove(mainTag);
+log.trace("for mainTag " + mainTag);
+log.trace("and remaining in " + tags);
+
+				TagMediaFeed tmf = instagram.getRecentMediaTags(mainTag,  
+						String.valueOf(start.getMillis()) + "000",
+						String.valueOf(end.getMillis()) + "000", 
+						count * 5);
+				List<MediaFeedData> medias = tmf.getData();
+log.trace(medias.size());
+log.debug("time of first result " + (new DateTime(Long.parseLong(medias.get(0).getCreatedTime())*1000)).toString());
+				finalMFDset.addAll(checkTag(medias,tags));
+//				finalMFDset.addAll(medias);
+			
+		    	while(tmf.getPagination() != null 
+		    			&& finalMFDset.size() < count){
+		    		tmf = instagram.getTagMediaInfoNextPage(tmf.getPagination());    		
+					medias = tmf.getData();
+					finalMFDset.addAll(checkTag(medias,tags));
+log.trace("["+ mainTag + "] partial size " + finalMFDset	.size());
+		    	}
+		    	
+		    	finalMFD.addAll(finalMFDset);
+
+				return finalMFD;
+}
+
+//	considers a mainTag and each photo must contain it and another from the tags and geolocalized
+	public List<MediaFeedData> getMedia4bis(ArrayList<String> tags,
+			double lat, double lng, DateTime start,
+			DateTime end, long radius, int count) throws InstagramException {
+		
+log.trace("entering getMedia");
+log.trace("searching for position (" + lat + "," + lng + ")");
+log.trace("from " + start + " to " + end);
+				List<MediaFeedData> finalMFD = new ArrayList<MediaFeedData>();
+				Set<MediaFeedData> finalMFDset = new HashSet<MediaFeedData>(); 
+				String mainTag = tags.get(0);
+				tags.remove(mainTag);
+log.trace("for mainTag " + mainTag);
+log.trace("and remaining in " + tags);
+
+				TagMediaFeed tmf = instagram.getRecentMediaTags(mainTag,  
+						String.valueOf(start.getMillis()) + "000",
+						String.valueOf(end.getMillis()) + "000", 
+						count * 5);
+				List<MediaFeedData> medias = tmf.getData();
+log.trace(medias.size());
+log.debug("time of first result " + (new DateTime(Long.parseLong(medias.get(0).getCreatedTime())*1000)).toString());
+				finalMFDset.addAll(checkTag(checkLocation(medias,lat,lng,radius),tags));
+//				finalMFDset.addAll(medias);
+			
+		    	while(tmf.getPagination() != null 
+		    			&& finalMFDset.size() < count){
+		    		tmf = instagram.getTagMediaInfoNextPage(tmf.getPagination());    		
+					medias = tmf.getData();
+					finalMFDset.addAll(checkTag(checkLocation(medias,lat,lng,radius),tags));
+log.trace("["+ mainTag + "] partial size " + finalMFDset.size());
+		    	}
+		    	
+		    	finalMFD.addAll(finalMFDset);
+
+				return finalMFD;
+}
+
+	private List<MediaFeedData> checkTag(List<MediaFeedData> medias, 
+			ArrayList<String> tags) {
+		if(medias.size() != 0){
+			List<MediaFeedData> MFD = new ArrayList<MediaFeedData>();
+	
+			for(MediaFeedData media : medias){
+				for(String t : tags){
+					if(media.getTags().contains(t)){
+						MFD.add(media);
+						break;
+					}
+				}
+			}		
+log.trace(" +" + MFD.size());
+			return MFD;
+		}
+		else
+			return null;
 	}
 
 	private List<MediaFeedData> checkDoubleTag(

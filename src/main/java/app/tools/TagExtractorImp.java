@@ -72,32 +72,47 @@ public class TagExtractorImp implements TagExtractor{
 		ArrayList<String> tag = new ArrayList<String>();
 		
 //		log.debug(event);
+		String[] singleWords;
 		
 		for(Artist artist : event.getArtist()) {
-			tag.add(artist.getName().toLowerCase().replaceAll("\\s",""));
+			tag.add(artist.getName().toLowerCase().replaceAll("\\s","")
+				.replaceAll("!","").replaceAll("-",""));
 		}
 		
 		tag.add(event.getVenue().getCity().toLowerCase().replaceAll("\\s","")
 				.replaceAll("!","").replaceAll("-",""));
+		singleWords = event.getVenue().getCity().toLowerCase().split(" ");
+		for(String sW : singleWords)
+			tag.add(sW);
 		
 		tag.add(event.getVenue().getCountry().toLowerCase().replaceAll("\\s","")
 				.replaceAll("!","").replaceAll("-",""));
+		singleWords = event.getVenue().getCountry().toLowerCase().split(" ");
+		for(String sW : singleWords)
+			tag.add(sW);
 		
 		tag.add(event.getVenue().getName().toLowerCase().replaceAll("\\s","")
 				.replaceAll("!","").replaceAll("-",""));
+		singleWords = event.getVenue().getName().toLowerCase().split(" ");
+		for(String sW : singleWords)
+			tag.add(sW);
 		
-		if(event.getVenue().getRegion() != null) { 
-			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s","")
-					.replaceAll("!","").replaceAll("-",""));
-		}
+//		if(event.getVenue().getRegion() != null) { 
+//			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s","")
+//					.replaceAll("!","").replaceAll("-",""));
+//		}
+		
 //		tag.add(event.getTitle().toLowerCase().replaceAll("\\s",""));
 //		tag.add(event.getDatetime().toString().toLowerCase().replaceAll("\\s",""));
-		
+
 		return tag;
 	}
 	
 	public ArrayList<String> extractTag(Event e, double radius) {
 		ArrayList<String> tag = new ArrayList<String>();
+		
+		tag.addAll(extractTagFromBandsintown(e));
+		
 		if(tweetRepo.count() > 0) {
 			Map<String, Integer> rawTag = extractTagFromTweets(e, radius);
 			
@@ -110,7 +125,6 @@ public class TagExtractorImp implements TagExtractor{
 			}
 		}
 				
-		tag.addAll(extractTagFromBandsintown(e));
 		return tag;
 	}
 	
