@@ -109,7 +109,7 @@ public class JSPController extends GenericController{
 //		  VenueService vS = new VenueService();
 //		  EventService eS = new EventService();
 
-		  HashMap<String,String> topA = aS.top(12);
+		  HashMap<String,String> topA = aS.top(16);
 //		  ArrayList<String> topV = vS.top(8);
 //		  ArrayList<String> topE = eS.top(8);
 		  
@@ -188,9 +188,9 @@ log.trace("events to page " + eventsToArtistEventsPage.size());
 		public String getArtistEventHome(@ModelAttribute("eventId") int eventId,
 				HttpServletRequest request, HttpServletResponse response,
 			  ArrayList<String> urlList) throws Exception{
-//
+
 			Event event = eS.findById(eventId);
-			
+log.trace(event);			
 			ArrayList<String> tags = tagExtractor.extractTag(event,5000L);
 log.trace("tags for event " + tags);
 
@@ -198,17 +198,25 @@ log.trace("tags for event " + tags);
 						
 //			String artistName = event.getArtist().get(0).getName().replaceAll("\\s", "");
 			
-			List<MediaFeedData> mediaList = pr.getMedia4bis(tags, 
+			List<MediaFeedData> mediaList = new ArrayList<MediaFeedData>();
+			
+//			for(String tag : tags)
+//				mediaList.addAll(pr.getMedia2(tag, 
+//						event.getVenue().getLatitude(), event.getVenue().getLongitude(),
+//						event.getDatetime().minusHours(6), event.getDatetime().plusHours(18),
+//						5000L, 10));
+			
+			mediaList = pr.getMedia4bis(tags, 
 					event.getVenue().getLatitude(), event.getVenue().getLongitude(),
-					event.getDatetime().minusHours(6), event.getDatetime().plusHours(18),
-					5000L, 16);
+					event.getDatetime().minusHours(1), event.getDatetime().plusHours(11),
+					5000L, 28);
 			
 			Collections.sort(mediaList,new CustomComparator());
 
-log.trace("time");
 			for (MediaFeedData mediaFeedData : mediaList) {
 //log.debug((new DateTime(Long.parseLong(mediaFeedData.getCreatedTime())*1000)).toString());
-log.trace(mediaFeedData.getLikes().getCount());
+//log.trace(mediaFeedData.getLikes().getCount());
+//log.trace(mediaFeedData.getTags());
 				String url = mediaFeedData.getImages()
 						.getLowResolution().getImageUrl();
 				urlList.add(url);

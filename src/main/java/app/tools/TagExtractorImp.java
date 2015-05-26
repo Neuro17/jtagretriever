@@ -1,6 +1,7 @@
 package app.tools;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -67,35 +68,24 @@ public class TagExtractorImp implements TagExtractor{
 		return rawTag;
 	}
 
+	
 	@Override
 	public ArrayList<String> extractTagFromBandsintown(Event event) {
 		ArrayList<String> tag = new ArrayList<String>();
 		
 //		log.debug(event);
-		String[] singleWords;
 		
 		for(Artist artist : event.getArtist()) {
-			tag.add(artist.getName().toLowerCase().replaceAll("\\s","")
-				.replaceAll("!","").replaceAll("-",""));
+			tag.add(artist.getName().replaceAll("\\s","").replaceAll("!","")
+					.replaceAll("-","").replaceAll("\\(", "")
+					.replaceAll("\\)", "").replaceAll("\\.", ""));
 		}
 		
-		tag.add(event.getVenue().getCity().toLowerCase().replaceAll("\\s","")
-				.replaceAll("!","").replaceAll("-",""));
-		singleWords = event.getVenue().getCity().toLowerCase().split(" ");
-		for(String sW : singleWords)
-			tag.add(sW);
+		tag.addAll(extractMultipleTags(event.getVenue().getCity()));
 		
-		tag.add(event.getVenue().getCountry().toLowerCase().replaceAll("\\s","")
-				.replaceAll("!","").replaceAll("-",""));
-		singleWords = event.getVenue().getCountry().toLowerCase().split(" ");
-		for(String sW : singleWords)
-			tag.add(sW);
-		
-		tag.add(event.getVenue().getName().toLowerCase().replaceAll("\\s","")
-				.replaceAll("!","").replaceAll("-",""));
-		singleWords = event.getVenue().getName().toLowerCase().split(" ");
-		for(String sW : singleWords)
-			tag.add(sW);
+		tag.addAll(extractMultipleTags(event.getVenue().getCountry()));
+
+		tag.addAll(extractMultipleTags(event.getVenue().getName()));
 		
 //		if(event.getVenue().getRegion() != null) { 
 //			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s","")
@@ -108,6 +98,25 @@ public class TagExtractorImp implements TagExtractor{
 		return tag;
 	}
 	
+	private Collection<? extends String> extractMultipleTags(String name) {
+		ArrayList<String> tags = new ArrayList<String>();
+
+		tags.add(name.toLowerCase().replaceAll("\\s","").replaceAll("!","")
+				.replaceAll("-","").replaceAll("\\(", "")
+				.replaceAll("\\)", "").replaceAll("'", "")
+				.replaceAll("\\.", ""));
+		
+		if(name.contains(" ")){
+			String[] singleWords = name.toLowerCase().split(" ");
+			
+			for(String sW : singleWords)
+				tags.add(sW.replaceAll("!","").replaceAll("-","")
+						.replaceAll("\\(", "").replaceAll("\\)", "")
+						.replaceAll("'", "").replaceAll("\\.", ""));
+		}
+		return tags;
+	}
+
 	public ArrayList<String> extractTag(Event e, double radius) {
 		ArrayList<String> tag = new ArrayList<String>();
 		

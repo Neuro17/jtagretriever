@@ -300,9 +300,11 @@ System.out.println(preparedStatement);
 					.setArtist(aTmp.getName())
 					.setDate(datesString).search();
 		
-//log.trace("persisting " + events.size() + " events for artist " + aTmp.getName());
-			for(Event e : events)
+log.trace("persisting " + events.size() + " events for artist " + aTmp.getName());
+			for(Event e : events){
+log.trace(events.size());
 				eS.persist(e);
+				}
 			return true;
 		}
 		else{
@@ -355,7 +357,8 @@ System.out.println(preparedStatement);
 						 + "FROM concerts_db.partecipations as p "
 						 + "right join concerts_db.events_table as e "
 						 + "on p.event_id = e.event_id "
-						 + "WHERE p.artist_name like ?");
+						 + "WHERE p.artist_name like ?"
+						 + "ORDER BY e.datetime");
 				preparedStatement.setString(1, artistName); 
 				System.out.println(preparedStatement);
 				resultSet = preparedStatement.executeQuery();
