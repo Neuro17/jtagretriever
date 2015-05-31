@@ -21,27 +21,23 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li  class="active"><a href="#">PhotoAlbum</a></li>
-                <li><a href="gallery">YourGalleries</a></li>
+                <li><a href="gallery">Your Galleries</a></li>
                 <li><a href="popular">Popular</a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
+                <li><a href="recent">Recent Events</a></li>
 <!--  SEARCH BAR -->
-				<li>
-					<form class="form-wrapper" action="search" method="post" commnadName="tag">
-					    <input type="text" id="search" name="tag" size="21" placeholder="Search for Artist, Concerts ..." maxlength="120" required />
-					    <input type="submit" name="submit" value="Search" id="submit">
-					    <input type="hidden" name="searchType" value="tag"/>					        
-					</form>
-					<div class="tfclear"></div>
-		        </li>            
+<!-- 				<li> -->
+<!-- 					<form id="demo-2" class="form-wrapper" action="search" method="post" commnadName="tag"> -->
+<!-- 					    <input type="text" id="search" name="tag" size="21" placeholder="Search for Artist, Concerts ..." maxlength="120" required /> -->
+<!-- 					    <input type="submit" name="submit" value="Search" id="submit"> -->
+<!-- 					    <input type="hidden" name="searchType" value="tag"/>					         -->
+<!-- 					</form> -->
+<!-- 					<div class="tfclear"></div> -->
+<!-- 		        </li> -->
+		        <li>
+						<form id="demo-2" action="search" method="post" commnadName="tag">
+							<input type="search" name="tag" required />
+						</form>
+		        </li> 
             </ul>
         </div>
     </div>
@@ -62,7 +58,7 @@
         	for(String url : urlList){	
 		 %>
         <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-            <a class="thumbnail" href="#">
+            <a class="thumbnail" href="<%=url%>">
                 <img class="img-responsive" src="<%=url%>"
                      alt="">
             </a>

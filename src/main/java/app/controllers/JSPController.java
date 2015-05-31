@@ -21,6 +21,7 @@ import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,6 +37,8 @@ import app.tools.Task;
 import app.tools.Tools;
 import dataBaseService.ArtistService;
 import dataBaseService.EventService;
+import dataBaseService.Photo;
+import dataBaseService.PhotoService;
 import dataBaseService.VenueService;
 
 @Controller
@@ -48,7 +51,6 @@ public class JSPController extends GenericController{
 	
 	@Autowired
 	TagExtractor tagExtractor;
-	
 	
 	ArtistService aS = new ArtistService();
 	VenueService vS = new VenueService();
@@ -95,9 +97,10 @@ public class JSPController extends GenericController{
 			  if(aTmp != null)
 				  map.put(name, aTmp.getUrlImage());
 		  }
-//		fine gestione cookies		  
+//		fine gestione cookies
 			  request.setAttribute("map",map);		  
 		  }
+log.trace("total artists to page " + map.size());
 		  return "gallery";
 	  }
 	  
@@ -120,7 +123,7 @@ public class JSPController extends GenericController{
 
 		  request.setAttribute("map", map);
 		  request.setAttribute("list",list);		  
-		  
+log.trace("popular artists to page " + map.size());
 		  return "popular";
 	  }
 	  
@@ -134,7 +137,8 @@ public class JSPController extends GenericController{
 
 		  boolean validA = false, validV = false, validE = false;
 		  
-		  validA = aS.checkName(tag) || aS.manageTag(tag);
+		  validA = aS.checkName(tag) || 
+				  aS.manageTag(tag);
 //log.debug(validA);
 		  if(!validA){
 			  return "empty-events";
@@ -175,8 +179,6 @@ log.trace("events to page " + eventsToArtistEventsPage.size());
 			  HttpServletRequest request,HttpServletResponse response,
 			  ArrayList<Event> events) throws Exception {
 		  
-//		  ArrayList<Event> events = new ArrayList<Event>();
-
 		  events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
 
 		  request.setAttribute("eventList", events);
@@ -190,9 +192,9 @@ log.trace("events to page " + eventsToArtistEventsPage.size());
 			  ArrayList<String> urlList) throws Exception{
 
 			Event event = eS.findById(eventId);
-log.trace(event);			
+log.trace("processing " + event);			
 			ArrayList<String> tags = tagExtractor.extractTag(event,5000L);
-log.trace("tags for event " + tags);
+log.trace("tags retrieved " + tags);
 
 			PhotoRetriever pr = new PhotoRetriever();
 						
@@ -225,29 +227,62 @@ log.trace("tags for event " + tags);
 			return "photoAlbum";  
 		}
 	
-	  /**
-	   * Shows a list of photos given an eventName from search-test page
-	   * 
-	 * @param eventName
-	 * @param urlList
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/concert-test")
-	  public String getConcertTest(@ModelAttribute("tag") String eventName, 
-	      ArrayList<String> urlList, HttpServletRequest request,
-	      HttpServletResponse response) throws Exception {
-		  ArrayList<String> tags = new ArrayList<String>();
-		  
-		  if(twitterRepo.findByEventName(eventName) != null){
-			  
-		  }
-		  
-		  return null;
-	  }
+	@RequestMapping("/recent")
+	  public String getRecentEvent(ArrayList<String> urlList, 
+			  HttpServletRequest request, HttpServletResponse response) throws Exception {  
 
+		  PhotoService pS = new PhotoService();
+		  ArrayList<Event> eventsToPage = new ArrayList<Event>();
+		  LocalDate localDate = (new LocalDate()).minusDays(1);
+		  
+		  ArrayList<Event> events = new ArrayList<Event>();
+		  ArrayList<Event> partialEvents = null;
+		  
+		int days = 0;
+		int maxDays = 5;
+		while((partialEvents = 
+				eS.getTodaysEvents(localDate.minusDays(days))).size() != 0
+				&& days < maxDays){
+			  events.addAll(partialEvents);
+			  days++;
+		}
+		
+		for(Event e : events)
+			if(pS.existsAlmostsOne(e.getId()))
+				eventsToPage.add(e);
+		  
+		if(eventsToPage.size() == 0) {
+			return "empty-events";
+		}
+
+		request.setAttribute("eventList", eventsToPage);
+log.trace("total events to page " + eventsToPage.size());
+		return "recent-artists-events";  
+	}
+	
+	  @RequestMapping("/local")
+	  public String getLocal(@ModelAttribute("eventId") String eventId, 
+			  ArrayList<String> urlList, HttpServletRequest request, 
+			  HttpServletResponse response) throws Exception {
+
+		  PhotoService pS = new PhotoService();
+		  
+		  int intEventId = Integer.parseInt(eventId);
+		  
+		  ArrayList<Photo> photos = pS.findAllByEventId(intEventId);
+		  
+		  if(photos.size() == 0)
+			  return "empty-results";
+		  
+		  for (Photo p  : photos) {
+			  String url = p.getUrlLinkLow();
+			  urlList.add(url);
+		  }          
+		  request.setAttribute("urlList",urlList);			
+log.trace("photos to page " + photos.size());		  		  
+		  return "photoAlbum";
+	  }
+	
 	@RequestMapping("/emptyEvents")
 	public String getEmptyEventsPage(ModelAndView modelAndView) {
 

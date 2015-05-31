@@ -27,7 +27,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="gallery">Your Galleries</a></li>
                 <li><a href="popular">Popular</a></li>
-                <li><a href="recent">Recent Events</a></li>
+                <li  class="active"><a href="recent">Recent Events</a></li>
 <!--  SEARCH BAR -->
 <!-- 				<li> -->
 <!-- 					<form id="demo-2" class="form-wrapper" action="search" method="post" commnadName="tag"> -->
@@ -77,7 +77,7 @@
 			 %>
 		       				    
 				<tr>
-				  <td><a href="artist-event-home?eventId=<%= event.getId()%>"><%= event.getTitle()%></a></td>
+				  <td><a href="local?eventId=<%= event.getId()%>"><%= event.getTitle()%></a></td>
 				  <td><%= event.getDatetime()%></td>
 				</tr>
 	

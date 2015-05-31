@@ -23,11 +23,9 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a href="gallery">YourGalleries</a></li>
+                <li><a href="gallery">Your Galleries</a></li>
                 <li><a href="popular">Popular</a></li>
+                <li><a href="recent">Recent Events</a></li>
             </ul>
         </div>
     </div>
@@ -43,16 +41,14 @@
                 <button class="btn btn-default" name="submit" value="Search" id="submit" type="submit">Go!</button>
             </span>
         </div>
-        </form>
-        
+        </form>    
     </div>
-
-<!-- 	<form  class="form-wrapper" action="search" method="post" commnadName="tag"> -->
-<!-- 	    <input type="text" id="search" name="tag" size="21" placeholder="Search for Artist, Concerts ..." maxlength="120" required /> -->
-<!-- <!-- 	&nbsp; 	-->
-<!-- 	    <input type="submit" name="submit" value="Search" id="submit"> -->
-<!-- 	    <input type="hidden" name="searchType" value="tag"/>					         -->
-<!-- 	</form> -->
+    
+<!--     <div class="col-lg-6 col-lg-offset-3" id="search-bar"> -->
+<!-- 			<form action="search" method="post" commnadName="tag"> -->
+<!-- 				<input type="search" name="tag" required />				 -->
+<!-- 			</form>         -->
+<!--     </div> -->
 
 </body>
 </html>

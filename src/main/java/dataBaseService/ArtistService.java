@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -133,7 +134,8 @@ System.out.println(preparedStatement);
 		    preparedStatement = connection.prepareStatement(
 		    		"INSERT INTO `concerts_db`.`artists_searched`"
 		    		+ "(`artist_name`,`total`) "
-		    		+ "VALUES (?, ?)");
+		    		+ "VALUES (?, ?)"
+		    		+ "ON DUPLICATE KEY UPDATE `total` = `total` + 1");
 		    preparedStatement.setString(1, entity.getName());
 		    preparedStatement.setInt(2, 1);
 System.out.println(preparedStatement);	      
@@ -299,12 +301,21 @@ System.out.println(preparedStatement);
 			ArrayList<Event> events = bandsintown.getEvents
 					.setArtist(aTmp.getName())
 					.setDate(datesString).search();
-		
-log.trace("persisting " + events.size() + " events for artist " + aTmp.getName());
-			for(Event e : events){
-log.trace(events.size());
-				eS.persist(e);
-				}
+			
+//log.trace("total events " + events.size());
+			while(events.size() > 0){
+				int fromIndex = 0;
+				int toIndex = 50;
+				if(events.size() < toIndex)
+					toIndex = events.size(); 
+				ArrayList<Event> partialEvents = 
+						new ArrayList<Event>(events.subList(fromIndex, toIndex));
+//log.trace("persisting " + partialEvents.size() +" events");
+				for(Event e : partialEvents)
+					eS.persist(e);
+				events = new ArrayList<Event>(events.subList(toIndex, events.size()));
+//log.trace("remaining " + events.size() +" events");
+			}				
 			return true;
 		}
 		else{
