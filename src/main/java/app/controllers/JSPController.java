@@ -228,7 +228,7 @@ log.trace("tags retrieved " + tags);
 		}
 	
 	@RequestMapping("/recent")
-	  public String getRecentEvent(ArrayList<String> urlList, 
+	  public String getRecentEvent(@ModelAttribute("daysBefore") int daysBefore, 
 			  HttpServletRequest request, HttpServletResponse response) throws Exception {  
 
 		  PhotoService pS = new PhotoService();
@@ -236,28 +236,23 @@ log.trace("tags retrieved " + tags);
 		  LocalDate localDate = (new LocalDate()).minusDays(1);
 		  
 		  ArrayList<Event> events = new ArrayList<Event>();
-		  ArrayList<Event> partialEvents = null;
 		  
-		int days = 0;
-		int maxDays = 5;
-		while((partialEvents = 
-				eS.getTodaysEvents(localDate.minusDays(days))).size() != 0
-				&& days < maxDays){
-			  events.addAll(partialEvents);
-			  days++;
-		}
+		  events = eS.getTodaysEvents(localDate.minusDays(daysBefore));
 		
-		for(Event e : events)
-			if(pS.existsAlmostsOne(e.getId()))
-				eventsToPage.add(e);
+		  for(Event e : events)
+			  if(pS.existsAlmostsOne(e.getId()))
+				  eventsToPage.add(e);
 		  
-		if(eventsToPage.size() == 0) {
-			return "empty-events";
-		}
+		  if(eventsToPage.size() == 0) {
+			  return "empty-events";
+		  }
 
-		request.setAttribute("eventList", eventsToPage);
-log.trace("total events to page " + eventsToPage.size());
-		return "recent-artists-events";  
+		  request.setAttribute("eventList", eventsToPage);
+		  request.setAttribute("daysBefore",daysBefore);
+		  
+log.trace("total events to page " + eventsToPage.size() + " for "
+		+ daysBefore + " days before now");
+		  return "recent-events";  
 	}
 	
 	  @RequestMapping("/local")
@@ -276,6 +271,7 @@ log.trace("total events to page " + eventsToPage.size());
 		  
 		  for (Photo p  : photos) {
 			  String url = p.getUrlLinkLow();
+log.trace(p.getUrlLinkLow());
 			  urlList.add(url);
 		  }          
 		  request.setAttribute("urlList",urlList);			

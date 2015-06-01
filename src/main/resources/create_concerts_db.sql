@@ -115,3 +115,7 @@ delete from `concerts_db`.`artists_searched` where artist_name like 'Five Finger
 delete from `concerts_db`.`events_table` where title like 'Five Finger Death Punch' and event_id != 0;
 delete from `concerts_db`.`events_table_searched` where title like 'Five Finger Death Punch';
 */
+
+select * from photos where url_link_low = 'https://scontent.cdninstagram.com/hphotos-xfa1/t51.2885-15/s320x320/e15/11311358_820378311386606_750268252_n.jpg';
+
+select * from photos where event_id = 9737618;

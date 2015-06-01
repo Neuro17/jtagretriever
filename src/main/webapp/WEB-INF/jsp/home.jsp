@@ -25,7 +25,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="gallery">Your Galleries</a></li>
                 <li><a href="popular">Popular</a></li>
-                <li><a href="recent">Recent Events</a></li>
+                <li><a href="recent?daysBefore=1">Recent Events</a></li>
             </ul>
         </div>
     </div>

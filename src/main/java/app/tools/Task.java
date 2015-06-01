@@ -154,7 +154,7 @@ log.trace(medias.size());
 	
 	public static void collectYesterdayDBEventsPhotos() throws Exception{
 		EventService eS = new EventService();
-		LocalDate localDate = (new LocalDate()).minusDays(5);
+		LocalDate localDate = (new LocalDate()).minusDays(8);
 		PhotoService pS = new PhotoService();
 		ArrayList<Event> eventsToManage = new ArrayList<Event>();
 		  
@@ -168,9 +168,12 @@ log.trace(eventsToManage.size());
 
 		for(Event e : eventsToManage){
 log.trace(e);
-			if(e.getId() != 8651908
-					&& e.getId() != 8670300
-//					&& e.getId() != 9226412
+			if(e.getId() != 9900839
+					&& e.getId() != 9187059
+					&& e.getId() != 9326508
+					&& e.getId() != 9700304
+					&& e.getId() != 9095063
+					&& e.getId() != 9848450
 					)
 				collectEventPhotos(e.getId());
 		}

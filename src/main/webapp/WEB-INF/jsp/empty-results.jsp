@@ -19,20 +19,10 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a href="gallery">YourGalleries</a></li>
+				<li><a href="gallery">Your Galleries</a></li>
                 <li><a href="popular">Popular</a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
-                <li><a></a></li>
+                <li><a href="recent?daysBefore=1">Recent Events</a></li>
+
 <!--  SEARCH BAR -->
 <!-- 				<li> -->
 <!-- 					<form id="demo-2" class="form-wrapper" action="search" method="post" commnadName="tag"> -->

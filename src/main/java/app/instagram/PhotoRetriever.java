@@ -390,7 +390,7 @@ log.trace("["+ mainTag + "] partial size " + finalMFDset.size() + " iteration " 
 		
 log.trace("entering getMedia4tris");
 log.trace("searching for position (" + lat + "," + lng + ")");
-log.trace("from " + start + "\nto " + end);
+log.trace("from " + start + " to " + end);
 				List<MediaFeedData> finalMFD = new ArrayList<MediaFeedData>();
 				Set<MediaFeedData> finalMFDset = new HashSet<MediaFeedData>(); 
 				String mainTag = tags.get(0).replaceAll("\\?", "Q");

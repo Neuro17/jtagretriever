@@ -27,7 +27,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="gallery">Your Galleries</a></li>
                 <li><a href="popular">Popular</a></li>
-                <li  class="active"><a href="#">Recent Events</a></li>
+                <li class="active"><a href="recent?daysBefore=1">Recent Events</a></li>
 <!--  SEARCH BAR -->
 <!-- 				<li> -->
 <!-- 					<form id="demo-2" class="form-wrapper" action="search" method="post" commnadName="tag"> -->
@@ -87,14 +87,24 @@
 	        %>
 		    </tbody>
         </table>
+	<% 
+    	int daysBefore = (int) request.getAttribute("daysBefore");
+		int previousDay = daysBefore + 1;
+		int nextDay = daysBefore - 1;
+    %>    
+	<ul>
+			<li>
+				<a href="recent?daysBefore=<%= previousDay %>">
+					previous day</a>
+			</li>
+		<% 	if(nextDay != 0){%>
+			<li>
+				<a href="recent?daysBefore=<%= nextDay %>">
+					next day</a>
+			</li> 
+		<%	} %>		
+	</ul>	
     </div>
-
-<!-- 	<form  class="form-wrapper" action="search" method="post" commnadName="tag"> -->
-<!-- 	    <input type="text" id="search" name="tag" size="21" placeholder="Search for Artist, Concerts ..." maxlength="120" required /> -->
-<!-- <!-- 	&nbsp; 	-->
-<!-- 	    <input type="submit" name="submit" value="Search" id="submit"> -->
-<!-- 	    <input type="hidden" name="searchType" value="tag"/>					         -->
-<!-- 	</form> -->
 
 </body>
 </html>
