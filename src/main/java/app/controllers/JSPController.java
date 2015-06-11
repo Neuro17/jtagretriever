@@ -197,7 +197,7 @@ log.trace("processing " + event);
 log.trace("tags retrieved " + tags);
 
 			PhotoRetriever pr = new PhotoRetriever();
-						
+			PhotoService pS = new PhotoService();		
 //			String artistName = event.getArtist().get(0).getName().replaceAll("\\s", "");
 			
 			List<MediaFeedData> mediaList = new ArrayList<MediaFeedData>();
@@ -208,21 +208,40 @@ log.trace("tags retrieved " + tags);
 //						event.getDatetime().minusHours(6), event.getDatetime().plusHours(18),
 //						5000L, 10));
 			
-			mediaList = pr.getMedia4bis(tags, 
+//			mediaList = pr.getMedia4bis(tags, 
+//					event.getVenue().getLatitude(), event.getVenue().getLongitude(),
+//					event.getDatetime().minusHours(1), event.getDatetime().plusHours(11),
+//					5000L, 28);
+			if(pS.existsAlmostsOne(eventId)){
+				ArrayList<Photo> photos = pS.findAllByEventId(eventId);
+				
+				for(Photo p : photos)
+					urlList.add(p.getUrlLinkLow());
+			}
+			else{
+				mediaList = pr.getMedia4tris(tags, 
 					event.getVenue().getLatitude(), event.getVenue().getLongitude(),
 					event.getDatetime().minusHours(1), event.getDatetime().plusHours(11),
-					5000L, 28);
-			
-			Collections.sort(mediaList,new CustomComparator());
+					5000L);
+				
+				Collections.sort(mediaList,new CustomComparator());
 
-			for (MediaFeedData mediaFeedData : mediaList) {
-//log.debug((new DateTime(Long.parseLong(mediaFeedData.getCreatedTime())*1000)).toString());
-//log.trace(mediaFeedData.getLikes().getCount());
-//log.trace(mediaFeedData.getTags());
-				String url = mediaFeedData.getImages()
-						.getLowResolution().getImageUrl();
-				urlList.add(url);
-			}          
+				Photo p = new Photo();
+				
+				for(MediaFeedData media : mediaList){
+					p.setEventId(eventId);
+					p.setMediaId(media.getId());
+					p.setUrlLinkLow(media.getImages().getLowResolution().getImageUrl());
+					p.setUrlLinkStd(media.getImages().getStandardResolution().getImageUrl());
+				
+					pS.persist(p);			
+					
+					String url = media.getImages()
+							.getLowResolution().getImageUrl();
+					urlList.add(url);
+				}
+			}
+						
 			request.setAttribute("urlList",urlList);
 			return "photoAlbum";  
 		}
@@ -233,16 +252,16 @@ log.trace("tags retrieved " + tags);
 
 		  PhotoService pS = new PhotoService();
 		  ArrayList<Event> eventsToPage = new ArrayList<Event>();
-		  LocalDate localDate = (new LocalDate()).minusDays(1);
+		  LocalDate localDate = new LocalDate();
 		  
 		  ArrayList<Event> events = new ArrayList<Event>();
 		  
 		  events = eS.getTodaysEvents(localDate.minusDays(daysBefore));
-		
+log.trace("total events " + events.size());		
 		  for(Event e : events)
 			  if(pS.existsAlmostsOne(e.getId()))
 				  eventsToPage.add(e);
-		  
+log.trace("total events to page " + eventsToPage.size());				  
 		  if(eventsToPage.size() == 0) {
 			  return "empty-events";
 		  }

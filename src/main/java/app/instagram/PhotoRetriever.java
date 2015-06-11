@@ -395,6 +395,10 @@ log.trace("from " + start + " to " + end);
 				Set<MediaFeedData> finalMFDset = new HashSet<MediaFeedData>(); 
 				String mainTag = tags.get(0).replaceAll("\\?", "Q");
 				tags.remove(mainTag);
+				if(tags.get(0).equals("Maroon5")){
+					mainTag = tags.get(0);
+					tags.remove(mainTag);
+				}
 log.trace("for mainTag " + mainTag);
 log.trace("and remaining in " + tags);
 				TagMediaFeed tmf = instagram.getRecentMediaTags(mainTag,  

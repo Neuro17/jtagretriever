@@ -37,13 +37,21 @@ public class Task {
 	private static final ArtistService artDAO = new ArtistService();
 	private static final EventService eventDAO = new EventService();
 	private static final VenueService venueDAO = new VenueService();
+	private static final PhotoService photoDAO = new PhotoService();
 	private static final Bandsintown bandsintown = new Bandsintown();
-	private static final TwitterConnector twitterExtractor= new TwitterConnectorImpl();
-		
+	private static final TwitterConnector twitterExtractor = new TwitterConnectorImpl();
+	
+	private static String complete(int i){
+		if(i < 10)
+			return  "0" + Integer.toString(i);
+		else
+			return
+					Integer.toString(i);
+	}
+	
 	public static void initArtistDB(){
 		ArrayList<String> artists = Tools.readFileFromResource(ARTISTS_FILE, "#");
 		ArrayList<Artist> art = new ArrayList<Artist>();
-		ArtistService artService = new ArtistService();
 		
 		for(String artist : artists) {
 			Artist artTmp = bandsintown.getArtist.setArtist(artist).search();
@@ -75,6 +83,16 @@ public class Task {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public static void updateDBAritsts() throws Exception{
+		ArrayList<Artist> artists = artDAO.findAll();
+		
+		for(Artist a : artists){
+			Artist updatedArtist = 
+					bandsintown.getArtist.setArtist(a.getName()).search();
+			artDAO.update(updatedArtist);
 		}
 	}
 	
@@ -111,7 +129,7 @@ public class Task {
 				log.debug(artist.getName());
 				ArrayList<Event> events = bandsintown.getEvents.
 						setArtist(artist.getName()).setDate("upcoming").searchGMTReferences();
-				
+log.trace(events.size() + " events for artist " + artist.getName());		
 				for (Event e : events) {
 					eventDAO.persist(e);
 				}
@@ -121,13 +139,49 @@ public class Task {
 		}
 	}
 	
+	public static void updateArtistsEvents() throws Exception{
+		ArtistService aS = new ArtistService();
+		
+		ArrayList<Artist> artists = aS.findAll(); 
+		for(Artist a : artists){
+log.trace(a);
+			initUpcomingArtistEvents(a.getName());
+		}
+	}
+	
+	public static void updateArtistsEvents(DateTime start,DateTime end) 
+			throws Exception{		
+		ArrayList<Artist> artists = artDAO.findAll();
+		
+		String timeForwardString = end.getYear() + "-" + 
+				complete(end.getMonthOfYear()) + "-" + 
+				complete(end.getDayOfMonth());
+		String timeAgoString = start.getYear() + "-" + 
+				complete(start.getMonthOfYear()) + "-" + 
+				complete(start.getDayOfMonth());
+		String datesString = timeAgoString + "," + timeForwardString; 
+
+		for(Artist a : artists){
+log.trace(a);
+		if(!a.getName().equals("BIG GUNS - Tribute AC/DC (FR)")
+			&&	!a.getName().equals("BRONCHO")){
+			ArrayList<Event> events = bandsintown.getEvents
+				.setArtist(a.getName())
+				.setDate(datesString).search();
+			if(events != null){
+log.trace(events.size());
+				for(Event e : events)
+					eventDAO.persist(e);
+				}
+			}
+		}
+	}
+	
 	public static void collectEventPhotos(int eventId) throws Exception{
-		EventService eS = new EventService();
 		PhotoRetriever pr = new PhotoRetriever();
-		PhotoService pS = new PhotoService();
 		TagExtractorImp tagExtractor = new TagExtractorImp();
 		
-		Event event = eS.findById(eventId);
+		Event event = eventDAO.findById(eventId);
 //log.trace(event);
 		
 		ArrayList<String> tags = tagExtractor.extractTagFromBandsintown(event);
@@ -147,45 +201,47 @@ log.trace(medias.size());
 			p.setUrlLinkLow(media.getImages().getLowResolution().getImageUrl());
 			p.setUrlLinkStd(media.getImages().getStandardResolution().getImageUrl());
 		
-			pS.persist(p);			
+			photoDAO.persist(p);			
 //log.trace(new DateTime(Long.parseLong(media.getCreatedTime())*1000));
 		}
 	}
 	
-	public static void collectYesterdayDBEventsPhotos() throws Exception{
-		EventService eS = new EventService();
-		LocalDate localDate = (new LocalDate()).minusDays(8);
-		PhotoService pS = new PhotoService();
+	public static void collectDaysAgoDBEventsPhotos(int days) throws Exception{
+		LocalDate localDate = (new LocalDate()).minusDays(days);
 		ArrayList<Event> eventsToManage = new ArrayList<Event>();
 		  
-		ArrayList<Event> events = eS.getTodaysEvents(localDate);			
+		ArrayList<Event> events = eventDAO.getTodaysEvents(localDate);			
 log.trace(events.size());
 
 		for(Event e : events)
-			if(!pS.existsAlmostsOne(e.getId()))
+			if(!photoDAO.existsAlmostsOne(e.getId()))
 				  eventsToManage.add(e);
 log.trace(eventsToManage.size());
 
 		for(Event e : eventsToManage){
 log.trace(e);
-			if(e.getId() != 9900839
-					&& e.getId() != 9187059
-					&& e.getId() != 9326508
-					&& e.getId() != 9700304
-					&& e.getId() != 9095063
-					&& e.getId() != 9848450
+			if(	
+//					e.getId() != 8900976
+//					&& e.getId() != 8983540
+					e.getId() > 9773545
 					)
 				collectEventPhotos(e.getId());
 		}
 	}
 	
 	public static void main(String[] args) throws Exception {
+		DateTime start = (new DateTime()).minusDays(7);
+		DateTime end = (new DateTime()).plusDays(7);
+		
 //		initArtistDB();
 //		initEventDB();
 //		startTweetExtraction();
 //		initUpcomingArtistEvents("Calvin Harris");
 //		collectEventPhotos(8932897);
-		collectYesterdayDBEventsPhotos();
+		collectDaysAgoDBEventsPhotos(4);
+// last update 2015-06-11
+//		updateArtistsEvents();
+//		updateArtistsEvents(start, end);
 	}
 
 }
