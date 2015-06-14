@@ -100,7 +100,6 @@ public class Test {
 		try {
 			rs = db.testSelect();
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -119,7 +118,6 @@ public class Test {
 //				log.debug(distance);
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		return filtered;
@@ -141,10 +139,8 @@ public class Test {
 			filtered = filterTweets(events.get(0), s, 0.5);
 			log.debug("reading from DB - done");
 		} catch (ClassNotFoundException  e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			s.closeConnection();

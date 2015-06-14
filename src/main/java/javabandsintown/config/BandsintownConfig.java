@@ -50,6 +50,4 @@ public class BandsintownConfig {
 	public static void setApiKey(String apiKey) {
 		BandsintownConfig.apiKey = apiKey;
 	}
-	
-	
 }

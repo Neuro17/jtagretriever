@@ -36,6 +36,7 @@ public class TwitterConnectorImpl implements TwitterConnector{
 
 	private static final Logger log = LogManager.getLogger(Twitter.class);
 	private static final int DEFAULT_COUNT = 100;
+	
 	@SuppressWarnings("unused")
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
@@ -43,29 +44,14 @@ public class TwitterConnectorImpl implements TwitterConnector{
 	public Query query;
 	private Twitter twitter;
 	public boolean running;
-//	public Event event;
-//	public int radius;
 	
 	@Autowired
 	TweetRepository twitterRepo;
-	
-//	public TwitterConnectorImpl(int queryCount) {
-//		this.queryCount = queryCount;
-//		this.twitter = TwitterFactory.getSingleton();
-//	}
-	
+		
 	public TwitterConnectorImpl() {
 		this.queryCount = DEFAULT_COUNT;
 		this.twitter = TwitterFactory.getSingleton();
 	}
-
-//	@Autowired
-//	public TwitterConnectorImpl(Event e, int radius) {
-//		this.event = e;
-//		this.radius = radius;
-//		this.twitter = TwitterFactory.getSingleton();
-//		this.running = true;
-//	}
 
 	public int getQueryCount() {
 		return queryCount;
@@ -142,9 +128,7 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		ArrayList<Status> tweetsArrayList= new ArrayList<Status>();
 		
 		queryCount = tweetsize < queryCount ? tweetsize : queryCount;	
-		
-//		QueryResult results = null;
-		
+				
 		query = new Query().geoCode(new GeoLocation(lat, lng), radius,
 				Unit.km.toString());
 		
@@ -162,7 +146,6 @@ public class TwitterConnectorImpl implements TwitterConnector{
 	        	pk.setEventName("test event");
 	        	pk.setId(tweet.getId());
 	        	
-//	        	log.debug(twitterRepo);
 	        	log.debug(pk);
 	        	log.debug("stampo geolocation: " + tweet.getGeoLocation());
 	        	
@@ -218,10 +201,7 @@ public class TwitterConnectorImpl implements TwitterConnector{
 		log.debug(getQueryCount());
 		
 		query = new Query().geoCode(new GeoLocation(lat, lng), radius, "km");
-		
-//		query = new Query().geoCode(new GeoLocation(lat, lng), radius,
-//				Unit.km.toString()
-		
+				
 		long lastID = 0;
 
 		do {
@@ -255,8 +235,7 @@ public class TwitterConnectorImpl implements TwitterConnector{
 	        			tweet.getText(),
 	        			tweet.getPlace().getName(),
 	        			tweet.getCreatedAt().toString());
-//	        	
-//	        	log.debug(twitterRepo);
+
 //	        	TODO - ricordarsi di inserire tutti i campi necessari per la tabella
 	        	System.out.println("twitterRepo: " + twitterRepo);
 	        	System.out.println("tweets: " + tmpTweet.toString());
@@ -266,14 +245,11 @@ public class TwitterConnectorImpl implements TwitterConnector{
 			}
 			
 			tmpTweets.clear();
-//			log.debug(lastID);
 			
 			query.setSinceId(lastID);
 			Thread.sleep(1000 * 10);
 		} while(DateTime.now().isBefore(endDate));
 		
-		return tweetsArrayList;
-		
+		return tweetsArrayList;		
 	}
-
 }

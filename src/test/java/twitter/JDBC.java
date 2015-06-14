@@ -86,7 +86,6 @@ public class JDBC {
 				// connection.commit();
 				connection.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	}

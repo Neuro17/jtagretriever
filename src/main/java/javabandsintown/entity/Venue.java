@@ -16,6 +16,7 @@ public class Venue {
 
 	private String region;
 		
+	
 	public Venue(){
 	}
 	

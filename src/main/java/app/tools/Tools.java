@@ -105,22 +105,20 @@ public class Tools {
 		return false;
 	}
 	
-	public static void main(String [] args) {
-		String file = "artists.txt";
-		
-		for(String line : Tools.readFileFromResource(file, "#")) {
-			log.debug(line);
-		}
-		
-		Tools.appendFileFromResource("tmp.txt", "faccia di culo!");
-		Tools.appendFileFromResource("tmp.txt", "faccia di merda");
-		
-		for(String line : Tools.readFileFromResource("tmp.txt")) {
-			log.debug(line);
-		}
-		
-	}
-
+//	public static void main(String [] args) {
+//		String file = "artists.txt";
+//		
+//		for(String line : Tools.readFileFromResource(file, "#")) {
+//			log.debug(line);
+//		}
+//		
+//		Tools.appendFileFromResource("tmp.txt", "faccia di culo!");
+//		Tools.appendFileFromResource("tmp.txt", "faccia di merda");
+//		
+//		for(String line : Tools.readFileFromResource("tmp.txt")) {
+//			log.debug(line);
+//		}
+//	}
 }
 
 

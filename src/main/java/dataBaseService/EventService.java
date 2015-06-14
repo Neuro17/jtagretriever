@@ -72,7 +72,7 @@ public class EventService extends DatabaseService implements EventDAOInterface{
 			  		+ "ON DUPLICATE KEY UPDATE `total` = `total` + 1;";
 			      preparedStatement = connection.prepareStatement(updateTableSQL);
 			      preparedStatement.setString(1, eventName);
-System.out.println(preparedStatement);
+			      System.out.println(preparedStatement);
 			      preparedStatement .executeUpdate();
 				      
 	    } catch (Exception e) {
@@ -169,7 +169,7 @@ System.out.println(preparedStatement);
 	  } finally {
 	    close();
 	  }
-//TODO controlla se iterando su events attraverso e modifica events o solo e
+
 	ArtistService aService = new ArtistService();
 	for(Event e : events){
 		eArtist = aService.getEventArtist(e.getId());
@@ -202,7 +202,7 @@ System.out.println(preparedStatement);
 		    preparedStatement.setInt(1, entity.getId());
 		    preparedStatement.setString(2, entity.getTitle());
 		    preparedStatement.setTimestamp(3, new Timestamp(entity.getDatetime().getMillis()));
-//log.trace("description for event " + entity.getDescription());
+
 			if(entity.getDescription() != null && entity.getDescription().length() > 255){
 				entity.setDescription(entity.getDescription().substring(0, 255));
 			}
@@ -269,7 +269,6 @@ public void update(Event entity) throws Exception{
 	 	 
 	 if(exists(entity.getId()) && vTmp != null){
 		 
-//		 System.out.println("updating events table");
 		 try {
 			this.configure();
 			  		  
@@ -293,10 +292,6 @@ public void update(Event entity) throws Exception{
 	      close();
 	    }
 
-//		 System.out.println("updated events table");
-
-
-//		 System.out.println("deleting from partecipations table");
 	 try {
 		this.configure();
 
@@ -311,9 +306,7 @@ public void update(Event entity) throws Exception{
 	} finally {
 	  close();
 	}
-//	 System.out.println("deleted from partecipations table");
-	 
-//	 System.out.println("adding to partecipations table");
+
     ArrayList<Artist> eArtist = entity.getArtist();
     for(Artist a : eArtist)
     	try {
@@ -332,7 +325,6 @@ public void update(Event entity) throws Exception{
     } finally {
       close();
     }
-//	 System.out.println("added to partecipations table");
  }
 
 } 
@@ -359,18 +351,11 @@ public void update(Event entity) throws Exception{
 	  ArrayList<Event> partialEvents = new ArrayList<Event>();
 	  ArrayList<Event> finalEvents = new ArrayList<Event>();
 	  ResultSet resultSetTmp = null;
-//	try {
+
 	  	this.configure();
 
 		statement = connection.createStatement();
 		resultSetTmp = statement.executeQuery("select * from `concerts_db`.`events_table`");
-//		close();
-	
-//	} catch (Exception e) {
-//      throw e;
-//    } finally {
-//      close();
-//    }
 
 		partialEvents = extractEvents(resultSetTmp);
 	
@@ -428,7 +413,7 @@ public void update(Event entity) throws Exception{
   
   public ArrayList<Event> getTodaysEvents(LocalDate today) throws Exception {
 		ResultSet resultSetTmp = null;
-//		try {
+
 			  this.configure();
 		      preparedStatement = 
 		    		  connection.prepareStatement("select * "
@@ -437,12 +422,6 @@ public void update(Event entity) throws Exception{
 		      preparedStatement.setString(1, today.toString());		
 
 		      resultSetTmp = preparedStatement.executeQuery();   
-		      
-//		    } catch (Exception e) {
-//		      throw e;
-//		    } finally {
-//		      close();
-//		    }	  
 		      
 		ArrayList<Event> partialEvents = extractEvents(resultSetTmp);
 
@@ -461,7 +440,7 @@ public ArrayList<String> top(int i) throws Exception {
 		      		+ "from `concerts_db`.`events_table_searched` "
 		      		+ "ORDER BY `total` DESC LIMIT ?");   
 		      preparedStatement.setInt(1,i);
-System.out.println(preparedStatement);
+		      System.out.println(preparedStatement);
 		      resultSet = preparedStatement.executeQuery();   
 				      
 		      while (resultSet.next()) {
@@ -476,5 +455,4 @@ System.out.println(preparedStatement);
 	  	
 		return titlesNames;
 	}
-
 } 

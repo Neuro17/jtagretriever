@@ -12,21 +12,10 @@ import javax.transaction.Transactional;
 
 @Entity
 @Table(name = "tweet_test")
-//@Transactional
 public class Tweet implements Serializable { 
-	
-//	CREATE TABLE tweets (id BIGINT PRIMARY KEY, text VARCHAR(140),
-//			lat FLOAT, lng FLOAT, place VARCHAR(50), ora VARCHAR(20))
-
-//	@Id
-//	@GeneratedValue(strategy=GenerationType.AUTO)
-//    private long id;
-	
+		
 	@EmbeddedId
 	private TweetKey myKey;
-
-//	private String eventName;
-
 	private double lat;
 	private double lng;
 	private String text;
@@ -36,9 +25,8 @@ public class Tweet implements Serializable {
 	protected Tweet() {}
 
 	public Tweet(long tweetId, double lat, double lng, String text,
-			String place, String time) {
+			String place, String time) {		
 		
-//		this.tweetId = tweetId;
 		this.lat = lat;
 		this.lng = lng;
 		this.text = text;
@@ -46,12 +34,10 @@ public class Tweet implements Serializable {
 		this.time = time;
 	}
 	
-	
-
 	public Tweet(String eventName, double lat, double lng, String text,
 			String place, String time) {
+		
 		super();
-//		this.eventName = eventName;
 		this.lat = lat;
 		this.lng = lng;
 		this.text = text;
@@ -61,9 +47,8 @@ public class Tweet implements Serializable {
 
 	public Tweet(long tweetId, String eventName, double lat, double lng,
 			String text, String place, String time) {
+		
 		super();
-//		this.tweetId = tweetId;
-//		this.eventName = eventName;
 		this.lat = lat;
 		this.lng = lng;
 		this.text = text;
@@ -72,16 +57,16 @@ public class Tweet implements Serializable {
 	}
 	
 	public Tweet(TweetKey myKey, double lat, double lng) {
+		
 		super();
 		this.myKey = myKey;
 		this.lat = lat;
 		this.lng = lng;
 	}
-	
-	
 
-public Tweet(TweetKey myKey, double lat, double lng, String text,
+	public Tweet(TweetKey myKey, double lat, double lng, String text,
 			String place, String time) {
+		
 		super();
 		this.myKey = myKey;
 		this.lat = lat;
@@ -90,22 +75,6 @@ public Tweet(TweetKey myKey, double lat, double lng, String text,
 		this.place = place;
 		this.time = time;
 	}
-
-//	public long getId() {
-//		return id;
-//	}
-//
-//	public void setId(long id) {
-//		this.id = id;
-//	}
-//
-//	public String getEventName() {
-//		return eventName;
-//	}
-//
-//	public void setEventName(String eventName) {
-//		this.eventName = eventName;
-//	}
 
 	public double getLat() {
 		return lat;

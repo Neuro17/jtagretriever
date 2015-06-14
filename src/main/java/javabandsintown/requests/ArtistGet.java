@@ -22,12 +22,9 @@ public class ArtistGet extends BandsintownConnector{
 	}
 	
 
-	public ArtistGet setArtist(String name){
-//		log.trace("Entering setArtist");
-		
+	public ArtistGet setArtist(String name){		
 		uriBld.setPath(BandsintownConfig.getArtistPath() + "/" + name);
 		
-//		log.trace("Exiting setArtist");
 		return this;
 	}
 	
@@ -44,16 +41,12 @@ public class ArtistGet extends BandsintownConnector{
 	}
 	
 	public Artist search(){
-//		log.trace("Entering search");
 		JsonObject artistAsJson;
 		
 		build();
-//		log.debug(uri);
 		
 		artistAsJson = executeRequest();
-//		log.debug(artistAsJson);
-		
-//		log.trace("Exiting search");
+
 		return Extractor.extractArtist(artistAsJson);
 	}
 }

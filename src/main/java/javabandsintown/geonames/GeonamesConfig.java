@@ -22,5 +22,4 @@ public class GeonamesConfig {
 	public static String getScheme() {
 		return SCHEME;
 	}
-	
 }

@@ -23,16 +23,14 @@ public class EventsGet extends BandsintownConnector{
 	}
 	
 	public EventsGet setArtist(String name){
-//		log.trace("Entering setArtist");
 		uriBld.setPath(BandsintownConfig.getArtistPath() + "/" + name + "/events");
-//		log.trace("Exiting setArtist");
+
 		return this;
 	}
 	
 	public EventsGet setDate(String date){
-//		log.trace("Entering setDate");
 		uriBld.setParameter(Parameters.getDate(), date);
-//		log.trace("Exiting setDate");
+
 		return this;
 	}
 	
@@ -49,26 +47,22 @@ public class EventsGet extends BandsintownConnector{
 	}
 
 	public ArrayList<Event> search() {
-//		log.trace("Entering search");
 		JsonObject events;
 		
 		build();
 		events = executeRequest();
 		log.debug(events);
-//		return null;
-//		log.trace("Exiting search");
+
 		return Extractor.extractEvents(events);
 		
 	}
 
 	public ArrayList<Event> searchGMTReferences() {
-//		log.trace("Entering search");
 		JsonObject events;
 		
 		build();
 		events = executeRequest();
-//		log.debug(events);
-//		log.trace("Exiting search");
+
 		return Extractor.extractGMTReferencesEvents(events);
 		
 	}

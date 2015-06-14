@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-
 /**
  * @author biagio
  *
@@ -37,9 +36,7 @@ public class Tokenizer {
 		ArrayList<String> stopWords = Tools.readFileFromResource(STOP_WORDS_FILE);
 		ValueComparator bvc =  new ValueComparator(countWords);
 		TreeMap<String,Integer> sortedMap = new TreeMap<String,Integer>(bvc);
-		//		Set<String> stopWords = new LinkedHashSet<String>();;
-		
-		
+				
 		for(String str : sentences){
 			if(str != null) {
 				str = str.toLowerCase();
@@ -64,22 +61,4 @@ public class Tokenizer {
 		sortedMap.putAll(countWords);
 		return sortedMap;
 	}
-
-}
-
-class ValueComparator implements Comparator<String> {
-
-    Map<String, Integer> base;
-    public ValueComparator(Map<String, Integer> base) {
-        this.base = base;
-    }
-
-    // Note: this comparator imposes orderings that are inconsistent with equals.    
-    public int compare(String a, String b) {
-        if (base.get(a) >= base.get(b)) {
-            return -1;
-        } else {
-            return 1;
-        } // returning 0 would merge keys
-    }
 }

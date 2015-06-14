@@ -1,7 +1,7 @@
 package javabandsintown.requests;
 
 public class Parameters {
-	
+
 	private static final String ARTIST = "artist";
 	private static final String ARTIST_ID = "artist_id";
 	private static final String FORMAT = "format";

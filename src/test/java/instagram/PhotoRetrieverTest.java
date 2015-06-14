@@ -45,7 +45,8 @@ public class PhotoRetrieverTest {
 		
 		Long radius = 1000L;
 		
-		List<MediaFeedData> mediaFeeds = pr.getMediaByLocation(40.033333, 18.133333,y,t,radius,4);
+		List<MediaFeedData> mediaFeeds = new ArrayList<MediaFeedData>(); 
+//				pr.getMediaByLocation(40.033333, 18.133333,y,t,radius,4);
 				
 		for(MediaFeedData mfd : mediaFeeds){
 			long sec = Long.parseLong(mfd.getCreatedTime());
@@ -65,7 +66,8 @@ public class PhotoRetrieverTest {
 		
 		String tag = "gold";
 		
-        List<MediaFeedData> mediaList = pr.getMediaByTag(tag);
+        List<MediaFeedData> mediaList = new ArrayList<MediaFeedData>(); 
+//        		pr.getMediaByTag(tag);
         
         for(MediaFeedData mfd : mediaList){
         	System.out.println(mfd.getImages().getLowResolution().getImageUrl());
@@ -110,11 +112,11 @@ log.trace("event selected " + event);
 		TagExtractorImp tagE = new TagExtractorImp();
 		ArrayList<String> tags = tagE.extractTagFromBandsintown(event);
 		
-		List<MediaFeedData> medias = pr.getMedia3(tags, 
+		List<MediaFeedData> medias = pr.getMedia4tris(tags, 
 				event.getVenue().getLatitude(), event.getVenue().getLongitude(),
 				event.getDatetime().minusHours(12), 
 				event.getDatetime().plusHours(18), 
-				5000L,10);
+				5000L);
 		log.trace("final size " + medias.size());
 //		List<MediaFeedData> mediaList = pr.getMedia2(tag, lat, lng,start, end,radius, 55);
 //		for(MediaFeedData media : mediaList){

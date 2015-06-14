@@ -50,5 +50,4 @@ public class Photo {
 				+ ", urlLinkLow=" + urlLinkLow + ", urlLinkStd=" + urlLinkStd
 				+ "]";
 	}
-    
 }

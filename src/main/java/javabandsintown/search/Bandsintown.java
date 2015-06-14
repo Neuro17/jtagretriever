@@ -15,5 +15,4 @@ public class Bandsintown {
 		getEvents = new EventsGet();
 		getVenues = new VenueEventsSearch();
 	}
-
 }

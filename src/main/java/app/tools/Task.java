@@ -36,17 +36,15 @@ public class Task {
 	public static final String ARTISTS_FILE = "artists.txt";
 	private static final ArtistService artDAO = new ArtistService();
 	private static final EventService eventDAO = new EventService();
-	private static final VenueService venueDAO = new VenueService();
 	private static final PhotoService photoDAO = new PhotoService();
 	private static final Bandsintown bandsintown = new Bandsintown();
 	private static final TwitterConnector twitterExtractor = new TwitterConnectorImpl();
 	
-	private static String complete(int i){
+	public static String complete(int i){
 		if(i < 10)
-			return  "0" + Integer.toString(i);
+			return "0" + Integer.toString(i);
 		else
-			return
-					Integer.toString(i);
+			return Integer.toString(i);
 	}
 	
 	public static void initArtistDB(){
@@ -81,7 +79,6 @@ public class Task {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -103,7 +100,6 @@ public class Task {
 			
 			twitterExtractor.StreamConcert(event, 2);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -129,12 +125,11 @@ public class Task {
 				log.debug(artist.getName());
 				ArrayList<Event> events = bandsintown.getEvents.
 						setArtist(artist.getName()).setDate("upcoming").searchGMTReferences();
-log.trace(events.size() + " events for artist " + artist.getName());		
+				log.trace(events.size() + " events for artist " + artist.getName());		
 				for (Event e : events) {
 					eventDAO.persist(e);
 				}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -144,7 +139,7 @@ log.trace(events.size() + " events for artist " + artist.getName());
 		
 		ArrayList<Artist> artists = aS.findAll(); 
 		for(Artist a : artists){
-log.trace(a);
+			log.trace(a);
 			initUpcomingArtistEvents(a.getName());
 		}
 	}
@@ -162,17 +157,14 @@ log.trace(a);
 		String datesString = timeAgoString + "," + timeForwardString; 
 
 		for(Artist a : artists){
-log.trace(a);
-		if(!a.getName().equals("BIG GUNS - Tribute AC/DC (FR)")
-			&&	!a.getName().equals("BRONCHO")){
+			log.trace(a);
 			ArrayList<Event> events = bandsintown.getEvents
 				.setArtist(a.getName())
 				.setDate(datesString).search();
 			if(events != null){
-log.trace(events.size());
+				log.trace(events.size());
 				for(Event e : events)
 					eventDAO.persist(e);
-				}
 			}
 		}
 	}
@@ -182,16 +174,14 @@ log.trace(events.size());
 		TagExtractorImp tagExtractor = new TagExtractorImp();
 		
 		Event event = eventDAO.findById(eventId);
-//log.trace(event);
 		
 		ArrayList<String> tags = tagExtractor.extractTagFromBandsintown(event);
-//log.trace(tags);
 
 		List<MediaFeedData> medias = pr.getMedia4tris(tags, 
 				event.getVenue().getLatitude(), event.getVenue().getLongitude(),
 				event.getDatetime().minusHours(1), event.getDatetime().plusHours(11),
 				5000L);
-log.trace(medias.size());
+		log.trace(medias.size());
 
 		Photo p = new Photo();
 
@@ -202,7 +192,6 @@ log.trace(medias.size());
 			p.setUrlLinkStd(media.getImages().getStandardResolution().getImageUrl());
 		
 			photoDAO.persist(p);			
-//log.trace(new DateTime(Long.parseLong(media.getCreatedTime())*1000));
 		}
 	}
 	
@@ -211,21 +200,18 @@ log.trace(medias.size());
 		ArrayList<Event> eventsToManage = new ArrayList<Event>();
 		  
 		ArrayList<Event> events = eventDAO.getTodaysEvents(localDate);			
-log.trace(events.size());
+		log.trace(events.size());
 
 		for(Event e : events)
-			if(!photoDAO.existsAlmostsOne(e.getId()))
+			if(!photoDAO.existsAlmostsOne(e.getId())
+//					&&(e.getId() > 10035741)
+					)
 				  eventsToManage.add(e);
-log.trace(eventsToManage.size());
+		log.trace(eventsToManage.size());
 
 		for(Event e : eventsToManage){
-log.trace(e);
-			if(	
-//					e.getId() != 8900976
-//					&& e.getId() != 8983540
-					e.getId() > 9773545
-					)
-				collectEventPhotos(e.getId());
+			log.trace(e);
+			collectEventPhotos(e.getId());
 		}
 	}
 	
@@ -238,7 +224,7 @@ log.trace(e);
 //		startTweetExtraction();
 //		initUpcomingArtistEvents("Calvin Harris");
 //		collectEventPhotos(8932897);
-		collectDaysAgoDBEventsPhotos(4);
+		collectDaysAgoDBEventsPhotos(1);
 // last update 2015-06-11
 //		updateArtistsEvents();
 //		updateArtistsEvents(start, end);

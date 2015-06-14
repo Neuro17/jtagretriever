@@ -1,23 +1,10 @@
 package dataBaseService;
 
-import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.mapping.Map;
-import org.joda.time.DateTime;
-import org.neo4j.cypher.internal.compiler.v2_1.ast.rewriters.deMorganRewriter;
 import org.springframework.context.annotation.PropertySource;
-
-import app.controllers.JSPController;
-import javabandsintown.search.Bandsintown;
-import javabandsintown.entity.Artist;
-import javabandsintown.entity.Event;
-import javabandsintown.entity.Venue;
 
 @PropertySource("classpath:config.properties")
 public class PhotoService extends DatabaseService implements PhotoDAOInterface{
@@ -31,7 +18,7 @@ public class PhotoService extends DatabaseService implements PhotoDAOInterface{
 		      preparedStatement = connection.prepareStatement("select * "
 		      		+ "from photos where event_id = ?");   
 		      preparedStatement.setInt(1,eventId);
-	System.out.println(preparedStatement);
+		      System.out.println(preparedStatement);
 	          resultSet = preparedStatement.executeQuery();   
 	          
 	          if(!resultSet.next())
@@ -46,7 +33,6 @@ public class PhotoService extends DatabaseService implements PhotoDAOInterface{
 	}
 
 	  public boolean check(int eventId, String mediaId) throws Exception{
-		//log.trace("entering checkname");
 		  try {
 			  configure();
 		      
@@ -54,7 +40,7 @@ public class PhotoService extends DatabaseService implements PhotoDAOInterface{
 		      		+ "from photos where media_id = ? and event_id = ?");   
 		      preparedStatement.setString(1,mediaId);
 		      preparedStatement.setInt(2,eventId);
-	System.out.println(preparedStatement);
+		      System.out.println(preparedStatement);
 	          resultSet = preparedStatement.executeQuery();   
 	          
 	          if(!resultSet.next())
@@ -71,7 +57,6 @@ public class PhotoService extends DatabaseService implements PhotoDAOInterface{
 	    
   public void persist(Photo photo) throws Exception{
 	 if(!check(photo.getEventId(),photo.getMediaId())){
-//salva l artista in concerts_db.artists
 	    try {
 	    	configure();
 	        
@@ -82,7 +67,7 @@ public class PhotoService extends DatabaseService implements PhotoDAOInterface{
 		    preparedStatement.setString(2, photo.getMediaId());
 		    preparedStatement.setString(3, photo.getUrlLinkLow());
 		    preparedStatement.setString(4, photo.getUrlLinkStd());
-System.out.println(preparedStatement);	      
+		    System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();	      
 	    } catch (Exception e) {
 	      throw e;
@@ -144,7 +129,7 @@ System.out.println(preparedStatement);
 				  preparedStatement = connection.prepareStatement("select * "
 				      		+ "from photos where event_id = ?");   
 				      preparedStatement.setInt(1,eventId);
-			System.out.println(preparedStatement);
+				      System.out.println(preparedStatement);
 			          resultSet = preparedStatement.executeQuery();   
 			          				  
 			      while (resultSet.next()) {

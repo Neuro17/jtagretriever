@@ -57,9 +57,7 @@ public class TwitterTest {
 		
 	}
 	
-	public static void main(String[] args) throws InterruptedException {
-		// TODO Auto-generated method stub
-		
+	public static void main(String[] args) throws InterruptedException {		
 		TwitterTest twc = new TwitterTest();
 		
 		twc.TweetsStreamTest(50);

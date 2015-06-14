@@ -37,7 +37,5 @@ public interface TwitterConnector {
 	 * @throws InterruptedException
 	 */
 	public ArrayList<Status> StreamConcert(Event event, int radius)
-			throws InterruptedException;
-	
-//	public void run();
+			throws InterruptedException;	
 }

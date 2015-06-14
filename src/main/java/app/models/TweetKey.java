@@ -11,7 +11,6 @@ import org.springframework.boot.orm.jpa.EntityScan;
 @Embeddable
 public class TweetKey implements Serializable {
 
-//    @Column(name = "tweet_id", nullable = false)
     private Long id;
 
     @Column(name = "eventName", nullable = false)

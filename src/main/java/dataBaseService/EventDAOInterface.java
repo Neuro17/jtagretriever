@@ -1,7 +1,5 @@
 package dataBaseService;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.joda.time.LocalDate;

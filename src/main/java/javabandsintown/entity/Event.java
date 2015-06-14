@@ -18,7 +18,8 @@ public class Event {
 
 	private Venue venue;
 	
-	public Event(Integer id, String title, DateTime datetime, String description, ArrayList<Artist> artist, Venue venue) {
+	public Event(Integer id, String title, DateTime datetime, String description, 
+			ArrayList<Artist> artist, Venue venue) {
 		this.id = id;
 		this.title = title;
 		this.datetime = datetime;
@@ -27,7 +28,8 @@ public class Event {
 		this.venue = venue;
 	}
 
-	public Event(Integer id, String title, DateTime datetime, ArrayList<Artist> artist, Venue venue) {
+	public Event(Integer id, String title, DateTime datetime, 
+			ArrayList<Artist> artist, Venue venue) {
 		this.id = id;
 		this.title = title;
 		this.datetime = datetime;

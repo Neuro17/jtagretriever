@@ -62,7 +62,6 @@ public class TwitterTest implements CommandLineRunner {
 			Event event = eventDAO.findById(9794397);
 			twitter.StreamConcert(event, 2);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

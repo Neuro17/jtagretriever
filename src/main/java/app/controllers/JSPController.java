@@ -61,14 +61,6 @@ public class JSPController extends GenericController{
 	@RequestMapping("/jsptest")
 	public String test(ModelAndView modelAndView) {
   
-//		  	String test = "test";
-  
-//		  	ModelMap model = new ModelMap();
-//	        model.addAttribute("test", "test");
-//	        return new ModelAndView("user_list", model);
-
-//		  	System.out.println(modelAndView);
-
 		return "jsp-spring-boot";
 	}
 
@@ -86,7 +78,6 @@ public class JSPController extends GenericController{
 		  HashMap<String,String> map = new HashMap<String,String>();
 		  ArrayList<String> artistsList = new ArrayList<String>();
 		  
-//		gestione cookies		  
 		  if(cookies != null){
 			  for(Cookie cookie : cookies){
 			      String name = cookie.getValue();
@@ -97,38 +88,34 @@ public class JSPController extends GenericController{
 			  if(aTmp != null)
 				  map.put(name, aTmp.getUrlImage());
 		  }
-//		fine gestione cookies
 			  request.setAttribute("map",map);		  
 		  }
-log.trace("total artists to page " + map.size());
+		  log.trace("total artists to page " + map.size());
 		  return "gallery";
 	  }
 	  
 	  @RequestMapping("/popular")
 	    public String getPopularPage(HashMap<String,String> map,
-	    		ArrayList<String> list, HttpServletRequest request) throws Exception {
-//TODO impostare periodicamente l aggionamento dell urlImage per ogni artista nel db
-
-//		  VenueService vS = new VenueService();
-//		  EventService eS = new EventService();
+	    		ArrayList<String> list, HttpServletRequest request) 
+	    				throws Exception {
 
 		  HashMap<String,String> topA = aS.top(16);
-//		  ArrayList<String> topV = vS.top(8);
-//		  ArrayList<String> topE = eS.top(8);
 		  
 		  map = topA;
 		  
-//		  topV.addAll(topE);
-//		  list = topV;
-
 		  request.setAttribute("map", map);
 		  request.setAttribute("list",list);		  
-log.trace("popular artists to page " + map.size());
+		  log.trace("popular artists to page " + map.size());
 		  return "popular";
 	  }
 	  
+//		returns a page with a list of events each linked with ?eventId=XXXXXX
+//		after clicking on one of these, you will be redirect to artist-event-home
+//		that manage to find the tag and then returns to photoAlbum
 	  @RequestMapping("/search")
-	  public String getSearchPage(@ModelAttribute("tag") String tag, ArrayList<String> urlList, HttpServletRequest request, HttpServletResponse response) throws Exception {  
+	  public String getSearchPage(@ModelAttribute("tag") String tag, 
+			  ArrayList<String> urlList, HttpServletRequest request, 
+			  HttpServletResponse response) throws Exception {  
 		  Artist artistTmp = null;
 		  ArrayList<Event> events = null;
 		  List<Event> eventsToArtistEventsPage = new ArrayList<Event>();
@@ -139,7 +126,6 @@ log.trace("popular artists to page " + map.size());
 		  
 		  validA = aS.checkName(tag) || 
 				  aS.manageTag(tag);
-//log.debug(validA);
 		  if(!validA){
 			  return "empty-events";
 		  }
@@ -153,7 +139,7 @@ log.trace("popular artists to page " + map.size());
 		  artistTmp = aS.findById(tag);
 		  events = aS.getAllEvents(artistTmp.getName());
 		  Task.addArtistToFile(artistTmp.getName());
-log.debug("total events found " + events.size());
+		  log.debug("total events found " + events.size());
 			
 		  for(Event e : events){
 			  if(e.getDatetime().isAfter(now.minusMonths(6)) &&
@@ -161,30 +147,28 @@ log.debug("total events found " + events.size());
 				  eventsToArtistEventsPage.add(e);
 			  }
 		  }
-log.trace("events to page " + eventsToArtistEventsPage.size());
+		  log.trace("events to page " + eventsToArtistEventsPage.size());
 		  
 		  if(events.size() == 0 || eventsToArtistEventsPage.size() == 0) {
 			  return "empty-events";
 		  }
 
 		  request.setAttribute("eventList", eventsToArtistEventsPage);
-//	returns a page with a list of events each linked with ?eventId=XXXXXX
-//	after clicking on one of these, you will be redirect to artist-event-home
-//	that manage to find the tag and then returns to photoAlbum
+
 		  return "artist-events";  
 	  }
 
-	  @RequestMapping("/artist-home")
-	  public String getSearchPageTest(@ModelAttribute("tag") String artistName, 
-			  HttpServletRequest request,HttpServletResponse response,
-			  ArrayList<Event> events) throws Exception {
-		  
-		  events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
-
-		  request.setAttribute("eventList", events);
-
-		  return "artist-event-home";
-	  }
+//	  @RequestMapping("/artist-home")
+//	  public String getSearchPageTest(@ModelAttribute("tag") String artistName, 
+//			  HttpServletRequest request,HttpServletResponse response,
+//			  ArrayList<Event> events) throws Exception {
+//		  
+//		  events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
+//
+//		  request.setAttribute("eventList", events);
+//
+//		  return "artist-event-home";
+//	  }
 	
 		@RequestMapping("/artist-event-home")
 		public String getArtistEventHome(@ModelAttribute("eventId") int eventId,
@@ -192,26 +176,15 @@ log.trace("events to page " + eventsToArtistEventsPage.size());
 			  ArrayList<String> urlList) throws Exception{
 
 			Event event = eS.findById(eventId);
-log.trace("processing " + event);			
+			log.trace("processing " + event);			
 			ArrayList<String> tags = tagExtractor.extractTag(event,5000L);
-log.trace("tags retrieved " + tags);
+			log.trace("tags retrieved " + tags);
 
 			PhotoRetriever pr = new PhotoRetriever();
 			PhotoService pS = new PhotoService();		
-//			String artistName = event.getArtist().get(0).getName().replaceAll("\\s", "");
 			
 			List<MediaFeedData> mediaList = new ArrayList<MediaFeedData>();
 			
-//			for(String tag : tags)
-//				mediaList.addAll(pr.getMedia2(tag, 
-//						event.getVenue().getLatitude(), event.getVenue().getLongitude(),
-//						event.getDatetime().minusHours(6), event.getDatetime().plusHours(18),
-//						5000L, 10));
-			
-//			mediaList = pr.getMedia4bis(tags, 
-//					event.getVenue().getLatitude(), event.getVenue().getLongitude(),
-//					event.getDatetime().minusHours(1), event.getDatetime().plusHours(11),
-//					5000L, 28);
 			if(pS.existsAlmostsOne(eventId)){
 				ArrayList<Photo> photos = pS.findAllByEventId(eventId);
 				
@@ -248,7 +221,8 @@ log.trace("tags retrieved " + tags);
 	
 	@RequestMapping("/recent")
 	  public String getRecentEvent(@ModelAttribute("daysBefore") int daysBefore, 
-			  HttpServletRequest request, HttpServletResponse response) throws Exception {  
+			  HttpServletRequest request, HttpServletResponse response) 
+					  throws Exception {  
 
 		  PhotoService pS = new PhotoService();
 		  ArrayList<Event> eventsToPage = new ArrayList<Event>();
@@ -257,11 +231,11 @@ log.trace("tags retrieved " + tags);
 		  ArrayList<Event> events = new ArrayList<Event>();
 		  
 		  events = eS.getTodaysEvents(localDate.minusDays(daysBefore));
-log.trace("total events " + events.size());		
+		  log.trace("total events " + events.size());		
 		  for(Event e : events)
 			  if(pS.existsAlmostsOne(e.getId()))
 				  eventsToPage.add(e);
-log.trace("total events to page " + eventsToPage.size());				  
+		  log.trace("total events to page " + eventsToPage.size());				  
 		  if(eventsToPage.size() == 0) {
 			  return "empty-events";
 		  }
@@ -269,8 +243,8 @@ log.trace("total events to page " + eventsToPage.size());
 		  request.setAttribute("eventList", eventsToPage);
 		  request.setAttribute("daysBefore",daysBefore);
 		  
-log.trace("total events to page " + eventsToPage.size() + " for "
-		+ daysBefore + " days before now");
+		  log.trace("total events to page " + eventsToPage.size() + " for "
+				  + daysBefore + " days before now");
 		  return "recent-events";  
 	}
 	
@@ -290,11 +264,11 @@ log.trace("total events to page " + eventsToPage.size() + " for "
 		  
 		  for (Photo p  : photos) {
 			  String url = p.getUrlLinkLow();
-log.trace(p.getUrlLinkLow());
+			  log.trace(p.getUrlLinkLow());
 			  urlList.add(url);
 		  }          
 		  request.setAttribute("urlList",urlList);			
-log.trace("photos to page " + photos.size());		  		  
+		  log.trace("photos to page " + photos.size());		  		  
 		  return "photoAlbum";
 	  }
 	

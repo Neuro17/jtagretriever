@@ -25,7 +25,7 @@ import javabandsintown.entity.Event;
 
 @Component
 public class TagExtractorImp implements TagExtractor{
-//	
+	
 	private static final Logger log = LogManager.getLogger(TagExtractorImp.class);
 	
 	@Autowired
@@ -39,8 +39,7 @@ public class TagExtractorImp implements TagExtractor{
 		double distance;
 		
 		ArrayList<String> filtered = new ArrayList<String>();
-//		log.debug(e);
-//		log.debug(tweetRepo);
+
 		for (Tweet tweet : (List<Tweet>) tweetRepo.findByEventName(e.getTitle())) {
 			log.debug(tweet);
 			center = new LatLng(e.getVenue().getLatitude(), 
@@ -62,9 +61,6 @@ public class TagExtractorImp implements TagExtractor{
 		ArrayList<String> filteredTweets = filterTweets(e, radius);
 		Map<String, Integer> rawTag = Tokenizer.tokenize(filteredTweets);
 		
-//		for (Map.Entry<String, Integer> entry : rawTag.entrySet()) {
-//		    log.debug(entry.getKey() + " : " + entry.getValue());
-//		}
 		return rawTag;
 	}
 
@@ -72,13 +68,14 @@ public class TagExtractorImp implements TagExtractor{
 	@Override
 	public ArrayList<String> extractTagFromBandsintown(Event event) {
 		ArrayList<String> tag = new ArrayList<String>();
-		
-//		log.debug(event);
-		
+				
 		for(Artist artist : event.getArtist()) {
-			tag.add(artist.getName().replaceAll("\\s","").replaceAll("!","")
-					.replaceAll("-","").replaceAll("\\(", "")
-					.replaceAll("\\)", "").replaceAll("\\.", ""));
+			tag.add(artist.getName().toLowerCase().replaceAll("\\s","")
+					.replaceAll("!","").replaceAll("-","")
+					.replaceAll("\\(", "").replaceAll("\\)", "")
+					.replaceAll("\\.", "").replaceAll("\\&", "and")
+					.replaceAll("\\'","").replaceAll("\\+","")
+					.replaceAll("\\$","s"));
 		}
 		
 		tag.addAll(extractMultipleTags(event.getVenue().getCity()));
@@ -86,19 +83,11 @@ public class TagExtractorImp implements TagExtractor{
 		tag.addAll(extractMultipleTags(event.getVenue().getCountry()));
 
 		tag.addAll(extractMultipleTags(event.getVenue().getName()));
-		
-//		if(event.getVenue().getRegion() != null) { 
-//			tag.add(event.getVenue().getRegion().toLowerCase().replaceAll("\\s","")
-//					.replaceAll("!","").replaceAll("-",""));
-//		}
-		
-//		tag.add(event.getTitle().toLowerCase().replaceAll("\\s",""));
-//		tag.add(event.getDatetime().toString().toLowerCase().replaceAll("\\s",""));
 
 		return tag;
 	}
 	
-	private Collection<? extends String> extractMultipleTags(String name) {
+	private ArrayList<String> extractMultipleTags(String name) {
 		ArrayList<String> tags = new ArrayList<String>();
 
 		tags.add(name.toLowerCase().replaceAll("\\s","").replaceAll("!","")
@@ -137,16 +126,16 @@ public class TagExtractorImp implements TagExtractor{
 		return tag;
 	}
 	
-	public static void main(String[] args) throws Exception{
-		EventService es = new EventService();
-		Event e = es.findById(9069374);
-		Bandsintown bandsintown = new Bandsintown();
-		Event event = bandsintown.getEvents.setArtist("foo fighters").setDate("upcoming").search().get(0);
-		TagExtractorImp t = new TagExtractorImp();
-//		for(String tag : t.extractTagFromBandsintown(event)){
-//			log.debug(tag);
-//		};
-		t.extractTag(e, 1);
-	}
+//	public static void main(String[] args) throws Exception{
+//		EventService es = new EventService();
+//		Event e = es.findById(9069374);
+//		Bandsintown bandsintown = new Bandsintown();
+//		Event event = bandsintown.getEvents.setArtist("foo fighters").setDate("upcoming").search().get(0);
+//		TagExtractorImp t = new TagExtractorImp();
+////		for(String tag : t.extractTagFromBandsintown(event)){
+////			log.debug(tag);
+////		};
+//		t.extractTag(e, 1);
+//	}
 
 }

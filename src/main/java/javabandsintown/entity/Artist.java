@@ -48,5 +48,4 @@ public class Artist {
 		return "Bandsintown artist [name=" + name + ", id=" + id + ", "
 				+ "urlImage=" + urlImage + "]";
 	}
-
 }

@@ -1,18 +1,17 @@
 package dataBaseService;
 
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javabandsintown.search.Bandsintown;
-import javabandsintown.entity.Artist;
 import javabandsintown.entity.Venue;
 
 public class VenueService extends DatabaseService implements VenueDAOInterface {
 
+	private static final Logger log = LogManager.getLogger(VenueService.class);
+	
 	  private void updateResearches(String venueName) throws Exception {
 			 try {
 				  configure();
@@ -21,7 +20,7 @@ public class VenueService extends DatabaseService implements VenueDAOInterface {
 			      		+ "SET total = total + 1 WHERE venue_name = ?";
 			      preparedStatement = connection.prepareStatement(updateTableSQL);
 			      preparedStatement.setString(1, venueName);
-System.out.println(preparedStatement);
+			      System.out.println(preparedStatement);
 			      preparedStatement .executeUpdate();
 			      
 		    } catch (Exception e) {
@@ -65,13 +64,12 @@ System.out.println(preparedStatement);
 		      preparedStatement = connection.prepareStatement("select * "
 	      		+ "from venues where `venue_name` like '%" + venueName + "%'");   
 
-System.out.println(preparedStatement);
+		      System.out.println(preparedStatement);
 	          
 		      resultSet = preparedStatement.executeQuery();   
 	          
 	          if(resultSet.last()){
 	        	  String venueNameTmp = resultSet.getString("venue_name");
-System.out.println(">>> found venue with name " + venueNameTmp);
 	        	  updateResearches(venueNameTmp);
 	        	  return true;
 	          }
@@ -129,7 +127,6 @@ public Venue find(double lat, double lng) throws Exception{
 	      
 	      preparedStatement = connection.prepareStatement("select * "
 	      		+ "from venues where `venue_name` like '%" + venueName + "%'");   
-//	      preparedStatement.setString(1,venueName);
 	      System.out.println(preparedStatement);
           resultSet = preparedStatement.executeQuery();   
 
@@ -177,7 +174,7 @@ public Venue find(double lat, double lng) throws Exception{
 		    preparedStatement.setString(6, entity.getCity());
 		    preparedStatement.setString(7, entity.getRegion());
 		    
-System.out.println(preparedStatement);
+		    System.out.println(preparedStatement);
 		    
 		    preparedStatement.executeUpdate();
 
@@ -200,7 +197,7 @@ System.out.println(preparedStatement);
 		    		+ " ON DUPLICATE KEY UPDATE `total` = `total` + 1");
 		    preparedStatement.setString(1, venue.getName());
 		    preparedStatement.setInt(2, 1);
-System.out.println(preparedStatement);	      
+		    System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();
 	    } catch (Exception e) {
 	      throw e;
@@ -301,7 +298,6 @@ public boolean manageTag(String tag) throws Exception {
 
 	if(!venues.isEmpty()){
 		for(Venue vTmp : venues)
-//			System.out.println(vTmp);
 			persist(vTmp);
 		persistSearches(tag);
 		return true;
@@ -319,15 +315,13 @@ private void persistSearches(String tag) throws Exception {
 		    		+ "ON DUPLICATE KEY UPDATE `total` = `total` + 1");
 		    preparedStatement.setString(1, tag);
 		    preparedStatement.setInt(2, 1);
-System.out.println(preparedStatement);	      
+		    System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();
 	    } catch (Exception e) {
 	      throw e;
 	    } finally {
 	      close();
 	    }
-
-	
 }
 
 public ArrayList<String> top(int i) throws Exception {
@@ -340,7 +334,7 @@ public ArrayList<String> top(int i) throws Exception {
 		      		+ "from `concerts_db`.`venues_searched` "
 		      		+ "ORDER BY `total` DESC LIMIT ?");   
 		      preparedStatement.setInt(1,i);
-System.out.println(preparedStatement);
+		      System.out.println(preparedStatement);
 		      resultSet = preparedStatement.executeQuery();   
 				      
 		      while (resultSet.next()) {
@@ -355,5 +349,4 @@ System.out.println(preparedStatement);
 	  	
 		return venuesNames;
 	}
-  
 } 

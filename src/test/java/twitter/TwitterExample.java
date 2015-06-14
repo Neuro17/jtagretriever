@@ -260,7 +260,6 @@ public class TwitterExample {
 //					System.out.println("tweet: " + s.getCreatedAt() + " " + s.getText() + " " + s.getUser());
 //				}
 //			} catch (TwitterException e1) {
-//				// TODO Auto-generated catch block
 //				e1.printStackTrace();
 //			}
 //			

@@ -15,6 +15,7 @@ import org.neo4j.cypher.internal.compiler.v2_1.ast.rewriters.deMorganRewriter;
 import org.springframework.context.annotation.PropertySource;
 
 import app.controllers.JSPController;
+import app.tools.Task;
 import javabandsintown.search.Bandsintown;
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
@@ -25,14 +26,6 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
   
 	private static final Logger log = LogManager.getLogger(ArtistService.class);
 	
-	private static String complete(int i){
-		if(i < 10)
-			return  "0" + Integer.toString(i);
-		else
-			return
-					Integer.toString(i);
-	}
-	
   private void updateResearches(String artistName) throws Exception{
 		 try {
 			  configure();
@@ -41,7 +34,7 @@ public class ArtistService extends DatabaseService implements ArtistDAOInterface
 		      		+ "SET total = total + 1 WHERE artist_name = ?";
 		      preparedStatement = connection.prepareStatement(updateTableSQL);
 		      preparedStatement.setString(1, artistName);
-System.out.println(preparedStatement);
+		      System.out.println(preparedStatement);
 		      preparedStatement .executeUpdate();
 		      
 	    } catch (Exception e) {
@@ -52,14 +45,13 @@ System.out.println(preparedStatement);
   }
 	
   public boolean checkName(String id) throws Exception{
-//log.trace("entering checkname");
 	  try {
 		  configure();
 	      
 	      preparedStatement = connection.prepareStatement("select * "
 	      		+ "from artists where artist_name = ?");   
 	      preparedStatement.setString(1,id);
-System.out.println(preparedStatement);
+	      System.out.println(preparedStatement);
           resultSet = preparedStatement.executeQuery();   
           
           if(!resultSet.next()){
@@ -138,7 +130,7 @@ System.out.println(preparedStatement);
 		    		+ "ON DUPLICATE KEY UPDATE `total` = `total` + 1");
 		    preparedStatement.setString(1, entity.getName());
 		    preparedStatement.setInt(2, 1);
-System.out.println(preparedStatement);	      
+		    System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();
 	    } catch (Exception e) {
 	      throw e;
@@ -149,7 +141,6 @@ System.out.println(preparedStatement);
 
   public void persist(Artist entity) throws Exception{
 	 if(!checkName(entity.getName())){
-//salva l artista in concerts_db.artists
 	    try {
 	    	configure();
 	        
@@ -159,14 +150,14 @@ System.out.println(preparedStatement);
 		    preparedStatement.setString(1, entity.getId());
 		    preparedStatement.setString(2, entity.getName());
 		    preparedStatement.setString(3, entity.getUrlImage());
-System.out.println(preparedStatement);	      
+		    System.out.println(preparedStatement);	      
 		    preparedStatement .executeUpdate();	      
 	    } catch (Exception e) {
 	      throw e;
 	    } finally {
 	      close();
 	    }
-//salva la ricerca dell artista in concerts_db.artists_researched
+	    
 	    persistSearch(entity);
 	 }
   }
@@ -276,7 +267,6 @@ System.out.println(preparedStatement);
 	}
 	
 	public boolean manageTag(String tag) throws Exception{
-//log.trace("entering manageTag");
 		Bandsintown bandsintown = new Bandsintown();
 
 		Artist aTmp = bandsintown.getArtist.setArtist(tag).asJson().search();
@@ -284,25 +274,23 @@ System.out.println(preparedStatement);
 		if(aTmp != null){
 			persist(aTmp);
 			EventService eS = new EventService();
-//log.trace("searching events for artist " + aTmp.getName());
 		
 			DateTime now = new DateTime();
 			DateTime timeAgo = now.minusMonths(9);
 			DateTime timeForward = now.plusMonths(3);
 
 			String timeForwardString = timeForward.getYear() + "-" + 
-					complete(timeForward.getMonthOfYear()) + "-" + 
-					complete(timeForward.getDayOfMonth());
+					Task.complete(timeForward.getMonthOfYear()) + "-" + 
+							Task.complete(timeForward.getDayOfMonth());
 			String timeAgoString = timeAgo.getYear() + "-" + 
-					complete(timeAgo.getMonthOfYear()) + "-" + 
-					complete(timeAgo.getDayOfMonth());
+					Task.complete(timeAgo.getMonthOfYear()) + "-" + 
+					Task.complete(timeAgo.getDayOfMonth());
 			String datesString = timeAgoString + "," + timeForwardString; 
 
 			ArrayList<Event> events = bandsintown.getEvents
 					.setArtist(aTmp.getName())
 					.setDate(datesString).search();
 			
-//log.trace("total events " + events.size());
 			while(events.size() > 0){
 				int fromIndex = 0;
 				int toIndex = 50;
@@ -310,11 +298,9 @@ System.out.println(preparedStatement);
 					toIndex = events.size(); 
 				ArrayList<Event> partialEvents = 
 						new ArrayList<Event>(events.subList(fromIndex, toIndex));
-//log.trace("persisting " + partialEvents.size() +" events");
 				for(Event e : partialEvents)
 					eS.persist(e);
 				events = new ArrayList<Event>(events.subList(toIndex, events.size()));
-//log.trace("remaining " + events.size() +" events");
 			}				
 			return true;
 		}
@@ -334,7 +320,7 @@ System.out.println(preparedStatement);
 		      		+ "from `concerts_db`.`artists_searched` "
 		      		+ "ORDER BY `total` DESC LIMIT ?");   
 		      preparedStatement.setInt(1,i);
-System.out.println(preparedStatement);
+		      System.out.println(preparedStatement);
 		      resultSet = preparedStatement.executeQuery();   
 				      
 		      while (resultSet.next()) {
@@ -372,9 +358,7 @@ System.out.println(preparedStatement);
 						 + "ORDER BY e.datetime");
 				preparedStatement.setString(1, artistName); 
 				System.out.println(preparedStatement);
-				resultSet = preparedStatement.executeQuery();
-//				System.out.println(resultSet.next());
-				 
+				resultSet = preparedStatement.executeQuery();				 
 			      
 			    while (resultSet.next()) {
 			    	int id = resultSet.getInt("event_id");
@@ -385,8 +369,6 @@ System.out.println(preparedStatement);
 					Double lng = resultSet.getDouble("longitude");
 					Venue venueTmp = new Venue(lat, lng);
 					events.add(new Event(id, title, date, venueTmp));
-//			    	String name = resultSet.getString("artist_name");
-//			    	artistsLieventst.add(name);
 			    }	  
 			} catch (Exception e) {
 		      throw e;
