@@ -1,6 +1,7 @@
 package dataBaseService;
 
 import java.util.ArrayList;
+
 import javabandsintown.entity.Artist;
 
 public interface ArtistDAOInterface {

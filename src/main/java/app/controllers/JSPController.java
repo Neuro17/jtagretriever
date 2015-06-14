@@ -120,8 +120,7 @@ public class JSPController extends GenericController{
 
 		  boolean validA = false;
 		  
-		  validA = aS.checkName(tag) || 
-				  aS.manageTag(tag);
+		  validA = aS.checkName(tag) || aS.manageTag(tag);
 		  if(!validA){
 			  return "empty-events";
 		  }
@@ -232,9 +231,6 @@ public class JSPController extends GenericController{
 			  if(pS.existsAlmostsOne(e.getId()))
 				  eventsToPage.add(e);
 		  log.trace("total events to page " + eventsToPage.size());				  
-		  if(eventsToPage.size() == 0) {
-			  return "empty-events";
-		  }
 
 		  request.setAttribute("eventList", eventsToPage);
 		  request.setAttribute("daysBefore",daysBefore);
