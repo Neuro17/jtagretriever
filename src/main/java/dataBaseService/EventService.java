@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import app.controllers.JSPController;
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
 import javabandsintown.entity.Venue;

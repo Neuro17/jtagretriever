@@ -1,6 +1,5 @@
 package javabandsintown.requests;
 
-
 import javabandsintown.config.BandsintownConfig;
 import javabandsintown.entity.Artist;
 import javabandsintown.http.BandsintownConnector;

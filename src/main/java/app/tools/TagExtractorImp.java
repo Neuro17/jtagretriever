@@ -1,7 +1,6 @@
 package app.tools;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -10,16 +9,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javabandsintown.search.Bandsintown;
 import app.models.Tweet;
 import app.repository.TweetRepository;
 
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
-import com.mysql.fabric.xmlrpc.base.Array;
 
-import dataBaseService.EventService;
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
 

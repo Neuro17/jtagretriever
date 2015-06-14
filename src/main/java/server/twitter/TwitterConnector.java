@@ -7,13 +7,9 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
-
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
-
-//import scala.annotation.meta.getter;
 import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.Query.Unit;

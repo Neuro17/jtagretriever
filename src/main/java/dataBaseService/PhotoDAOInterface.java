@@ -2,8 +2,6 @@ package dataBaseService;
 
 import java.util.ArrayList;
 
-import javabandsintown.entity.Artist;
-
 public interface PhotoDAOInterface {
 
 	public boolean check(int eventId, String mediaId) throws Exception;

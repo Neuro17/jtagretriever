@@ -7,7 +7,6 @@ import java.util.List;
 
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
-import javabandsintown.http.BandsintownConnector;
 import javabandsintown.search.Bandsintown;
 
 import javax.servlet.http.Cookie;
@@ -18,9 +17,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jinstagram.entity.users.feed.MediaFeedData;
-import org.jinstagram.exceptions.InstagramException;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,7 +31,6 @@ import app.repository.TweetRepository;
 import app.tools.CustomComparator;
 import app.tools.TagExtractor;
 import app.tools.Task;
-import app.tools.Tools;
 import dataBaseService.ArtistService;
 import dataBaseService.EventService;
 import dataBaseService.Photo;
@@ -122,7 +118,7 @@ public class JSPController extends GenericController{
 		  
 		  tag = WordUtils.capitalizeFully(tag);
 
-		  boolean validA = false, validV = false, validE = false;
+		  boolean validA = false;
 		  
 		  validA = aS.checkName(tag) || 
 				  aS.manageTag(tag);

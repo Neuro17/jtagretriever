@@ -1,26 +1,19 @@
 package app.instagram;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.jinstagram.Instagram;
 import org.jinstagram.entity.common.Location;
-import org.jinstagram.entity.common.Pagination;
-import org.jinstagram.entity.locations.LocationSearchFeed;
-import org.jinstagram.entity.tags.TagInfoData;
 import org.jinstagram.entity.tags.TagMediaFeed;
-import org.jinstagram.entity.tags.TagSearchFeed;
-import org.jinstagram.entity.users.feed.MediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
-import org.jinstagram.model.QueryParam;
+
 import org.joda.time.DateTime;
 
 public class PhotoRetriever {

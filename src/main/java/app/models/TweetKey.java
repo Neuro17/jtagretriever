@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-
-import org.springframework.boot.orm.jpa.EntityScan;
 
 @Embeddable
 public class TweetKey implements Serializable {

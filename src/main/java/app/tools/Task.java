@@ -1,7 +1,6 @@
 package app.tools;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,18 +8,15 @@ import org.apache.logging.log4j.Logger;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javabandsintown.search.Bandsintown;
 import app.instagram.PhotoRetriever;
 import app.twitter.TwitterConnector;
 import app.twitter.impl.TwitterConnectorImpl;
-import dataBaseService.ArtistDAOInterface;
 import dataBaseService.ArtistService;
 import dataBaseService.EventService;
 import dataBaseService.Photo;
 import dataBaseService.PhotoService;
-import dataBaseService.VenueService;
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
 
@@ -216,8 +212,8 @@ public class Task {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		DateTime start = (new DateTime()).minusDays(7);
-		DateTime end = (new DateTime()).plusDays(7);
+//		DateTime start = (new DateTime()).minusDays(7);
+//		DateTime end = (new DateTime()).plusDays(7);
 		
 //		initArtistDB();
 //		initEventDB();

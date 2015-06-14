@@ -1,21 +1,18 @@
 package app.scheduler;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import app.tools.Task;
+
 import app.twitter.TwitterConnector;
-import dataBaseService.EventService;
-import javabandsintown.entity.Event;
 
 @Component
 @EnableAsync

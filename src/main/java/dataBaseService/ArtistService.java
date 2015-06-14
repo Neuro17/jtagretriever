@@ -4,17 +4,12 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.mapping.Map;
 import org.joda.time.DateTime;
-import org.neo4j.cypher.internal.compiler.v2_1.ast.rewriters.deMorganRewriter;
 import org.springframework.context.annotation.PropertySource;
 
-import app.controllers.JSPController;
 import app.tools.Task;
 import javabandsintown.search.Bandsintown;
 import javabandsintown.entity.Artist;
