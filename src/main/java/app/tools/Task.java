@@ -199,9 +199,7 @@ public class Task {
 		log.trace(events.size());
 
 		for(Event e : events)
-			if(!photoDAO.existsAlmostsOne(e.getId())
-//					&&(e.getId() > 10035741)
-					)
+			if(!photoDAO.existsAlmostsOne(e.getId()))
 				  eventsToManage.add(e);
 		log.trace(eventsToManage.size());
 

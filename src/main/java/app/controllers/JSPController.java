@@ -152,18 +152,6 @@ public class JSPController extends GenericController{
 
 		  return "artist-events";  
 	  }
-
-//	  @RequestMapping("/artist-home")
-//	  public String getSearchPageTest(@ModelAttribute("tag") String artistName, 
-//			  HttpServletRequest request,HttpServletResponse response,
-//			  ArrayList<Event> events) throws Exception {
-//		  
-//		  events = bandsintown.getEvents.setArtist(artistName).setDate("all").search();
-//
-//		  request.setAttribute("eventList", events);
-//
-//		  return "artist-event-home";
-//	  }
 	
 		@RequestMapping("/artist-event-home")
 		public String getArtistEventHome(@ModelAttribute("eventId") int eventId,
