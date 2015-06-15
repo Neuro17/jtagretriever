@@ -5,20 +5,14 @@ import java.util.List;
 
 import javabandsintown.entity.Artist;
 import javabandsintown.entity.Event;
-import javabandsintown.geonames.GeonamesConnector;
 import javabandsintown.search.Bandsintown;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jinstagram.Instagram;
-import org.jinstagram.entity.tags.TagMediaFeed;
-import org.jinstagram.entity.users.feed.MediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 import org.joda.time.DateTime;
 
-import dataBaseService.ArtistService;
-import scala.annotation.meta.getter;
 import app.instagram.PhotoRetriever;
 import app.tools.TagExtractorImp;
 

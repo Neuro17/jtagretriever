@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import app.example.GenericController;
 import app.instagram.PhotoRetriever;
 import app.repository.TweetRepository;
 import app.tools.CustomComparator;
@@ -38,7 +37,7 @@ import dataBaseService.PhotoService;
 import dataBaseService.VenueService;
 
 @Controller
-public class JSPController extends GenericController{
+public class JSPController{
 
 	private static final Logger log = LogManager.getLogger(JSPController.class);
 
