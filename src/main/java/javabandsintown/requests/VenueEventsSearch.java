@@ -72,7 +72,6 @@ public class VenueEventsSearch extends BandsintownConnector {
 	
 	
 	public ArrayList<Venue> search() {
-//TODO - torna anche le venue che hanno nel nome la parola cercata e non solo se sono in quella città
 		JsonObject venues;
 		
 		BandsintownConfig.setApiVersion("1.0");

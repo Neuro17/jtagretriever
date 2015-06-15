@@ -17,20 +17,12 @@ import app.twitter.TwitterConnector;
 @Component
 @EnableAsync
 public class ScheduledTasks {
-
-//    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     
     private static final Logger log = LogManager.getLogger(ScheduledTasks.class);
     
     @Autowired 
     TwitterConnector twitter;
-
-//    @Scheduled(fixedRate = 5000)
-//    public void reportCurrentTime() {	
-//        System.out.println("The time is now " + dateFormat.format(new Date()));
-//    }
-    
-    
+        
     /**
      * This task start at midnight of every day.
      * The pattern is a list of six single space-separated fields: representing
@@ -61,9 +53,5 @@ public class ScheduledTasks {
     	log.trace("Collecting yesterday concerts images");
     	    	
     	Task.collectDaysAgoDBEventsPhotos(1);
-    }
-    
-    public static void main(String [] args) throws Exception{
-    	
     }
 }

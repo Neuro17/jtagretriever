@@ -237,7 +237,6 @@ public class TwitterConnectorImpl implements TwitterConnector{
 	        			tweet.getPlace().getName(),
 	        			tweet.getCreatedAt().toString());
 
-//	        	TODO - ricordarsi di inserire tutti i campi necessari per la tabella
 	        	System.out.println("twitterRepo: " + twitterRepo);
 	        	System.out.println("tweets: " + tmpTweet.toString());
  	        	twitterRepo.save(tmpTweet);

@@ -59,11 +59,5 @@ public class GeonamesGet extends GeonamesConnector{
 			return TimeZone.getTimeZone(searchResult).getRawOffset()/3600000;
 		else 
 			return -99;
-	}
-	
-//TODO WTF???	
-	public String getGMTStandard(){
-		
-		return null;
-	}
+	}	
 }

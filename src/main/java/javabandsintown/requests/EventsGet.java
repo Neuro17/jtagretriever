@@ -53,8 +53,7 @@ public class EventsGet extends BandsintownConnector{
 		events = executeRequest();
 		log.debug(events);
 
-		return Extractor.extractEvents(events);
-		
+		return Extractor.extractEvents(events);		
 	}
 
 	public ArrayList<Event> searchGMTReferences() {
